@@ -1,65 +1,126 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div style={styles.wrapper}>
+      <div style={styles.left}>
+        <h1 style={styles.brand}>Sistem Aplikasi<br />Retribusi Pasar</h1>
+        <p style={styles.tagline}>
+          Platform digital untuk pencatatan, monitoring, dan pelaporan retribusi pasar secara terpusat.
+        </p>
+      </div>
+
+      <div style={styles.right}>
+        <div style={styles.card}>
+          <h2 style={styles.title}>Masuk ke Sistem</h2>
+          <p style={styles.subtitle}>Gunakan akun terdaftar Anda</p>
+
+          <input style={styles.input} placeholder="Username / Email" />
+          <input style={styles.input} type="password" placeholder="Password" />
+
+          <button style={styles.primaryBtn}>Login</button>
+
+          <div style={styles.divider}><span>atau</span></div>
+
+          <button style={styles.googleBtn}>
+            Login dengan Google Account
+          </button>
+
+          <p style={styles.footer}>
+            © 2025 Sistem Retribusi Pasar
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  wrapper: {
+    display: 'flex',
+    minHeight: '100vh',
+    background: '#f7f8fa',
+    fontFamily: 'system-ui, -apple-system',
+  },
+  left: {
+    flex: 1,
+    padding: '60px',
+    background: 'linear-gradient(135deg, #1f2937, #111827)',
+    color: '#fff',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  brand: {
+    fontSize: '36px',
+    fontWeight: 600,
+    lineHeight: 1.2,
+  },
+  tagline: {
+    marginTop: '16px',
+    fontSize: '15px',
+    color: '#d1d5db',
+    maxWidth: '420px',
+  },
+  right: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: '100%',
+    maxWidth: '380px',
+    background: '#fff',
+    padding: '36px',
+    borderRadius: '18px',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  title: {
+    fontSize: '22px',
+    fontWeight: 600,
+  },
+  subtitle: {
+    fontSize: '14px',
+    color: '#6b7280',
+    marginBottom: '20px',
+  },
+  input: {
+    padding: '14px',
+    borderRadius: '12px',
+    border: '1px solid #e5e7eb',
+    marginBottom: '12px',
+    fontSize: '14px',
+  },
+  primaryBtn: {
+    padding: '14px',
+    borderRadius: '12px',
+    background: '#111827',
+    color: '#fff',
+    border: 'none',
+    fontWeight: 500,
+    cursor: 'pointer',
+  },
+  divider: {
+    textAlign: 'center',
+    margin: '18px 0',
+    fontSize: '12px',
+    color: '#9ca3af',
+  },
+  googleBtn: {
+    padding: '14px',
+    borderRadius: '12px',
+    border: '1px solid #e5e7eb',
+    background: '#fff',
+    cursor: 'pointer',
+    fontWeight: 500,
+  },
+  footer: {
+    marginTop: '24px',
+    fontSize: '11px',
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
+};
