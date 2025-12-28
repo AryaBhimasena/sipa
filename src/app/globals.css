@@ -1,0 +1,103 @@
+/* ===================================================== */
+/* DASHBOARD */
+/* ===================================================== */
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  margin: 4px 0 24px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ================= SUMMARY CARDS ================= */
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.summary-card {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.summary-card span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+}
+
+/* Variants */
+.summary-card.primary strong { color: #2563eb; }
+.summary-card.success strong { color: #16a34a; }
+.summary-card.warning strong { color: #d97706; }
+
+/* ================= DIVIDER ================= */
+
+.dashboard-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 32px 0;
+}
+
+/* ================= TABLE ================= */
+
+.dashboard-section h3 {
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.dashboard-table th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #6b7280;
+}
+
+.dashboard-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.status.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.info {
+  background: #e0f2fe;
+  color: #075985;
+}
