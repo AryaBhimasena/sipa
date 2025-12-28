@@ -1,0 +1,140 @@
+.data-toko-container {
+  padding: 24px;
+  background: #f4f6f9;
+  min-height: 100vh;
+}
+
+.data-toko-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.data-toko-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.data-toko-header p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* FILTER */
+.data-toko-filter {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.data-toko-filter input,
+.data-toko-filter select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+}
+
+.data-toko-filter input {
+  flex: 1;
+}
+
+.data-toko-filter input:focus,
+.data-toko-filter select:focus {
+  border-color: #2563eb;
+}
+
+/* TABLE */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-toko-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-toko-table thead {
+  background: #f1f5f9;
+}
+
+.data-toko-table th,
+.data-toko-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.data-toko-table th {
+  font-weight: 600;
+  color: #374151;
+}
+
+.data-toko-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px;
+  color: #6b7280;
+}
+
+/* AKSI */
+.aksi-btn {
+  display: flex;
+  gap: 8px;
+}
+
+.aksi-btn button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.btn-view {
+  background: #e0f2fe;
+}
+
+.btn-view::before {
+  content: "👁";
+}
+
+.btn-edit {
+  background: #fef3c7;
+}
+
+.btn-edit::before {
+  content: "✏";
+}
+
+.btn-delete {
+  background: #fee2e2;
+}
+
+.btn-delete::before {
+  content: "🗑";
+}
+
+.aksi-btn button:hover {
+  transform: scale(1.08);
+}
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
