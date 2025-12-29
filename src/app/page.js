@@ -1,21 +1,14 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import "../styles/login.css";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (searchParams.get("reason") === "auth") {
-      alert("Anda harus login terlebih dahulu");
-    }
-  }, [searchParams]);
 
   async function handleLogin(e) {
     e.preventDefault();
