@@ -1,0 +1,191 @@
+.mobile-wrapper {
+  min-height: 100vh;
+  background: #0b1220;
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-frame {
+  width: 390px;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* ================= HEADER ================= */
+.tarikan-header {
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.tarikan-header h1 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.back-btn {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 6px;
+  color: #0f172a;
+}
+
+/* ================= TAB ================= */
+.tab-switch {
+  display: flex;
+  margin: 12px 16px;
+  background: #e9edf5;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.tab-switch button {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  color: #475569;
+}
+
+.tab-switch .active {
+  background: #ffffff;
+  color: #1e40af;
+}
+
+/* ================= SEARCH ================= */
+.search-box {
+  margin: 0 16px 12px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  font-size: 12px;
+  flex: 1;
+}
+
+/* ================= DETAIL ================= */
+.detail-section {
+  margin: 0 16px 16px;
+}
+
+.detail-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.detail-section ul {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.detail-section li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 6px 0;
+}
+
+.detail-section span {
+  color: #64748b;
+}
+
+/* ================= OPTIONS ================= */
+.option-section {
+  margin: 0 16px 16px;
+}
+
+.option-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* RADIO – DIPERBAIKI */
+.radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 12px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-group input {
+  accent-color: #1e40af;
+}
+
+/* ================= PAYMENT ================= */
+.payment-method {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-method button {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  font-size: 12px;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-method .active {
+  border-color: #1e40af;
+  color: #1e40af;
+}
+
+/* ================= TRANSFER ================= */
+.transfer-box {
+  margin-top: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.qris-dummy {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 8px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+}
