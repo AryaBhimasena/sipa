@@ -23,7 +23,7 @@ export default function TarikanRetribusiPage() {
 		  >
 			<ArrowLeft size={20} />
 		  </button>
-		  <h1>Tarikan Kebersihan</h1>
+		  <h1>Jasa Kebersihan</h1>
 		</header>
 
         {/* TAB */}
@@ -75,7 +75,7 @@ export default function TarikanRetribusiPage() {
 
         {/* PERIODE */}
         <section className="option-section">
-          <h3>Periode Retribusi</h3>
+          <h3>Periode Sewa Jasa Layanan</h3>
           <div className="radio-group">
             <label>
               <input type="radio" name="periode" defaultChecked />

@@ -14,8 +14,8 @@ export default function MobileLoginPage() {
     <div style={styles.wrapper}>
       <div style={styles.mobileFrame}>
         <div style={styles.header}>
-          <h1 style={styles.title}>Aplikasi Retribusi</h1>
-          <p style={styles.subtitle}>Pasar Daerah</p>
+          <h1 style={styles.title}>Sistem Informasi</h1>
+          <p style={styles.subtitle}>Pasar Antasari</p>
         </div>
 
         <form style={styles.form} onSubmit={handleLogin}>
@@ -36,7 +36,7 @@ export default function MobileLoginPage() {
         </form>
 
         <div style={styles.footer}>
-          <small>© 2026 Retribusi Pasar</small>
+          <small>© 2026 SIPA</small>
         </div>
       </div>
     </div>

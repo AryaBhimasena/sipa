@@ -26,7 +26,7 @@ export default function DataTokoPage() {
 		  >
 			<ChevronLeft size={20} />
 		  </button>
-		  <h1>Tarikan Kebersihan</h1>
+		  <h1>Jasa Kebersihan</h1>
 		</header>
 
         {/* QUICK ACTION */}

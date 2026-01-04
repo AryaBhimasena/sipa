@@ -26,7 +26,7 @@ export default function MobileDashboardPage() {
 
         {/* HEADER */}
         <header className="brand-surface">
-          <div className="brand-title">Retribusi Pasar</div>
+          <div className="brand-title">Sistem Informasi Pasar Antasari</div>
         </header>
 
         {/* TOTAL */}
@@ -39,7 +39,7 @@ export default function MobileDashboardPage() {
         {/* TARIKAN */}
         <section className="section">
           <div className="section-header">
-            <span>Tarikan Retribusi</span>
+            <span>Tarif Sewa Jasa Pelayanan </span>
           </div>
 
           <div className="grid-3">
