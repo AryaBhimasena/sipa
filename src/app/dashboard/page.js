@@ -19,8 +19,8 @@ export default function DashboardPage() {
         {/* PAGE HEADER */}
         <div className="dashboard-header">
           <div>
-            <h1>Dashboard Retribusi</h1>
-            <p>Monitoring penerimaan dan kepatuhan retribusi Pasar Antasari</p>
+            <h1>Dashboard Sewa Jasa Layanan</h1>
+            <p>Monitoring penerimaan dan kepatuhan sewa jasa layanan Pasar Antasari</p>
           </div>
           <div className="dashboard-date">
             <span>Tanggal Aktif</span>
@@ -31,12 +31,12 @@ export default function DashboardPage() {
         {/* RETRIBUSI KPI */}
         <div className="kpi-grid">
           <div className="kpi-card highlight">
-            <span className="kpi-label">Retribusi Hari Ini</span>
+            <span className="kpi-label">Pembayaran Jasa Hari Ini</span>
             <strong className="kpi-value">Rp 18.450.000</strong>
           </div>
 
           <div className="kpi-card">
-            <span className="kpi-label">Retribusi Bulan Ini</span>
+            <span className="kpi-label">Pembayaran Jasa Bulan Ini</span>
             <strong className="kpi-value">Rp 328.450.000</strong>
           </div>
 
@@ -84,9 +84,9 @@ export default function DashboardPage() {
 
           {/* AKTIVITAS */}
           <div className="panel full">
-            <h3>Aktivitas Penarikan Retribusi</h3>
+            <h3>Aktivitas Penarikan Sewa Jasa Layanan</h3>
 			<p className="panel-subtitle">
-  Menampilkan transaksi retribusi terakhir berdasarkan aktivitas petugas
+  Menampilkan transaksi pembayaran sewa jasa layanan terakhir berdasarkan aktivitas petugas
 </p>
 
             <table className="activity-table">

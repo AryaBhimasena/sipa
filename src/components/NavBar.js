@@ -31,7 +31,7 @@ export default function NavBar() {
         href="/retribusi"
         className={`nav-item ${isActive("/retribusi") ? "active" : ""}`}
       >
-        Retribusi
+        Jasa Layanan
       </Link>
 
       <Link

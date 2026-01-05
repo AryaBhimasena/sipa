@@ -57,7 +57,7 @@ export default function DataTokoPage() {
         <div className="data-toko-card">
           <div className="data-toko-header">
             <h2>Data Toko</h2>
-            <p>Master data objek retribusi Pasar Antasari</p>
+            <p>Master data objek Pengguna Jasa Layanan Pasar Antasari</p>
           </div>
 
           {/* SEARCH & FILTER */}
