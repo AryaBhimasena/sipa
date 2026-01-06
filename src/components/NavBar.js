@@ -28,10 +28,10 @@ export default function NavBar() {
       </Link>
 
       <Link
-        href="/retribusi"
-        className={`nav-item ${isActive("/retribusi") ? "active" : ""}`}
+        href="/tarif-jasa-layanan"
+        className={`nav-item ${isActive("/tarif-jasa-layanan") ? "active" : ""}`}
       >
-        Jasa Layanan
+        Tarif Jasa Layanan
       </Link>
 
       <Link
