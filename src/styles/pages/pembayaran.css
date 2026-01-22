@@ -1,0 +1,91 @@
+.pembayaran-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.pembayaran-layout {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  gap: 16px;
+}
+
+.pembayaran-left,
+.pembayaran-right {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.foto-placeholder {
+  height: 160px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.status.unpaid {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.total-bar {
+  text-align: right;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.diskon-input {
+  width: 60px;
+}
+
+.objek-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: flex-start;
+  font-size: 13px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+.info-label::after {
+  content: ":";
+  margin-left: 2px;
+}
+
+.info-value {
+  color: #0f172a;
+}

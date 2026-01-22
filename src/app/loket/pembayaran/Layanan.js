@@ -1,0 +1,140 @@
+"use client";
+
+export default function Layanan({ data }) {
+  if (!data) return null;
+
+  const luas = data.objek?.luas || 0;
+
+  const tarifSewaDasar = data.tarif?.sewa?.tarif || 0;
+  const tarifKebersihan = data.tarif?.kebersihan?.tarif || 0;
+  const tarifKeamanan = data.tarif?.keamanan?.tarif || 0;
+  
+  const panjang = data.objek?.panjang || 0;
+  const lebar = data.objek?.lebar || 0;
+  const tinggi = data.objek?.tinggi || 0;
+
+  const tarifSewa = tarifSewaDasar * luas;
+
+  const bulanList = [
+    "Januari","Februari","Maret","April","Mei","Juni",
+    "Juli","Agustus","September","Oktober","November","Desember"
+  ];
+
+  return (
+    <div className="pembayaran-layout">
+      {/* LEFT */}
+      <div className="pembayaran-left">
+        <div className="foto-placeholder">Foto Toko</div>
+
+		<div className="objek-info">
+		  <div className="info-row">
+			<span className="info-label">Nama Pedagang</span>
+			<span className="info-value">{data.nama}</span>
+		  </div>
+
+		  <div className="info-row">
+			<span className="info-label">Jenis Objek</span>
+			<span className="info-value">{data.objek.jenis_objek}</span>
+		  </div>
+
+		  <div className="info-row">
+			<span className="info-label">Tipe</span>
+			<span className="info-value">{data.objek.tipe}</span>
+		  </div>
+
+		  <div className="info-row">
+			<span className="info-label">Alamat</span>
+			<span className="info-value">
+			  Lt.{data.lantai} Blok {data.blok} No.{data.no}
+			</span>
+		  </div>
+
+		  <div className="info-row luas-row">
+			<span className="info-label">Luas</span>
+			<span className="info-value luas-box">
+			  {panjang} × {lebar} × {tinggi} = <strong>{luas} m²</strong>
+			</span>
+		  </div>
+
+		  <hr />
+
+		  <div className="info-row">
+			<span className="info-label">Tarif Sewa</span>
+			<span className="info-value">
+			  Rp {tarifSewaDasar.toLocaleString()}
+			</span>
+		  </div>
+
+		  <div className="info-row">
+			<span className="info-label">Tarif Kebersihan</span>
+			<span className="info-value">
+			  Rp {tarifKebersihan.toLocaleString()}
+			</span>
+		  </div>
+
+		  <div className="info-row">
+			<span className="info-label">Tarif Keamanan</span>
+			<span className="info-value">
+			  Rp {tarifKeamanan.toLocaleString()}
+			</span>
+		  </div>
+		</div>
+
+      </div>
+
+      {/* RIGHT */}
+      <div className="pembayaran-right">
+        <div className="total-bar">
+          Total Dibayar: <strong>Rp 0</strong>
+        </div>
+
+        <div className="loket-table-wrapper">
+          <table className="loket-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Bulan</th>
+                <th>Status</th>
+                <th>Jasa Sewa</th>
+                <th>Diskon (%)</th>
+                <th>Kebersihan</th>
+                <th>Keamanan</th>
+                <th>Denda</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bulanList.map((bulan) => {
+                const total =
+                  tarifSewa + tarifKebersihan + tarifKeamanan;
+
+                return (
+                  <tr key={bulan}>
+                    <td><input type="checkbox" /></td>
+                    <td>{bulan}</td>
+                    <td>
+                      <span className="status unpaid">Belum Bayar</span>
+                    </td>
+                    <td>{tarifSewa.toLocaleString()}</td>
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        className="diskon-input"
+                      />
+                    </td>
+                    <td>{tarifKebersihan.toLocaleString()}</td>
+                    <td>{tarifKeamanan.toLocaleString()}</td>
+                    <td>0</td>
+                    <td>{total.toLocaleString()}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

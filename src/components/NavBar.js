@@ -21,24 +21,10 @@ export default function NavBar() {
       </Link>
 
       <Link
-        href="/dataToko"
-        className={`nav-item ${isActive("/dataToko") ? "active" : ""}`}
+        href="/loket"
+        className={`nav-item ${isActive("/loket") ? "active" : ""}`}
       >
-        Data Toko
-      </Link>
-
-      <Link
-        href="/tarif-jasa-layanan"
-        className={`nav-item ${isActive("/tarif-jasa-layanan") ? "active" : ""}`}
-      >
-        Tarif Jasa Layanan
-      </Link>
-
-      <Link
-        href="/dokumen"
-        className={`nav-item ${isActive("/dokumen") ? "active" : ""}`}
-      >
-        Dokumen
+        Loket
       </Link>
 
       <Link
@@ -49,10 +35,10 @@ export default function NavBar() {
       </Link>
 
       <Link
-        href="/pengaturan"
-        className={`nav-item ${isActive("/pengaturan") ? "active" : ""}`}
+        href="/master-data"
+        className={`nav-item ${isActive("/master-data") ? "active" : ""}`}
       >
-        Pengaturan
+        Master Data
       </Link>
     </nav>
   );
