@@ -1,22 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Header from "../../../components/Header";
-import NavBar from "../../../components/NavBar";
-import ContainerCard from "../../../components/ContainerCard";
+import { useParams } from "next/navigation";
+
+import Header from "../../../../components/Header";
+import NavBar from "../../../../components/NavBar";
+import ContainerCard from "../../../../components/ContainerCard";
 import Layanan from "./Layanan";
 import Tunggakan from "./Tunggakan";
 
-import { API_URL } from "../../../lib/api";
+import { API_URL } from "../../../../lib/api";
 
-import "../../../styles/layout.css";
-import "../../../styles/pages/loket.css";
-import "../../../styles/pages/pembayaran.css";
+import "../../../../styles/layout.css";
+import "../../../../styles/pages/loket.css";
+import "../../../../styles/pages/pembayaran.css";
 
 export default function PembayaranPage() {
-  const searchParams = useSearchParams();
-  const idReg = searchParams.get("id");
+  const { idReg } = useParams();
 
   const [activeTab, setActiveTab] = useState("layanan");
   const [dataPedagang, setDataPedagang] = useState(null);
@@ -38,8 +38,12 @@ export default function PembayaranPage() {
 
         const json = await res.json();
 
-        if (json.success && json.data?.length) {
-          setDataPedagang(json.data[0]);
+		if (json.success && Array.isArray(json.data)) {
+		  const found = json.data.find(
+			(item) => String(item.id_reg) === String(idReg)
+		  );
+
+		  setDataPedagang(found ?? null);
         } else {
           setDataPedagang(null);
         }

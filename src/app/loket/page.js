@@ -190,13 +190,14 @@ const filteredData = data.filter((row) => {
                       <td>{row.blok}</td>
                       <td>{row.no}</td>
                       <td>
-                        <Link
-                          href={`/loket/pembayaran?id=${row.id_reg}`}
-                        >
-                          <button className="loket-btn">
-                            Pilih
-                          </button>
-                        </Link>
+						<button
+						  className="loket-btn"
+							onClick={() => {
+							  window.location.href = `/loket/pembayaran/${row.id_reg}`;
+							}}
+						>
+						  Pilih
+						</button>
                       </td>
                     </tr>
                   ))}
