@@ -4,86 +4,39 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import NavBar from "../../components/NavBar";
 import ContainerCard from "../../components/ContainerCard";
+import { useDataToko } from "../contexts/DataTokoContext";
 import Link from "next/link";
-
-import { API_URL } from "../../lib/api";
 
 import "../../styles/layout.css";
 import "../../styles/pages/loket.css";
 
 export default function LoketPage() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { dataToko, loading } = useDataToko();
 
-	const [search, setSearch] = useState("");
-	const [filterJenis, setFilterJenis] = useState("");
-	const [filterTipe, setFilterTipe] = useState("");
-	const [filterLantai, setFilterLantai] = useState("");
-	const [filterBlok, setFilterBlok] = useState("");
+  const [search, setSearch] = useState("");
+  const [filterJenis, setFilterJenis] = useState("");
+  const [filterTipe, setFilterTipe] = useState("");
+  const [filterLantai, setFilterLantai] = useState("");
+  const [filterBlok, setFilterBlok] = useState("");
 
-  useEffect(() => {
-    async function fetchDataToko() {
-      try {
-        const res = await fetch(`${API_URL}?path=dataToko`, {
-          method: "GET",
-          cache: "no-store",
-        });
+  const filteredData = dataToko.filter((row) => {
+    const keyword = search.toLowerCase();
 
-        if (!res.ok) {
-          throw new Error("Gagal mengambil data toko");
-        }
+    const jenis = row.objek?.jenis_objek ?? "";
+    const tipe = row.objek?.tipe ?? "";
+    const lantai = row.lantai?.toString() ?? "";
+    const blok = row.blok ?? "";
+    const nama = row.nama?.toLowerCase() ?? "";
+    const idReg = row.id_reg?.toString() ?? "";
 
-        const json = await res.json();
-
-        if (json.success) {
-          setData(json.data);
-        } else {
-          setData([]);
-        }
-      } catch (err) {
-        console.error(err);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDataToko();
-  }, []);
-
-const filteredData = data.filter((row) => {
-  const keyword = search.toLowerCase();
-
-  const jenis = row.objek?.jenis_objek ?? "";
-  const tipe = row.objek?.tipe ?? "";
-  const lantai = row.lantai?.toString() ?? "";
-  const blok = row.blok ?? "";
-  const nama = row.nama?.toLowerCase() ?? "";
-  const idReg = row.id_reg?.toString() ?? "";
-
-  const matchSearch =
-    idReg.includes(keyword) || nama.includes(keyword);
-
-  const matchJenis =
-    !filterJenis || jenis === filterJenis;
-
-  const matchTipe =
-    !filterTipe || tipe === filterTipe;
-
-  const matchLantai =
-    !filterLantai || lantai === filterLantai;
-
-  const matchBlok =
-    !filterBlok || blok === filterBlok;
-
-  return (
-    matchSearch &&
-    matchJenis &&
-    matchTipe &&
-    matchLantai &&
-    matchBlok
-  );
-});
+    return (
+      (idReg.includes(keyword) || nama.includes(keyword)) &&
+      (!filterJenis || jenis === filterJenis) &&
+      (!filterTipe || tipe === filterTipe) &&
+      (!filterLantai || lantai === filterLantai) &&
+      (!filterBlok || blok === filterBlok)
+    );
+  });
 
   return (
     <>

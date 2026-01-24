@@ -1,6 +1,10 @@
+//app/loket/pembayaran/[idReg]/Layanan.js
+
 "use client";
 
-export default function Layanan({ data }) {
+import { useEffect, useMemo, useState } from "react";
+
+export default function Layanan({ data, onTotalChange }) {
   if (!data) return null;
 
   const luas = data.objek?.luas || 0;
@@ -19,6 +23,65 @@ export default function Layanan({ data }) {
     "Januari","Februari","Maret","April","Mei","Juni",
     "Juli","Agustus","September","Oktober","November","Desember"
   ];
+  
+  const totalPerBulan =
+    tarifSewa + tarifKebersihan + tarifKeamanan;
+  
+  /* ================================
+     STATE CHECKLIST
+  ================================= */
+  const [checkedRows, setCheckedRows] = useState({});
+
+const handleCheck = (bulan) => {
+  setCheckedRows(prev => {
+    const next = { ...prev };
+
+    if (next[bulan]) {
+      delete next[bulan];
+    } else {
+      next[bulan] = {
+        bulan,
+        sewa: tarifSewa,
+        kebersihan: tarifKebersihan,
+        keamanan: tarifKeamanan,
+        denda: 0,
+        diskon: 0,
+        total: totalPerBulan,
+      };
+    }
+
+    return next;
+  });
+};
+
+const detailArray = Object.values(checkedRows);
+
+const totalDibayar = useMemo(
+  () => detailArray.reduce((sum, r) => sum + r.total, 0),
+  [checkedRows]
+);
+
+const jumlahBulan = detailArray.length;
+
+  
+useEffect(() => {
+  if (typeof onTotalChange === "function") {
+    onTotalChange({
+      jenis: "LAYANAN",
+      periode: new Date().getFullYear(),
+      jumlahBulan,
+      total: totalDibayar,
+      rincian: detailArray,
+      subtotal: {
+        sewa: tarifSewa * jumlahBulan,
+        kebersihan: tarifKebersihan * jumlahBulan,
+        keamanan: tarifKeamanan * jumlahBulan,
+        denda: 0,
+      },
+    });
+  }
+}, [checkedRows, totalDibayar]);
+
 
   return (
     <div className="pembayaran-layout">
@@ -84,10 +147,6 @@ export default function Layanan({ data }) {
 
       {/* RIGHT */}
       <div className="pembayaran-right">
-        <div className="total-bar">
-          Total Dibayar: <strong>Rp 0</strong>
-        </div>
-
         <div className="loket-table-wrapper">
           <table className="loket-table">
             <thead>
@@ -104,14 +163,18 @@ export default function Layanan({ data }) {
               </tr>
             </thead>
             <tbody>
-              {bulanList.map((bulan) => {
-                const total =
-                  tarifSewa + tarifKebersihan + tarifKeamanan;
-
-                return (
-                  <tr key={bulan}>
-                    <td><input type="checkbox" /></td>
-                    <td>{bulan}</td>
+			  {bulanList.map((bulan) => (
+                <tr key={bulan}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={!!checkedRows[bulan]}
+                      onChange={() =>
+                        handleCheck(bulan)
+                      }
+                    />
+                  </td>
+                  <td>{bulan}</td>
                     <td>
                       <span className="status unpaid">Belum Bayar</span>
                     </td>
@@ -122,15 +185,16 @@ export default function Layanan({ data }) {
                         min="0"
                         max="100"
                         className="diskon-input"
+						disabled={!checkedRows[bulan]}
                       />
                     </td>
                     <td>{tarifKebersihan.toLocaleString()}</td>
                     <td>{tarifKeamanan.toLocaleString()}</td>
                     <td>0</td>
-                    <td>{total.toLocaleString()}</td>
+                    <td>{totalPerBulan.toLocaleString()}</td>
                   </tr>
-                );
-              })}
+                )
+              )}
             </tbody>
           </table>
         </div>

@@ -1,3 +1,5 @@
+//app/loket/pembayaran/[idReg]/page.js
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,6 +8,8 @@ import { useParams } from "next/navigation";
 import Header from "../../../../components/Header";
 import NavBar from "../../../../components/NavBar";
 import ContainerCard from "../../../../components/ContainerCard";
+import ModalKuitansi from "../../../../components/ModalKuitansi";
+
 import Layanan from "./Layanan";
 import Tunggakan from "./Tunggakan";
 
@@ -21,6 +25,21 @@ export default function PembayaranPage() {
   const [activeTab, setActiveTab] = useState("layanan");
   const [dataPedagang, setDataPedagang] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [totalDibayar, setTotalDibayar] = useState(0);
+  
+  const [showModal, setShowModal] = useState(false);
+  const [ringkasanBayar, setRingkasanBayar] = useState(null);
+
+const handlePaymentData = (payload) => {
+  if (!payload || typeof payload.total !== "number") {
+    setTotalDibayar(0);
+    setRingkasanBayar(null);
+    return;
+  }
+
+  setRingkasanBayar(payload);
+  setTotalDibayar(payload.total);
+};
 
   useEffect(() => {
     if (!idReg) return;
@@ -69,21 +88,38 @@ export default function PembayaranPage() {
           subtitle="Pemrosesan pembayaran jasa layanan dan tunggakan"
         >
           {/* TAB */}
-          <div className="pembayaran-tabs">
-            <button
-              className={`tab-btn ${activeTab === "layanan" ? "active" : ""}`}
-              onClick={() => setActiveTab("layanan")}
-            >
-              Pembayaran Layanan
-            </button>
+			<div className="pembayaran-tab-header">
+			  <div className="pembayaran-tabs">
+				<button
+				  className={`tab-btn ${activeTab === "layanan" ? "active" : ""}`}
+				  onClick={() => setActiveTab("layanan")}
+				>
+				  Pembayaran Layanan
+				</button>
 
-            <button
-              className={`tab-btn ${activeTab === "tunggakan" ? "active" : ""}`}
-              onClick={() => setActiveTab("tunggakan")}
-            >
-              Pembayaran Tunggakan
-            </button>
-          </div>
+				<button
+				  className={`tab-btn ${activeTab === "tunggakan" ? "active" : ""}`}
+				  onClick={() => setActiveTab("tunggakan")}
+				>
+				  Pembayaran Tunggakan
+				</button>
+			  </div>
+
+			  <div className="total-action-bar">
+			    <div className="total-amount">
+				  Total Dibayar:
+				  <strong> Rp {totalDibayar.toLocaleString()}</strong>
+			    </div>
+
+			    <button
+				  className="btn-bayar"
+				  disabled={totalDibayar === 0}
+				  onClick={() => setShowModal(true)}
+			    >
+				  Bayar
+			    </button>
+			  </div>
+			</div>
 
           {/* CONTENT */}
           {loading && <p>Memuat data...</p>}
@@ -93,13 +129,27 @@ export default function PembayaranPage() {
           )}
 
           {!loading && dataPedagang && activeTab === "layanan" && (
-            <Layanan data={dataPedagang} />
+            <Layanan data={dataPedagang}
+			onTotalChange={handlePaymentData}
+			/>
           )}
 
           {!loading && dataPedagang && activeTab === "tunggakan" && (
             <Tunggakan data={dataPedagang} />
           )}
         </ContainerCard>
+		
+		{showModal && ringkasanBayar && (
+		  <ModalKuitansi
+			dataPedagang={dataPedagang}
+			ringkasan={ringkasanBayar}
+			onClose={() => setShowModal(false)}
+			onConfirm={() => {
+			  setShowModal(false);
+			}}
+		  />
+		)}
+
       </main>
     </>
   );

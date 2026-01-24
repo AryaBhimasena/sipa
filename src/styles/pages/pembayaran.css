@@ -1,14 +1,47 @@
+.pembayaran-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .pembayaran-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
 }
 
+.total-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.total-amount {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn-bayar {
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-bayar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .tab-btn {
   padding: 8px 18px;
   border-radius: 999px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #2563eb;
   background: #ffffff;
+  color: #2563eb;
   font-size: 13px;
   cursor: pointer;
 }

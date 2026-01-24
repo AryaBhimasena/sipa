@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import "../styles/components/container-card.css";
 
 export default function ContainerCard({ title, subtitle, children }) {
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-	setMounted(true);
-	
+    setMounted(true);
+    setNow(new Date());
+
     const timer = setInterval(() => {
       setNow(new Date());
     }, 1000);
@@ -40,12 +41,16 @@ export default function ContainerCard({ title, subtitle, children }) {
         </div>
 
         <div className="container-card-clock">
-          <span className="container-card-date">
-            {dateFormatter.format(now)}
-          </span>
-          <strong className="container-card-time">
-            {timeFormatter.format(now)}
-          </strong>
+          {mounted && now && (
+            <>
+              <span className="container-card-date">
+                {dateFormatter.format(now)}
+              </span>
+              <strong className="container-card-time">
+                {timeFormatter.format(now)}
+              </strong>
+            </>
+          )}
         </div>
       </div>
 
