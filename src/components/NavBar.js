@@ -35,8 +35,8 @@ export default function NavBar() {
       </Link>
 
       <Link
-        href="/master-data"
-        className={`nav-item ${isActive("/master-data") ? "active" : ""}`}
+        href="/master"
+        className={`nav-item ${isActive("/master") ? "active" : ""}`}
       >
         Master Data
       </Link>

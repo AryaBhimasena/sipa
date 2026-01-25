@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Header from "../../components/Header";
 import NavBar from "../../components/NavBar";
 import ContainerCard from "../../components/ContainerCard";
@@ -19,6 +19,34 @@ export default function LoketPage() {
   const [filterLantai, setFilterLantai] = useState("");
   const [filterBlok, setFilterBlok] = useState("");
 
+  /* ===============================
+     PAGINATION STATE
+  =============================== */
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 20;
+
+  /* ===============================
+     UNIQUE FILTER OPTIONS (DINAMIS)
+  =============================== */
+  const jenisOptions = useMemo(() => {
+    return [...new Set(dataToko.map(r => r.objek?.jenis_objek).filter(Boolean))];
+  }, [dataToko]);
+
+  const tipeOptions = useMemo(() => {
+    return [...new Set(dataToko.map(r => r.objek?.tipe).filter(Boolean))];
+  }, [dataToko]);
+
+  const lantaiOptions = useMemo(() => {
+    return [...new Set(dataToko.map(r => r.lantai?.toString()).filter(Boolean))];
+  }, [dataToko]);
+
+  const blokOptions = useMemo(() => {
+    return [...new Set(dataToko.map(r => r.blok).filter(Boolean))];
+  }, [dataToko]);
+
+  /* ===============================
+     FILTERED DATA
+  =============================== */
   const filteredData = dataToko.filter((row) => {
     const keyword = search.toLowerCase();
 
@@ -38,6 +66,18 @@ export default function LoketPage() {
     );
   });
 
+  /* ===============================
+     PAGINATION LOGIC
+  =============================== */
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filterJenis, filterTipe, filterLantai, filterBlok]);
+
   return (
     <>
       <Header />
@@ -50,59 +90,75 @@ export default function LoketPage() {
         >
           {/* FILTER BAR */}
           <div className="loket-filter">
-			<input
-			  type="text"
-			  placeholder="Cari no reg atau nama pedagang"
-			  value={search}
-			  onChange={(e) => setSearch(e.target.value)}
-			/>
+            <input
+              type="text"
+              placeholder="Cari no reg atau nama pedagang"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-			<select
-			  value={filterJenis}
-			  onChange={(e) => {
-				const val = e.target.value;
-				setFilterJenis(val);
+            <select
+              value={filterJenis}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFilterJenis(val);
+                if (val !== "KIOS") {
+                  setFilterTipe("");
+                }
+              }}
+            >
+              <option value="">Jenis Objek</option>
+              {jenisOptions.map((j) => (
+                <option key={j} value={j}>{j}</option>
+              ))}
+            </select>
 
-				// jika bukan KIOS, reset & disable tipe
-				if (val !== "KIOS") {
-				  setFilterTipe("");
-				}
-			  }}
-			>
-			  <option value="">Jenis Objek</option>
-			  <option value="TOKO">TOKO</option>
-			  <option value="KIOS">KIOS</option>
-			  <option value="LOS">LOS</option>
-			</select>
+            <select
+              value={filterTipe}
+              disabled={filterJenis !== "KIOS"}
+              onChange={(e) => setFilterTipe(e.target.value)}
+            >
+              <option value="">Tipe</option>
+              {tipeOptions.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
 
-			<select
-			  value={filterTipe}
-			  disabled={filterJenis !== "KIOS"}
-			  onChange={(e) => setFilterTipe(e.target.value)}
-			>
-			  <option value="">Tipe</option>
-			  <option value="TIPE A">TIPE A</option>
-			  <option value="TIPE B">TIPE B</option>
-			</select>
+            <select
+              value={filterLantai}
+              onChange={(e) => setFilterLantai(e.target.value)}
+            >
+              <option value="">Lantai</option>
+              {lantaiOptions.map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
 
-			<select
-			  value={filterLantai}
-			  onChange={(e) => setFilterLantai(e.target.value)}
-			>
-			  <option value="">Lantai</option>
-			  <option value="1">1</option>
-			  <option value="2">2</option>
-			</select>
-
-			<select
-			  value={filterBlok}
-			  onChange={(e) => setFilterBlok(e.target.value)}
-			>
-			  <option value="">Blok</option>
-			  <option value="A">A</option>
-			  <option value="B">B</option>
-			</select>
+            <select
+              value={filterBlok}
+              onChange={(e) => setFilterBlok(e.target.value)}
+            >
+              <option value="">Blok</option>
+              {blokOptions.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
           </div>
+
+          {/* PAGINATION */}
+			<div className="loket-pagination">
+			  <span className="page-arrow" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
+				&lt;
+			  </span>
+
+			  <span className="pagination-info">
+				{startIndex + 1}-{Math.min(endIndex, filteredData.length)} records dari {filteredData.length} records
+			  </span>
+
+			  <span className="page-arrow" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}>
+				&gt;
+			  </span>
+			</div>
 
           {/* TABLE */}
           <div className="loket-table-wrapper">
@@ -126,14 +182,14 @@ export default function LoketPage() {
                   </tr>
                 )}
 
-				{!loading && filteredData.length === 0 && (
-				  <tr>
-					<td colSpan="8">Data tidak ditemukan</td>
-				  </tr>
-				)}
+                {!loading && paginatedData.length === 0 && (
+                  <tr>
+                    <td colSpan="8">Data tidak ditemukan</td>
+                  </tr>
+                )}
 
                 {!loading &&
-                  filteredData.map((row) => (
+                  paginatedData.map((row) => (
                     <tr key={row.id_reg}>
                       <td>{row.id_reg}</td>
                       <td>{row.nama}</td>
@@ -143,20 +199,21 @@ export default function LoketPage() {
                       <td>{row.blok}</td>
                       <td>{row.no}</td>
                       <td>
-						<button
-						  className="loket-btn"
-							onClick={() => {
-							  window.location.href = `/loket/pembayaran/${row.id_reg}`;
-							}}
-						>
-						  Pilih
-						</button>
+                        <button
+                          className="loket-btn"
+                          onClick={() => {
+                            window.location.href = `/loket/pembayaran/${row.id_reg}`;
+                          }}
+                        >
+                          Pilih
+                        </button>
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
+
         </ContainerCard>
       </main>
     </>

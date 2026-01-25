@@ -29,6 +29,9 @@ export default function PembayaranPage() {
   
   const [showModal, setShowModal] = useState(false);
   const [ringkasanBayar, setRingkasanBayar] = useState(null);
+  const [loadingBayar, setLoadingBayar] = useState(false);
+  const [bulanTerbayar, setBulanTerbayar] = useState([]);
+
 
 const handlePaymentData = (payload) => {
   if (!payload || typeof payload.total !== "number") {
@@ -41,41 +44,95 @@ const handlePaymentData = (payload) => {
   setTotalDibayar(payload.total);
 };
 
-  useEffect(() => {
-    if (!idReg) return;
+useEffect(() => {
+  if (!idReg) return;
 
-    async function fetchDetailPedagang() {
-      try {
-        const res = await fetch(
-          `${API_URL}?path=dataToko&id=${idReg}`,
-          { cache: "no-store" }
+  async function fetchDetailPedagang() {
+    try {
+      // ======================
+      // 1. Fetch data pedagang
+      // ======================
+      const res = await fetch(
+        `${API_URL}?path=dataToko&id=${idReg}`,
+        { cache: "no-store" }
+      );
+
+      const json = await res.json();
+
+      if (json.success && Array.isArray(json.data)) {
+        const found = json.data.find(
+          (item) => String(item.id_reg) === String(idReg)
         );
-
-        if (!res.ok) {
-          throw new Error("Gagal mengambil detail pedagang");
-        }
-
-        const json = await res.json();
-
-		if (json.success && Array.isArray(json.data)) {
-		  const found = json.data.find(
-			(item) => String(item.id_reg) === String(idReg)
-		  );
-
-		  setDataPedagang(found ?? null);
-        } else {
-          setDataPedagang(null);
-        }
-      } catch (err) {
-        console.error(err);
+        setDataPedagang(found ?? null);
+      } else {
         setDataPedagang(null);
-      } finally {
-        setLoading(false);
       }
+
+      // ======================
+      // 2. Fetch bulan terbayar
+      // ======================
+      const resBayar = await fetch(
+        `${API_URL}?path=transaksiPembayaranByIdReg&id_reg=${idReg}`,
+        { cache: "no-store" }
+      );
+
+      const jsonBayar = await resBayar.json();
+
+      if (jsonBayar.success && Array.isArray(jsonBayar.data)) {
+        // contoh hasil: [{bulan:1,tahun:2025}, ...]
+        const paidKeys = jsonBayar.data.map(
+          (r) => `${r.bulan}-${r.tahun}`
+        );
+        setBulanTerbayar(paidKeys);
+      } else {
+        setBulanTerbayar([]);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setDataPedagang(null);
+      setBulanTerbayar([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchDetailPedagang();
+}, [idReg]);
+
+const handleBayar = async () => {
+  if (!ringkasanBayar) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}?path=generateNoKuitansi`,
+      { cache: "no-store" }
+    );
+
+    const json = await res.json();
+
+    if (!json.success) {
+      alert("Gagal generate nomor kuitansi");
+      return;
     }
 
-    fetchDetailPedagang();
-  }, [idReg]);
+    const payload = {
+      ...ringkasanBayar,
+      no_kuitansi: json.no_kuitansi,
+      id_reg: idReg,
+      tanggal: new Date().toISOString(),
+      pedagang: dataPedagang,
+    };
+
+    setRingkasanBayar(payload);
+    setShowModal(true);
+
+  } catch (err) {
+    console.error("Error generate kuitansi:", err);
+    alert("Terjadi kesalahan saat generate nomor kuitansi");
+  }
+};
+
 
   return (
     <>
@@ -114,9 +171,9 @@ const handlePaymentData = (payload) => {
 			    <button
 				  className="btn-bayar"
 				  disabled={totalDibayar === 0}
-				  onClick={() => setShowModal(true)}
+				  onClick={handleBayar}
 			    >
-				  Bayar
+				  {loadingBayar ? "Memproses..." : "Bayar"}
 			    </button>
 			  </div>
 			</div>
@@ -129,8 +186,10 @@ const handlePaymentData = (payload) => {
           )}
 
           {!loading && dataPedagang && activeTab === "layanan" && (
-            <Layanan data={dataPedagang}
-			onTotalChange={handlePaymentData}
+			<Layanan
+			  data={dataPedagang}
+			  bulanTerbayar={bulanTerbayar}
+			  onTotalChange={handlePaymentData}
 			/>
           )}
 

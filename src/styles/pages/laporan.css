@@ -1,0 +1,247 @@
+/* ================= LAPORAN PAGE ================= */
+
+/* baris utama laporan (klik-able) */
+.laporan-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.laporan-row:hover {
+  background: #f8fafc; /* sama seperti loket hover */
+}
+
+/* ================= DETAIL STRIP ================= */
+
+.detail-strip {
+  background: #f8fafc;
+}
+
+.detail-strip td {
+  padding: 0;
+}
+
+/* wrapper strip */
+.strip-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+/* header strip */
+.strip-table thead th {
+  background: #eef2ff; /* biru muda selaras theme loket */
+  color: #1e3a8a;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* body strip */
+.strip-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #0f172a;
+}
+
+/* hover strip row */
+.strip-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+/* strip last row */
+.strip-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ================= DELETE BASE (ICON ONLY) ================= */
+
+.btn-delete-base {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: #dc2626; /* merah */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* hover hanya icon */
+.btn-delete-base:hover {
+  color: #b91c1c;
+  transform: scale(1.1);
+}
+
+/* hilangkan efek global */
+.btn-delete-base:focus,
+.btn-delete-base:active {
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+
+/* ================= DELETE STRIP (X ONLY, NO BG) ================= */
+
+.btn-delete-strip {
+  background: transparent !important;
+  border: none !important;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #ef4444;
+  line-height: 1;
+}
+
+/* hover hanya simbol X */
+.btn-delete-strip:hover {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+/* matikan global hover bg */
+.btn-delete-strip:focus,
+.btn-delete-strip:active {
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+
+/* ================= FIX STRIP FULL WIDTH ================= */
+
+.detail-strip td {
+  padding: 0;
+  background: #f8fafc;
+}
+
+.strip-table {
+  width: 100%;
+  table-layout: fixed; /* penting agar full lebar */
+}
+
+
+/* ================= PREVENT BUTTON STYLE FROM GLOBAL ================= */
+
+.laporan-row button {
+  all: unset;
+}
+
+.btn-delete-base,
+.btn-delete-strip {
+  all: unset;
+  cursor: pointer;
+}
+
+/* ================= CONFIRM MODAL ================= */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.confirm-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 28px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: fadeScale 0.15s ease;
+}
+
+.confirm-icon {
+  color: #dc2626;
+  margin-bottom: 10px;
+}
+
+.confirm-modal h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.confirm-modal p {
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 18px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #1f2933;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+.btn-confirm {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-confirm:hover {
+  background: #b91c1c;
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ================= EMPTY STATE ================= */
+
+.laporan-empty {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+  padding: 20px;
+}
+
+/* ================= ANIMATION FEEL ================= */
+
+.detail-strip {
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

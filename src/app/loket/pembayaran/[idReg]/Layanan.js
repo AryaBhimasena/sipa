@@ -4,7 +4,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-export default function Layanan({ data, onTotalChange }) {
+export default function Layanan({ data, onTotalChange, bulanTerbayar = [] }) {
+
   if (!data) return null;
 
   const luas = data.objek?.luas || 0;
@@ -18,6 +19,8 @@ export default function Layanan({ data, onTotalChange }) {
   const tinggi = data.objek?.tinggi || 0;
 
   const tarifSewa = tarifSewaDasar * luas;
+  
+  const tahunAktif = new Date().getFullYear();
 
   const bulanList = [
     "Januari","Februari","Maret","April","Mei","Juni",
@@ -54,7 +57,10 @@ const handleCheck = (bulan) => {
   });
 };
 
-const detailArray = Object.values(checkedRows);
+// hanya hitung yang bukan readonly (belum dibayar)
+const detailArray = Object.values(checkedRows).filter(
+  (r) => !r.readonly
+);
 
 const totalDibayar = useMemo(
   () => detailArray.reduce((sum, r) => sum + r.total, 0),
@@ -62,7 +68,6 @@ const totalDibayar = useMemo(
 );
 
 const jumlahBulan = detailArray.length;
-
   
 useEffect(() => {
   if (typeof onTotalChange === "function") {
@@ -82,6 +87,35 @@ useEffect(() => {
   }
 }, [checkedRows, totalDibayar]);
 
+const isPaid = (bulan) => {
+  const key = `${bulan}-${tahunAktif}`;
+  return bulanTerbayar.includes(key);
+};
+
+useEffect(() => {
+  if (!bulanTerbayar.length) return;
+
+  const preset = {};
+
+  bulanTerbayar.forEach((key) => {
+    const [bulanNama, tahun] = key.split("-");
+
+    if (parseInt(tahun) === tahunAktif) {
+      preset[bulanNama] = {
+        bulan: bulanNama,
+        sewa: tarifSewa,
+        kebersihan: tarifKebersihan,
+        keamanan: tarifKeamanan,
+        denda: 0,
+        diskon: 0,
+        total: totalPerBulan,
+        readonly: true
+      };
+    }
+  });
+
+  setCheckedRows(preset);
+}, [bulanTerbayar]);
 
   return (
     <div className="pembayaran-layout">
@@ -162,40 +196,51 @@ useEffect(() => {
                 <th>Total</th>
               </tr>
             </thead>
-            <tbody>
-			  {bulanList.map((bulan) => (
-                <tr key={bulan}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={!!checkedRows[bulan]}
-                      onChange={() =>
-                        handleCheck(bulan)
-                      }
-                    />
-                  </td>
-                  <td>{bulan}</td>
-                    <td>
-                      <span className="status unpaid">Belum Bayar</span>
-                    </td>
-                    <td>{tarifSewa.toLocaleString()}</td>
-                    <td>
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        className="diskon-input"
+			<tbody>
+			  {bulanList.map((bulan) => {
+				const paid = isPaid(bulan);
+
+				return (
+				  <tr key={bulan} className={paid ? "row-paid" : "row-unpaid"}>
+					<td>
+					  <input
+						type="checkbox"
+						checked={!!checkedRows[bulan]}
+						disabled={paid}
+						onChange={() => handleCheck(bulan)}
+					  />
+					</td>
+
+					<td>{bulan}</td>
+
+					<td>
+					  {paid ? (
+						<span className="status paid">Sudah Bayar</span>
+					  ) : (
+						<span className="status unpaid">Belum Bayar</span>
+					  )}
+					</td>
+
+					<td>{tarifSewa.toLocaleString()}</td>
+
+					<td>
+					  <input
+						type="number"
+						min="0"
+						max="100"
+						className="diskon-input"
 						disabled={!checkedRows[bulan]}
-                      />
-                    </td>
-                    <td>{tarifKebersihan.toLocaleString()}</td>
-                    <td>{tarifKeamanan.toLocaleString()}</td>
-                    <td>0</td>
-                    <td>{totalPerBulan.toLocaleString()}</td>
-                  </tr>
-                )
-              )}
-            </tbody>
+					  />
+					</td>
+
+					<td>{tarifKebersihan.toLocaleString()}</td>
+					<td>{tarifKeamanan.toLocaleString()}</td>
+					<td>0</td>
+					<td>{totalPerBulan.toLocaleString()}</td>
+				  </tr>
+				);
+			  })}
+			</tbody>
           </table>
         </div>
       </div>

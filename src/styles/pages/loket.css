@@ -81,3 +81,53 @@
 .loket-btn:hover {
   background: #1d4ed8;
 }
+
+/* ================= PAGINATION (TEXT ONLY) ================= */
+
+.loket-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 6px 10px;
+
+  font-size: 12px;
+  color: #475569;
+}
+
+/* teks info */
+.loket-pagination .pagination-info {
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* panah < > */
+.loket-pagination .page-arrow {
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+/* hover halus */
+.loket-pagination .page-arrow:hover {
+  background: #eff6ff;
+}
+
+/* disable look (opsional via class) */
+.loket-pagination .page-arrow.disabled {
+  color: #cbd5f5;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .loket-pagination {
+    justify-content: center;
+  }
+}

@@ -1,27 +1,10 @@
 "use client";
 
 import "../styles/components/kuitansi.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { API_URL } from "../lib/api";
-
-function terbilang(n) {
-  const angka = [
-    "", "Satu", "Dua", "Tiga", "Empat", "Lima",
-    "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"
-  ];
-
-  if (n < 12) return angka[n];
-  if (n < 20) return terbilang(n - 10) + " Belas";
-  if (n < 100) return terbilang(Math.floor(n / 10)) + " Puluh " + terbilang(n % 10);
-  if (n < 200) return "Seratus " + terbilang(n - 100);
-  if (n < 1000) return terbilang(Math.floor(n / 100)) + " Ratus " + terbilang(n % 100);
-  if (n < 2000) return "Seribu " + terbilang(n - 1000);
-  if (n < 1000000) return terbilang(Math.floor(n / 1000)) + " Ribu " + terbilang(n % 1000);
-  if (n < 1000000000)
-    return terbilang(Math.floor(n / 1000000)) + " Juta " + terbilang(n % 1000000);
-
-  return "";
-}
+import { terbilang, printIframe } from "../lib/KuitansiHelper";
 
 export default function ModalKuitansi({
   dataPedagang,
@@ -31,106 +14,96 @@ export default function ModalKuitansi({
 }) {
   const today = new Date().toLocaleDateString("id-ID");
   const [loading, setLoading] = useState(false);
-  
-async function handleSubmit() {
-  try {
-    setLoading(true);
+  const printRef = useRef(null);
+  const router = useRouter();
 
-const payload = {
-  header: {
-    no_kuitansi: ringkasan.noKuitansi,
-    id_reg: dataPedagang.id_reg,
-    nama_pedagang: dataPedagang.nama,
-    jenis_objek: dataPedagang.objek?.jenis_objek,
-    blok: dataPedagang.blok,
-    no_toko: dataPedagang.no,
-    periode_tahun: ringkasan.periode,
-    jumlah_bulan: ringkasan.jumlahBulan,
-    subtotal: ringkasan.subtotal,
-    total_bayar: ringkasan.total,
-    metode_bayar: "TUNAI",
-  },
-  detail: ringkasan.rincian,
-};
+  async function handleSubmit() {
+    try {
+      setLoading(true);
 
-const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  body: new URLSearchParams({
-    payload: JSON.stringify(payload),
-  }),
-});
+      const payload = {
+        header: {
+          no_kuitansi: ringkasan.no_kuitansi,
+          id_reg: dataPedagang.id_reg,
+          nama_pedagang: dataPedagang.nama,
+          jenis_objek: dataPedagang.objek?.jenis_objek,
+          blok: dataPedagang.blok,
+          no_toko: dataPedagang.no,
+          periode_tahun: ringkasan.periode,
+          jumlah_bulan: ringkasan.jumlahBulan,
+          subtotal: ringkasan.subtotal,
+          total_bayar: ringkasan.total,
+          metode_bayar: "TUNAI",
+        },
+        detail: ringkasan.rincian,
+      };
 
-    const result = await res.json();
+      const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          payload: JSON.stringify(payload),
+        }),
+      });
 
-    if (!result.success) {
-      alert(result.message || "Gagal menyimpan pembayaran");
+      const result = await res.json();
+
+      if (!result.success) {
+        alert(result.message || "Gagal menyimpan pembayaran");
+        setLoading(false);
+        return;
+      }
+
+      if (typeof onConfirm === "function") {
+        onConfirm(result);
+      }
+
       setLoading(false);
-      return;
+
+      // PRINT
+      printIframe(printRef, () => {
+	  router.push("/loket");
+	});
+
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menyimpan data");
+      setLoading(false);
     }
-
-    // OPTIONAL: callback ke parent (misal refresh data)
-    if (typeof onConfirm === "function") {
-      onConfirm(result);
-    }
-
-    setLoading(false);
-
-    // PRINT SETELAH DATA FIX TERSIMPAN
-    window.print();
-
-  } catch (err) {
-    console.error(err);
-    alert("Terjadi kesalahan saat menyimpan data");
-    setLoading(false);
   }
-}
-
 
   return (
     <>
-{loading && (
-  <div className="saving-overlay">
-    <div className="saving-box">
-      Menyimpan data...
-    </div>
-  </div>
-)}
+      {loading && (
+        <div className="saving-overlay">
+          <div className="saving-box">Menyimpan data...</div>
+        </div>
+      )}
 
-      {/* OVERLAY */}
       <div className="modal-overlay" onClick={onClose} />
 
-      {/* MODAL */}
       <div className="modal-container">
-        {/* HEADER MODAL */}
-		<div className="modal-header custom-header">
-		  <button
-			type="button"
-			className="btn-batal"
-			onClick={onClose}
-		  >
-			Batal
-		  </button>
+        <div className="modal-header custom-header">
+          <button type="button" className="btn-batal" onClick={onClose}>
+            Batal
+          </button>
 
-		  <span className="modal-title">Preview Kuitansi</span>
+          <span className="modal-title">Preview Kuitansi</span>
 
-<button
-  type="button"
-  className="btn-simpan-print"
-  disabled={loading}
-  onClick={handleSubmit}
->
-  {loading ? "Menyimpan..." : "Simpan & Print"}
-</button>
+          <button
+            type="button"
+            className="btn-simpan-print"
+            disabled={loading}
+            onClick={handleSubmit}
+          >
+            {loading ? "Menyimpan..." : "Simpan & Print"}
+          </button>
+        </div>
 
-		</div>
-
-        {/* BODY MODAL */}
         <div className="modal-body">
-          <div className="kuitansi-paper">
-
+          <div className="kuitansi-paper" ref={printRef}>
             {/* ================= HEADER ================= */}
             <div className="kuitansi-header">
               <div className="kop-left">
@@ -154,7 +127,6 @@ const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
 
             {/* ================= BODY ================= */}
             <div className="kuitansi-body">
-
               <div className="tanggal-bayar">
                 Banjarmasin, {today}
               </div>
@@ -162,7 +134,7 @@ const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
               <div className="content-left">
                 <div className="row">
                   <span>Nomor</span>
-                  <span>: 12479</span>
+                  <span>: {ringkasan.no_kuitansi}</span>
                 </div>
 
                 <div className="row">
@@ -172,21 +144,21 @@ const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
                   </span>
                 </div>
 
-<div className="row">
-  <span>Sudah Terima Dari</span>
-  <span>
-    : {dataPedagang.nama}
-    {" / "}
-    {dataPedagang.objek?.jenis_objek}
-    {" / "}
-    {dataPedagang.objek?.tipe}
-    {" / "}
-    {dataPedagang.objek?.panjang}x
-    {dataPedagang.objek?.lebar}x
-    {dataPedagang.objek?.tinggi}
-    {" ("}{dataPedagang.objek?.luas} m²{")"}
-  </span>
-</div>
+                <div className="row">
+                  <span>Sudah Terima Dari</span>
+                  <span>
+                    : {dataPedagang.nama}
+                    {" / "}
+                    {dataPedagang.objek?.jenis_objek}
+                    {" / "}
+                    {dataPedagang.objek?.tipe}
+                    {" / "}
+                    {dataPedagang.objek?.panjang}x
+                    {dataPedagang.objek?.lebar}x
+                    {dataPedagang.objek?.tinggi}
+                    {" ("}{dataPedagang.objek?.luas} m²{")"}
+                  </span>
+                </div>
 
                 <div className="row">
                   <span>Pembayaran</span>
@@ -205,44 +177,43 @@ const res = await fetch(`${API_URL}?path=simpanPembayaran`, {
                   <span>: Rp {ringkasan.total.toLocaleString()}</span>
                 </div>
 
-<div className="row">
-  <span>Terbilang</span>
-  <span>
-    : {terbilang(ringkasan.total).toUpperCase()} RUPIAH
-  </span>
-</div>
+                <div className="row">
+                  <span>Terbilang</span>
+                  <span>
+                    : {terbilang(ringkasan.total).toUpperCase()} RUPIAH
+                  </span>
+                </div>
 
                 <br />
 
-<div className="row">
-  <span>
-    Rincian Bulan Dibayar ({ringkasan.jumlahBulan} bulan)
-  </span>
-  <span>
-    : {ringkasan.rincian.map(r => r.bulan).join(", ")}
-  </span>
-</div>
+                <div className="row">
+                  <span>
+                    Rincian Bulan Dibayar ({ringkasan.jumlahBulan} bulan)
+                  </span>
+                  <span>
+                    : {ringkasan.rincian.map((r) => r.bulan).join(", ")}
+                  </span>
+                </div>
 
-<div className="row">
-  <span>Layanan Sewa</span>
-  <span>: Rp {ringkasan.subtotal.sewa.toLocaleString()}</span>
-</div>
+                <div className="row">
+                  <span>Layanan Sewa</span>
+                  <span>: Rp {ringkasan.subtotal.sewa.toLocaleString()}</span>
+                </div>
 
-<div className="row">
-  <span>Layanan Kebersihan</span>
-  <span>: Rp {ringkasan.subtotal.kebersihan.toLocaleString()}</span>
-</div>
+                <div className="row">
+                  <span>Layanan Kebersihan</span>
+                  <span>: Rp {ringkasan.subtotal.kebersihan.toLocaleString()}</span>
+                </div>
 
-<div className="row">
-  <span>Layanan Keamanan</span>
-  <span>: Rp {ringkasan.subtotal.keamanan.toLocaleString()}</span>
-</div>
+                <div className="row">
+                  <span>Layanan Keamanan</span>
+                  <span>: Rp {ringkasan.subtotal.keamanan.toLocaleString()}</span>
+                </div>
 
-<div className="row">
-  <span>Denda</span>
-  <span>: Rp {ringkasan.subtotal.denda.toLocaleString()}</span>
-</div>
-
+                <div className="row">
+                  <span>Denda</span>
+                  <span>: Rp {ringkasan.subtotal.denda.toLocaleString()}</span>
+                </div>
               </div>
             </div>
 

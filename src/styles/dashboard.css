@@ -178,6 +178,46 @@
   font-weight: 600;
 }
 
+/* ================================
+   TOTAL ROW – DASHBOARD TABLE
+================================ */
+
+.dashboard-table tfoot .total-row {
+  font-weight: 700;
+  border-top: 2px solid #d0d7e2;
+}
+
+.dashboard-table tfoot .total-row td {
+  padding: 12px 10px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+/* Kolom label "Total" */
+.dashboard-table tfoot .total-row td:first-child {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #374151;
+}
+
+/* Perkuat angka total */
+.dashboard-table tfoot .total-row td:not(:first-child) {
+  font-weight: 800;
+}
+
+/* Tetap hormati warna status */
+.dashboard-table tfoot .total-row .success {
+  color: #16a34a;
+}
+
+.dashboard-table tfoot .total-row .warning {
+  color: #d97706;
+}
+
+.dashboard-table tfoot .total-row .danger {
+  color: #dc2626;
+}
+
 /* BADGE */
 
 .badge {

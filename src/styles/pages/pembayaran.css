@@ -14,12 +14,17 @@
 .total-action-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+
+  width: 70%;
+  padding: 0 16px;
 }
 
 .total-amount {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  color: #16a34a;
+  white-space: nowrap;
 }
 
 .btn-bayar {
@@ -34,6 +39,8 @@
 .btn-bayar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  background: #fafafa;
+  color: #000000;
 }
 
 .tab-btn {
@@ -85,6 +92,14 @@
   font-size: 11px;
 }
 
+.status.paid {
+  background: #dcfce7;
+  color: #166534;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
 .total-bar {
   text-align: right;
   margin-bottom: 12px;
@@ -121,4 +136,27 @@
 
 .info-value {
   color: #0f172a;
+}
+
+/* ROW STATUS */
+.row-paid {
+  background-color: #f1f5f9; /* abu soft */
+  color: #64748b;
+  opacity: 0.8;
+}
+
+/* disable semua input di row paid */
+.row-paid input {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* hover tidak aktif */
+.row-paid:hover {
+  background-color: #f1f5f9;
+}
+
+/* unpaid tetap normal */
+.row-unpaid {
+  background-color: #ffffff;
 }
