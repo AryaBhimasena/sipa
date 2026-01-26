@@ -145,6 +145,8 @@
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
 
   margin: 0 auto;
+  
+  overflow: hidden;
 }
 
 /* ======================================================
@@ -154,6 +156,9 @@
   position: relative;
   text-align: center;
   padding-bottom: 6px;
+  
+  min-height: 95px; /* WAJIB, sesuaikan tinggi logo */
+  flex-shrink: 0;   /* jangan ikut menyusut */
 }
 
 /* LOGO KOP (OVERLAY) */
@@ -200,6 +205,10 @@
 .kuitansi-body {
   margin-top: 8px;
   position: relative;
+  flex: 1 1 auto;     /* ambil sisa ruang */
+  overflow: hidden;
+  
+  padding-top: 10px;
 }
 
 /* TANGGAL POJOK KANAN */
@@ -221,6 +230,11 @@
   display: flex;
   gap: 10px;
   margin-bottom: 4px;
+}
+
+.row span {
+  word-break: break-word;
+  white-space: normal;
 }
 
 .row span:first-child {
@@ -248,7 +262,9 @@
 .kuitansi-footer {
   display: flex;
   gap: 16px;
-  margin-top: 10px;
+
+  flex-shrink: 0;     /* jangan menyusut */
+  margin-top: auto;
 }
 
 /* 70% LEFT */

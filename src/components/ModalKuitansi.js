@@ -1,7 +1,7 @@
 "use client";
 
 import "../styles/components/kuitansi.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_URL } from "../lib/api";
 import { terbilang, printIframe } from "../lib/KuitansiHelper";
@@ -16,6 +16,20 @@ export default function ModalKuitansi({
   const [loading, setLoading] = useState(false);
   const printRef = useRef(null);
   const router = useRouter();
+  const [namaPetugas, setNamaPetugas] = useState("");
+
+useEffect(() => {
+  const session = localStorage.getItem("session");
+
+  if (!session) return;
+
+  try {
+    const parsed = JSON.parse(session);
+    setNamaPetugas(parsed.user?.nama || "");
+  } catch {
+    setNamaPetugas("");
+  }
+}, []);
 
   async function handleSubmit() {
     try {
@@ -34,6 +48,7 @@ export default function ModalKuitansi({
           subtotal: ringkasan.subtotal,
           total_bayar: ringkasan.total,
           metode_bayar: "TUNAI",
+		  nama_petugas: namaPetugas,
         },
         detail: ringkasan.rincian,
       };
@@ -232,7 +247,11 @@ export default function ModalKuitansi({
                   <p>Banjarmasin, {today}</p>
                   <p>Yang menerima,</p>
                   <div className="ttd-space" />
-                  <p className="nama-petugas">( Nama Petugas )</p>
+					<p className="nama-petugas">
+					  {namaPetugas || "(Nama Petugas)"}
+					  <br />
+					  <span className="jabatan">Petugas Loket</span>
+					</p>
                 </div>
               </div>
             </div>

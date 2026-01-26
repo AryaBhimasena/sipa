@@ -119,6 +119,7 @@ async function confirmDelete() {
                   <th>Periode</th>
                   <th>Jumlah Bulan</th>
                   <th>Total Bayar</th>
+                  <th>Petugas Loket</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -126,13 +127,13 @@ async function confirmDelete() {
               <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan="8">Memuat data...</td>
+                    <td colSpan="10">Memuat data...</td>
                   </tr>
                 )}
 
                 {!loading && filteredData.length === 0 && (
                   <tr>
-                    <td colSpan="8">Data tidak ditemukan</td>
+                    <td colSpan="10">Data tidak ditemukan</td>
                   </tr>
                 )}
 
@@ -157,6 +158,7 @@ async function confirmDelete() {
                         <td>{row.periode_tahun}</td>
                         <td>{row.jumlah_bulan}</td>
                         <td>Rp {row.total_bayar.toLocaleString("id-ID")}</td>
+						<td>{row.nama_petugas || "-"}</td>
 						<td>
 							<button
 							  className="btn-delete-base"
@@ -174,7 +176,7 @@ async function confirmDelete() {
 
                       {expandedRow === row.id_transaksi && (
                         <tr className="detail-strip">
-                          <td colSpan="9">
+                          <td colSpan="10">
                             <table className="strip-table">
                               <thead>
                                 <tr>
