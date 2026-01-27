@@ -265,6 +265,7 @@
 
   flex-shrink: 0;     /* jangan menyusut */
   margin-top: auto;
+  padding-top: 10px;
 }
 
 /* 70% LEFT */

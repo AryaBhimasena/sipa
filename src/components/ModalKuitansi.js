@@ -235,7 +235,7 @@ useEffect(() => {
             {/* ================= FOOTER ================= */}
             <div className="kuitansi-footer">
               <div className="catatan">
-                <p><strong>Ket:</strong></p>
+                <p><strong>Keterangan</strong></p>
                 <ol>
                   <li>Pembayaran tarif jasa layanan paling lambat akhir bulan berjalan.</li>
                   <li>Keterlambatan dikenakan denda sesuai ketentuan.</li>
