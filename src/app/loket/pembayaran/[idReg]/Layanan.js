@@ -42,17 +42,19 @@ const handleCheck = (bulan) => {
     if (next[bulan]) {
       delete next[bulan];
     } else {
+      const denda = hitungDenda(bulan, tahunAktif, totalPerBulan);
+
       next[bulan] = {
         bulan,
         sewa: tarifSewa,
         kebersihan: tarifKebersihan,
         keamanan: tarifKeamanan,
-        denda: 0,
-        diskon: 0,
-        total: totalPerBulan,
+        diskonPersen: 0,
+        diskonNominal: 0,
+        denda,
+        total: totalPerBulan + denda,
       };
     }
-
     return next;
   });
 };
@@ -60,6 +62,22 @@ const handleCheck = (bulan) => {
 // hanya hitung yang bukan readonly (belum dibayar)
 const detailArray = Object.values(checkedRows).filter(
   (r) => !r.readonly
+);
+
+const totalDiskon = useMemo(
+  () => detailArray.reduce(
+    (sum, r) => sum + (r.diskonNominal || 0),
+    0
+  ),
+  [detailArray]
+);
+
+const totalDenda = useMemo(
+  () => detailArray.reduce(
+    (sum, r) => sum + (r.denda || 0),
+    0
+  ),
+  [detailArray]
 );
 
 const totalDibayar = useMemo(
@@ -81,15 +99,16 @@ useEffect(() => {
         sewa: tarifSewa * jumlahBulan,
         kebersihan: tarifKebersihan * jumlahBulan,
         keamanan: tarifKeamanan * jumlahBulan,
-        denda: 0,
+        diskon: totalDiskon,
+		denda: totalDenda,
       },
     });
   }
-}, [checkedRows, totalDibayar]);
+}, [checkedRows, totalDibayar, totalDiskon, totalDenda]);
 
 const isPaid = (bulan) => {
   const key = `${bulan}-${tahunAktif}`;
-  return bulanTerbayar.includes(key);
+  return bulanTerbayar.some(b => b.key === key);
 };
 
 useEffect(() => {
@@ -97,25 +116,77 @@ useEffect(() => {
 
   const preset = {};
 
-  bulanTerbayar.forEach((key) => {
-    const [bulanNama, tahun] = key.split("-");
+  bulanTerbayar.forEach((hist) => {
+    if (Number(hist.tahun) !== tahunAktif) return;
 
-    if (parseInt(tahun) === tahunAktif) {
-      preset[bulanNama] = {
-        bulan: bulanNama,
-        sewa: tarifSewa,
-        kebersihan: tarifKebersihan,
-        keamanan: tarifKeamanan,
-        denda: 0,
-        diskon: 0,
-        total: totalPerBulan,
-        readonly: true
-      };
-    }
+    const diskonNominal = Math.round(
+      totalPerBulan * (hist.diskon / 100)
+    );
+
+    const totalHist =
+      totalPerBulan - diskonNominal + hist.denda;
+
+    preset[hist.bulan] = {
+      bulan: hist.bulan,
+      sewa: tarifSewa,
+      kebersihan: tarifKebersihan,
+      keamanan: tarifKeamanan,
+
+      diskonPersen: hist.diskon,
+      diskonNominal,
+
+      denda: hist.denda,
+      total: totalHist,
+
+      readonly: true
+    };
   });
 
   setCheckedRows(preset);
-}, [bulanTerbayar]);
+}, [bulanTerbayar, totalPerBulan]);
+
+const bulanIndex = {
+  Januari: 0, Februari: 1, Maret: 2, April: 3,
+  Mei: 4, Juni: 5, Juli: 6, Agustus: 7,
+  September: 8, Oktober: 9, November: 10, Desember: 11
+};
+
+const hitungDenda = (bulanNama, tahun, totalBulanan) => {
+  const idx = bulanIndex[bulanNama];
+  const batas = new Date(tahun, idx + 1, 10); // +10 hari setelah akhir bulan
+  const now = new Date();
+
+  if (now > batas) {
+    return Math.round(totalBulanan * 0.02);
+  }
+  return 0;
+};
+
+const handleDiskonChange = (bulan, persen) => {
+  setCheckedRows(prev => {
+    const row = prev[bulan];
+    if (!row) return prev;
+
+    const diskonNominal = Math.round(
+      totalPerBulan * (persen / 100)
+    );
+
+    const total =
+      totalPerBulan -
+      diskonNominal +
+      row.denda;
+
+    return {
+      ...prev,
+      [bulan]: {
+        ...row,
+        diskonPersen: persen,
+        diskonNominal,
+        total
+      }
+    };
+  });
+};
 
   return (
     <div className="pembayaran-layout">
@@ -230,13 +301,23 @@ useEffect(() => {
 						max="100"
 						className="diskon-input"
 						disabled={!checkedRows[bulan]}
+						value={checkedRows[bulan]?.diskonPersen || ""}
+						onChange={(e) =>
+						  handleDiskonChange(bulan, Number(e.target.value))
+						}
 					  />
 					</td>
 
 					<td>{tarifKebersihan.toLocaleString()}</td>
 					<td>{tarifKeamanan.toLocaleString()}</td>
-					<td>0</td>
-					<td>{totalPerBulan.toLocaleString()}</td>
+					<td>
+					  {checkedRows[bulan]?.denda
+						? checkedRows[bulan].denda.toLocaleString()
+						: "0"}
+					</td>
+					<td>
+					  {(checkedRows[bulan]?.total || totalPerBulan).toLocaleString()}
+					</td>
 				  </tr>
 				);
 			  })}

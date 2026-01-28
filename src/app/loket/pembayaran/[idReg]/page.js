@@ -78,15 +78,19 @@ useEffect(() => {
 
       const jsonBayar = await resBayar.json();
 
-      if (jsonBayar.success && Array.isArray(jsonBayar.data)) {
-        // contoh hasil: [{bulan:1,tahun:2025}, ...]
-        const paidKeys = jsonBayar.data.map(
-          (r) => `${r.bulan}-${r.tahun}`
-        );
-        setBulanTerbayar(paidKeys);
-      } else {
-        setBulanTerbayar([]);
-      }
+		if (jsonBayar.success && Array.isArray(jsonBayar.data)) {
+		  const paidMap = jsonBayar.data.map(r => ({
+			key: `${r.bulan}-${r.tahun}`,
+			bulan: r.bulan,
+			tahun: r.tahun,
+			denda: Number(r.denda) || 0,
+			diskon: Number(r.diskon) || 0,
+		  }));
+
+		  setBulanTerbayar(paidMap);
+		} else {
+		  setBulanTerbayar([]);
+		}
 
     } catch (err) {
       console.error(err);
@@ -102,6 +106,8 @@ useEffect(() => {
 
 const handleBayar = async () => {
   if (!ringkasanBayar) return;
+  
+  setLoadingBayar(true);
 
   try {
     const res = await fetch(
@@ -202,10 +208,14 @@ const handleBayar = async () => {
 		  <ModalKuitansi
 			dataPedagang={dataPedagang}
 			ringkasan={ringkasanBayar}
-			onClose={() => setShowModal(false)}
-			onConfirm={() => {
-			  setShowModal(false);
-			}}
+			onClose={() => {
+				setShowModal(false);
+				setLoadingBayar(false); // ⬅ reset tombol bayar
+			  }}
+			  onConfirm={() => {
+				setShowModal(false);
+				setLoadingBayar(false);
+			  }}
 		  />
 		)}
 

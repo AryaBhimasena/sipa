@@ -1,223 +1,92 @@
 /* ================= LAPORAN PAGE ================= */
 
+.laporan-page {
+  padding: 28px 32px 40px;
+}
+
+/* ================= FILTER BAR (BORDERLESS) ================= */
+
+.laporan-filter {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.laporan-filter input,
+.laporan-filter select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.laporan-filter input:focus,
+.laporan-filter select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ================= TABLE ================= */
+
+.laporan-table-wrapper {
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.laporan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.laporan-table thead th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.laporan-table tbody td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+}
+
+.laporan-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.laporan-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 /* baris utama laporan (klik-able) */
 .laporan-row {
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
-.laporan-row:hover {
-  background: #f8fafc; /* sama seperti loket hover */
-}
-
-/* ================= DETAIL STRIP ================= */
-
-.detail-strip {
-  background: #f8fafc;
-}
-
-.detail-strip td {
-  padding: 0;
-}
-
-/* wrapper strip */
-.strip-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12.5px;
-}
-
-/* header strip */
-.strip-table thead th {
-  background: #eef2ff; /* biru muda selaras theme loket */
-  color: #1e3a8a;
-  font-weight: 600;
-  text-align: left;
-  padding: 10px 14px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* body strip */
-.strip-table tbody td {
-  padding: 10px 14px;
-  border-bottom: 1px solid #e5e7eb;
-  color: #0f172a;
-}
-
-/* hover strip row */
-.strip-table tbody tr:hover {
+.laporan-row:hover td {
   background: #f1f5f9;
 }
 
-/* strip last row */
-.strip-table tbody tr:last-child td {
-  border-bottom: none;
-}
+/* ================= ACTION TOOLBAR ROW ================= */
 
-/* ================= DELETE BASE (ICON ONLY) ================= */
-
-.btn-delete-base {
-  background: transparent !important;
-  border: none !important;
-  padding: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  color: #dc2626; /* merah */
+.laporan-actions {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px; /* jarak antar icon */
 }
 
-/* hover hanya icon */
-.btn-delete-base:hover {
-  color: #b91c1c;
-  transform: scale(1.1);
-}
-
-/* hilangkan efek global */
-.btn-delete-base:focus,
-.btn-delete-base:active {
-  outline: none;
-  box-shadow: none;
-  background: transparent;
-}
-
-
-/* ================= DELETE STRIP (X ONLY, NO BG) ================= */
-
-.btn-delete-strip {
-  background: transparent !important;
-  border: none !important;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  font-size: 14px;
-  color: #ef4444;
-  line-height: 1;
-}
-
-/* hover hanya simbol X */
-.btn-delete-strip:hover {
-  color: #b91c1c;
-  text-decoration: underline;
-}
-
-/* matikan global hover bg */
-.btn-delete-strip:focus,
-.btn-delete-strip:active {
-  outline: none;
-  box-shadow: none;
-  background: transparent;
-}
-
-
-/* ================= FIX STRIP FULL WIDTH ================= */
-
-.detail-strip td {
-  padding: 0;
-  background: #f8fafc;
-}
-
-.strip-table {
-  width: 100%;
-  table-layout: fixed; /* penting agar full lebar */
-}
-
-
-/* ================= PREVENT BUTTON STYLE FROM GLOBAL ================= */
-
-.laporan-row button {
-  all: unset;
-}
-
-.btn-delete-base,
-.btn-delete-strip {
-  all: unset;
-  cursor: pointer;
-}
-
-/* ================= CONFIRM MODAL ================= */
-
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.confirm-modal {
-  background: white;
-  border-radius: 12px;
-  padding: 24px 28px;
-  width: 360px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  animation: fadeScale 0.15s ease;
-}
-
-.confirm-icon {
-  color: #dc2626;
-  margin-bottom: 10px;
-}
-
-.confirm-modal h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #0f172a;
-}
-
-.confirm-modal p {
-  font-size: 13px;
-  color: #475569;
-  margin-bottom: 18px;
-}
-
-.confirm-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.btn-cancel {
-  background: #e5e7eb;
-  color: #1f2933;
-  border: none;
-  padding: 6px 14px;
+/* rapikan semua tombol icon */
+.laporan-actions button {
+  padding: 6px;
   border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-cancel:hover {
-  background: #d1d5db;
-}
-
-.btn-confirm {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-confirm:hover {
-  background: #b91c1c;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  transition: background 0.15s ease;
 }
 
 /* ================= EMPTY STATE ================= */
@@ -229,16 +98,191 @@
   padding: 20px;
 }
 
+/* ================= DETAIL STRIP CONTAINER ================= */
+
+.detail-strip {
+  background: #fff;
+}
+
+.detail-strip:hover {
+  background: transparent;
+}
+
+.detail-strip td {
+  padding: 12px 16px 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================= STRIP CARD FEEL ================= */
+
+.strip-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12.5px;
+
+  border-radius: 10px;
+  overflow: hidden;
+
+  box-shadow: inset 0 0 0 1px #e5e7eb;
+}
+
+/* ================= STRIP HEADER ================= */
+
+.strip-table thead th {
+  background: #f1f5ff;
+  color: #1e3a8a;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+}
+
+/* ================= STRIP BODY ================= */
+
+.strip-table tbody td {
+  padding: 10px 14px;
+  color: #0f172a;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.strip-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.strip-table tbody tr:hover td {
+  background: #eef2f7;
+}
+
+/* ================= STRIP ACTION COLUMN ================= */
+
+.strip-table tbody td:last-child {
+  width: 110px;
+  padding: 6px;
+}
+
+/* center perfect */
+.strip-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================= DELETE BUTTON (CONSISTENT DESIGN) ================= */
+.btn-delete-base {
+  padding: 6px 14px;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #fff;
+  background: #fee2e2;
+  border: none;
+
+  cursor: pointer;
+
+  transition: 
+    background 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.1s ease;
+}
+
+.btn-delete-base:hover {
+  background: #dc2626;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.btn-delete-base:active {
+  transform: translateY(1px);
+}
+
+.btn-delete-strip {
+  padding: 6px 14px;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #fff;
+  background: #fee2e2;
+  border: none;
+
+  cursor: pointer;
+
+  transition: 
+    background 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.1s ease;
+}
+
+.btn-delete-strip:hover {
+  background: #dc2626;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.btn-delete-strip:active {
+  transform: translateY(1px);
+}
+
+/* ================= PRINT BUTTON (MATCH SYSTEM) ================= */
+
+.btn-print {
+  padding: 6px 14px;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  background: #dbeafe;
+  color: #1d4ed8;
+
+  border: none;
+  cursor: pointer;
+
+  transition: 
+    background 0.15s ease,
+    transform 0.05s ease,
+    box-shadow 0.1s ease;
+}
+
+.btn-print:hover {
+  background: #bfdbfe;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.btn-print:active {
+  transform: translateY(1px);
+}
+
+/* ================= CENTER ACTION COLUMN ================= */
+
+.strip-table tbody td:last-child {
+  width: 90px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* kalau ada lebih dari 1 tombol dalam 1 cell */
+.strip-actions {
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
 /* ================= ANIMATION FEEL ================= */
 
 .detail-strip {
-  animation: fadeIn 0.15s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-2px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;

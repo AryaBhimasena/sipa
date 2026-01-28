@@ -41,99 +41,127 @@ export function printIframe(printRef, onFinish) {
       <head>
         <title>Print Kuitansi</title>
         <style>
-          @page {
-            size: 11in 9.5in;
-            margin: 0;
-          }
+@page {
+  size: 21.59cm 15.6cm;
+  margin-top: 2cm;
+}
 
-          body {
-            margin: 0;
-            background: #fff;
-            font-family: "Courier New", Courier, monospace;
-          }
+body {
+  margin: 0;
+  background: #fff;
+  font-family: "Courier New", Courier, monospace;
+}
 
-          .kuitansi-paper {
-            width: 11in;
-            padding: 20px;
-            box-sizing: border-box;
-            background: #ffffff;
-            color: #000000;
-            font-size: 12px;
-            line-height: 1.4;
-          }
+/* ================= CANVAS KERTAS ================= */
 
-          hr { border: 1px solid #000; }
+.kuitansi-paper {
+  width: 100%;
 
-          .kuitansi-header {
-            position: relative;
-            text-align: center;
-            padding-bottom: 6px;
-          }
+  padding: 14px 16px;
+  box-sizing: border-box;
 
-          .kop-left {
-            position: absolute;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-          .kop-logo { width: 120px; height: auto; }
+  background: #ffffff;
+  color: #000000;
 
-          .kop-center h3 {
-            margin: 0;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-          }
+  font-size: 11px;
+  line-height: 1.35;
 
-          .kop-center h4 {
-            margin: 4px 0 0;
-            font-size: 13px;
-            font-weight: bold;
-          }
+  overflow: hidden; /* PENTING */
+}
 
-          .kop-center p {
-            margin: 2px 0;
-            font-size: 11px;
-          }
+/* ================= HEADER ================= */
 
-          .subtitle { font-style: italic; }
+.kuitansi-header {
+  position: relative;
+  text-align: center;
+  padding-bottom: 4px;
+}
 
-          .kuitansi-body { margin-top: 8px; position: relative; }
+.kop-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 70px;
 
-          .tanggal-bayar {
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 11px;
-          }
+  display: flex;
+  align-items: center;
+}
 
-          .content-left { margin-top: 18px; width: 100%; }
+.kop-logo {
+  width: 105px;
+}
 
-          .row { display: flex; gap: 10px; margin-bottom: 4px; }
+/* ================= BODY ================= */
 
-          .row span:first-child { width: 230px; }
+.kuitansi-body {
+  flex: 1; /* ISI OTOMATIS NGISI TENGAH */
+  margin-top: 6px;
+  position: relative;
+}
 
-          .kuitansi-footer { display: flex; gap: 16px; margin-top: 10px; }
+.tanggal-bayar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 10px;
+}
 
-          .catatan { flex: 7; font-size: 11px; }
+.content-left {
+  margin-top: 14px;
+}
 
-          .catatan ol { margin: 4px 0 0 16px; padding: 0; }
+.row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 6px;
+  margin-bottom: 3px;
+}
 
-          .content-right { flex: 3; font-size: 11px; text-align: center; }
+/* ================= FOOTER ================= */
 
-          .ttd-space { height: 48px; }
+.kuitansi-footer {
+  display: flex;
+  gap: 12px;
+  font-size: 10.5px;
+  margin-top: 6px;
+}
 
-          .nama-petugas { font-weight: bold; }
+.catatan {
+  flex: 7;
+}
 
-          .modal-overlay,
-          .modal-container,
-          .modal-header,
-          .btn-batal,
-          .btn-simpan-print {
-            display: none !important;
-          }
+.content-right {
+  flex: 3;
+  text-align: center;
+}
+
+.ttd-space {
+  height: 38px;
+}
+
+.nama-petugas {
+  font-weight: bold;
+}
+
+hr {
+  border: 1px solid #000;
+  margin: 4px 0;
+}
+
+/* HIDE NON PRINT UI */
+
+.modal-overlay,
+.modal-container,
+.modal-header,
+.action-group,
+button {
+  display: none !important;
+}
+
         </style>
       </head>
       <body>

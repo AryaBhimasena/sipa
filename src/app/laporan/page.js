@@ -7,10 +7,10 @@ import ContainerCard from "../../components/ContainerCard";
 import { API_URL } from "../../lib/api";
 
 import "../../styles/layout.css";
-import "../../styles/pages/loket.css";
 import "../../styles/pages/laporan.css";
 
 import { Trash2, X, AlertTriangle } from "lucide-react";
+import ModalKuitansi from "../../components/ModalKuitansi";
 
 export default function LaporanPembayaranPage() {
   const [search, setSearch] = useState("");
@@ -22,6 +22,10 @@ export default function LaporanPembayaranPage() {
   const [confirmType, setConfirmType] = useState(""); // "header" | "detail"
   const [selectedHeaderId, setSelectedHeaderId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
+  
+  const [kuitansiOpen, setKuitansiOpen] = useState(false);
+  const [kuitansiData, setKuitansiData] = useState(null);
+  const [kuitansiPedagang, setKuitansiPedagang] = useState(null);
 
   async function fetchAllData() {
     setLoading(true);
@@ -86,18 +90,83 @@ async function confirmDelete() {
   setSelectedDetail(null);
 }
 
+async function openKuitansiFromLaporan(row) {
+  const rincian = row.detail.map(d => {
+    const total =
+      d.sewa +
+      d.kebersihan +
+      d.keamanan -
+      Math.round((d.sewa + d.kebersihan + d.keamanan) * (d.diskon / 100)) +
+      d.denda;
+
+    return {
+      bulan: d.bulan,
+      sewa: d.sewa,
+      kebersihan: d.kebersihan,
+      keamanan: d.keamanan,
+      diskonPersen: d.diskon,
+      diskonNominal: Math.round(
+        (d.sewa + d.kebersihan + d.keamanan) * (d.diskon / 100)
+      ),
+      denda: d.denda,
+      total,
+      readonly: true
+    };
+  });
+
+  const subtotal = rincian.reduce(
+    (acc, r) => {
+      acc.sewa += r.sewa;
+      acc.kebersihan += r.kebersihan;
+      acc.keamanan += r.keamanan;
+      acc.diskon += r.diskonNominal;
+      acc.denda += r.denda;
+      return acc;
+    },
+    { sewa: 0, kebersihan: 0, keamanan: 0, diskon: 0, denda: 0 }
+  );
+
+	setKuitansiPedagang({
+	  id_reg: row.id_reg,
+	  blok: row.blok,
+	  no: row.no_toko,
+
+	  nama: row.nama_pedagang,
+
+	  objek: {
+		jenis_objek: row.objek.jenis_objek,
+		tipe: row.objek.tipe_objek,
+		panjang: row.objek.panjang,
+		lebar: row.objek.lebar,
+		tinggi: row.objek.tinggi,
+		luas: row.objek.dimensi
+	  }
+	});
+
+  setKuitansiData({
+	no_kuitansi: row.no_kuitansi,
+    periode: row.periode_tahun,
+    jumlahBulan: row.jumlah_bulan,
+    total: row.total_bayar,
+    rincian,
+    subtotal
+  });
+
+  setKuitansiOpen(true);
+}
+
   return (
     <>
       <Header />
       <NavBar />
 
-      <main className="loket-page">
+      <main className="laporan-page">
         <ContainerCard
           title="Laporan Pembayaran"
           subtitle="Pencarian data pembayaran berdasarkan nomor kuitansi"
         >
           {/* FILTER */}
-          <div className="loket-filter">
+          <div className="laporan-filter">
             <input
               type="text"
               placeholder="Cari nomor kuitansi..."
@@ -107,8 +176,8 @@ async function confirmDelete() {
           </div>
 
           {/* TABLE */}
-          <div className="loket-table-wrapper">
-            <table className="loket-table">
+          <div className="laporan-table-wrapper">
+            <table className="laporan-table">
               <thead>
                 <tr>
                   <th>No</th>
@@ -154,23 +223,35 @@ async function confirmDelete() {
                         <td>{row.no_kuitansi}</td>
                         <td>{new Date(row.tanggal_bayar).toLocaleDateString("id-ID")}</td>
                         <td>{row.nama_pedagang}</td>
-                        <td>{row.jenis_objek}</td>
+                        <td>{row.objek.jenis_objek}</td>
                         <td>{row.periode_tahun}</td>
                         <td>{row.jumlah_bulan}</td>
                         <td>Rp {row.total_bayar.toLocaleString("id-ID")}</td>
 						<td>{row.nama_petugas || "-"}</td>
 						<td>
-							<button
-							  className="btn-delete-base"
-							  onClick={(e) => {
-								e.stopPropagation();
-								setConfirmType("header");
-								setSelectedHeaderId(row.id_transaksi);
-								setConfirmOpen(true);
-							  }}
-							>
-							  <Trash2 size={16} />
-							</button>
+						  <div className="laporan-actions">
+							  <button
+								className="btn-print"
+								onClick={(e) => {
+								  e.stopPropagation();
+								  openKuitansiFromLaporan(row);
+								}}
+							  >
+								Print
+							  </button>
+
+							  <button
+								className="btn-delete-base"
+								onClick={(e) => {
+								  e.stopPropagation();
+								  setConfirmType("header");
+								  setSelectedHeaderId(row.id_transaksi);
+								  setConfirmOpen(true);
+								}}
+							  >
+								<Trash2 size={16} />
+							  </button>
+						  </div>
 						</td>
                       </tr>
 
@@ -197,7 +278,7 @@ async function confirmDelete() {
                                     <td>{d.kebersihan.toLocaleString("id-ID")}</td>
                                     <td>{d.keamanan.toLocaleString("id-ID")}</td>
                                     <td>{d.denda.toLocaleString("id-ID")}</td>
-                                    <td>{d.diskon.toLocaleString("id-ID")}</td>
+                                    <td>{d.diskon.toLocaleString("id-ID")} %</td>
 									<td>
 										<button
 										  className="btn-delete-strip"
@@ -208,7 +289,7 @@ async function confirmDelete() {
 											setConfirmOpen(true);
 										  }}
 										>
-										  <X size={14} />
+										  Hapus
 										</button>
 									</td>
                                   </tr>
@@ -256,6 +337,16 @@ async function confirmDelete() {
 			  </div>
 			</div>
 		  </div>
+		)}
+
+		{kuitansiOpen && kuitansiData && (
+		  <ModalKuitansi
+			dataPedagang={kuitansiPedagang}
+			ringkasan={kuitansiData}
+			onClose={() => setKuitansiOpen(false)}
+			onConfirm={() => setKuitansiOpen(false)} // hanya preview + print
+			showSimpan={false}
+		  />
 		)}
 
     </>

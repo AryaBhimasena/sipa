@@ -5,18 +5,33 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_URL } from "../lib/api";
 import { terbilang, printIframe } from "../lib/KuitansiHelper";
+import {
+  createKuitansiActionState,
+  handleCloseWithConfirm,
+  handlePrint,
+  handleExportPDF,
+  markAsSaved
+} from "../lib/KuitansiActionHelper";
+import { AlertTriangle } from "lucide-react";
 
 export default function ModalKuitansi({
   dataPedagang,
   ringkasan,
   onClose,
   onConfirm,
+  showSimpan = true,
 }) {
   const today = new Date().toLocaleDateString("id-ID");
   const [loading, setLoading] = useState(false);
   const printRef = useRef(null);
   const router = useRouter();
   const [namaPetugas, setNamaPetugas] = useState("");
+  const actionState = useRef(createKuitansiActionState());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  
+  const totalDiskon =
+  ringkasan.subtotal?.diskon ??
+  ringkasan.rincian.reduce((s, r) => s + (r.diskonNominal || 0), 0);
 
 useEffect(() => {
   const session = localStorage.getItem("session");
@@ -77,10 +92,7 @@ useEffect(() => {
 
       setLoading(false);
 
-      // PRINT
-      printIframe(printRef, () => {
-	  router.push("/loket");
-	});
+	markAsSaved(actionState.current);
 
     } catch (err) {
       console.error(err);
@@ -100,22 +112,58 @@ useEffect(() => {
       <div className="modal-overlay" onClick={onClose} />
 
       <div className="modal-container">
-        <div className="modal-header custom-header">
-          <button type="button" className="btn-batal" onClick={onClose}>
-            Batal
-          </button>
+		<div className="modal-header custom-header">
 
-          <span className="modal-title">Preview Kuitansi</span>
+		  <button
+			className="btn-tutup"
+			onClick={() => {
+			  if (loading) return;
 
-          <button
-            type="button"
-            className="btn-simpan-print"
-            disabled={loading}
-            onClick={handleSubmit}
-          >
-            {loading ? "Menyimpan..." : "Simpan & Print"}
-          </button>
-        </div>
+			  if (actionState.current.saved) {
+				onClose();
+			  } else {
+				setConfirmOpen(true);
+			  }
+			}}
+		  >
+			Tutup
+		  </button>
+
+		  <div className="action-group">
+
+			<button
+			  className="btn-pdf"
+			  onClick={() =>
+				  handleExportPDF(
+					printRef,
+					ringkasan.no_kuitansi,
+					dataPedagang.nama
+				  )
+				}
+			>
+			  Export PDF
+			</button>
+
+			{showSimpan && (
+			  <button
+				className="btn-simpan"
+				disabled={loading}
+				onClick={handleSubmit}
+			  >
+				{loading ? "Menyimpan..." : "Simpan"}
+			  </button>
+			)}
+
+			<button
+			  className="btn-print"
+			  onClick={() => handlePrint(printRef)}
+			>
+			  Print
+			</button>
+
+		  </div>
+
+		</div>
 
         <div className="modal-body">
           <div className="kuitansi-paper" ref={printRef}>
@@ -220,15 +268,31 @@ useEffect(() => {
                   <span>: Rp {ringkasan.subtotal.kebersihan.toLocaleString()}</span>
                 </div>
 
-                <div className="row">
-                  <span>Layanan Keamanan</span>
-                  <span>: Rp {ringkasan.subtotal.keamanan.toLocaleString()}</span>
-                </div>
+				<div className="row">
+				  <span>Layanan Keamanan</span>
+				  <span>: Rp {ringkasan.subtotal.keamanan.toLocaleString()}</span>
+				</div>
 
-                <div className="row">
-                  <span>Denda</span>
-                  <span>: Rp {ringkasan.subtotal.denda.toLocaleString()}</span>
-                </div>
+				{/* DISKON */}
+				<div className="row">
+				  <span>Diskon</span>
+				  <span>
+					: {ringkasan.subtotal.diskon > 0
+					  ? `Rp ${ringkasan.subtotal.diskon.toLocaleString()}`
+					  : "-"}
+				  </span>
+				</div>
+
+				{/* DENDA */}
+				<div className="row">
+				  <span>Denda</span>
+				  <span>
+					: {ringkasan.subtotal.denda > 0
+					  ? `Rp ${ringkasan.subtotal.denda.toLocaleString()}`
+					  : "-"}
+				  </span>
+				</div>
+
               </div>
             </div>
 
@@ -259,6 +323,41 @@ useEffect(() => {
           </div>
         </div>
       </div>
+	  
+		{confirmOpen && (
+		  <div className="confirm-overlay">
+			<div className="confirm-modal">
+			  <AlertTriangle size={36} className="confirm-icon" />
+
+			  <h3>Transaksi belum disimpan</h3>
+			  <p>Apakah ingin menyimpan sebelum menutup?</p>
+
+			  <div className="confirm-actions">
+				<button
+				  className="btn-confirm"
+				  onClick={async () => {
+					setConfirmOpen(false);
+					await handleSubmit();
+					onClose();
+				  }}
+				>
+				  Simpan & Tutup
+				</button>
+
+				<button
+				  className="btn-cancel"
+				  onClick={() => {
+					setConfirmOpen(false);
+					onClose();
+				  }}
+				>
+				  Tutup
+				</button>
+			  </div>
+			</div>
+		  </div>
+		)}
+
     </>
   );
 }
