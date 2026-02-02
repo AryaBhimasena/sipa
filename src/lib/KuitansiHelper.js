@@ -72,7 +72,7 @@ body {
   color: #000000;
 
   font-size: 11px;
-  line-height: 1.35;
+  line-height: 1;
 
   overflow: hidden; /* PENTING */
 }
@@ -82,14 +82,13 @@ body {
 .kuitansi-header {
   position: relative;
   text-align: center;
-  padding-bottom: 4px;
 }
 
 .kop-left {
   position: absolute;
   left: 0;
   top: 0;
-  height: 70px;
+  height: 60px;
 
   display: flex;
   align-items: center;
