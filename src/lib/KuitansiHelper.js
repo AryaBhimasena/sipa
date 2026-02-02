@@ -42,7 +42,7 @@ export function printIframe(printRef, onFinish) {
         <title>Print Kuitansi</title>
         <style>
 @page {
-  size: 21.59cm 15.6cm;
+  size: 21.59cm 27.94cm;
   margin-top: 2cm;
 }
 
@@ -50,6 +50,10 @@ body {
   margin: 0;
   background: #fff;
   font-family: "Courier New", Courier, monospace;
+  
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  image-rendering: pixelated;
 }
 
 /* ================= CANVAS KERTAS ================= */
