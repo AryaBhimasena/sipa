@@ -42,7 +42,7 @@ export function printIframe(printRef, onFinish) {
         <title>Print Kuitansi</title>
         <style>
 @page {
-  size: 21.59cm 27.94cm;
+  size: 21.45cm 27.94cm;
   margin-top: 2cm;
 }
 
@@ -50,16 +50,6 @@ body {
   margin: 0;
   background: #fff;
   font-family: "Courier New", Courier, monospace;
-  
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-  image-rendering: pixelated;
-  -webkit-font-smoothing: none;
-  font-smooth: never;
-}
-
-* {
-  text-rendering: optimizeSpeed;
 }
 
 /* ================= CANVAS KERTAS ================= */
@@ -78,7 +68,7 @@ body {
   color: #000000;
 
   font-size: 11px;
-  line-height: 1.2;
+  line-height: 1.4;
 
   overflow: hidden; /* PENTING */
 }
@@ -88,6 +78,10 @@ body {
 .kuitansi-header {
   position: relative;
   text-align: center;
+}
+
+.kop-center {
+	margin : 0;
 }
 
 .kop-left {
@@ -117,6 +111,7 @@ body {
   top: 0;
   right: 0;
   font-size: 10px;
+  margin-right: 18px;
 }
 
 .content-left {

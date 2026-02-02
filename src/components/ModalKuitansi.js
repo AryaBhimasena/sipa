@@ -180,7 +180,6 @@ useEffect(() => {
               <div className="kop-center">
                 <h3>PERUSAHAAN UMUM DAERAH PASAR BAIMAN BANJARMASIN</h3>
                 <p>Pasar Sentra Antasari Banjarmasin</p>
-                <br />
                 <h4>KUITANSI TARIF JASA PELAYANAN</h4>
                 <p className="subtitle">( TANDA BUKTI PEMBAYARAN )</p>
               </div>
