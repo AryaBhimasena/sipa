@@ -54,6 +54,12 @@ body {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+* {
+  text-rendering: optimizeSpeed;
 }
 
 /* ================= CANVAS KERTAS ================= */
@@ -61,7 +67,7 @@ body {
 .kuitansi-paper {
   width: 100%;
 
-  padding: 14px 16px;
+  padding: 14px 10px;
   box-sizing: border-box;
 
   display: flex;
@@ -72,7 +78,7 @@ body {
   color: #000000;
 
   font-size: 11px;
-  line-height: 1;
+  line-height: 1.2;
 
   overflow: hidden; /* PENTING */
 }
