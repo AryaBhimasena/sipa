@@ -68,7 +68,7 @@ body {
   color: #000000;
 
   font-size: 11px;
-  line-height: 1.4;
+  line-height: 1;
 
   overflow: hidden; /* PENTING */
 }
