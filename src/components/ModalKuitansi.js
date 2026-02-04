@@ -225,7 +225,7 @@ useEffect(() => {
                 <div className="row">
                   <span>Pembayaran</span>
                   <span>
-                    : Tarif jasa pelayanan toko/kios/los serta kebersihan dan keamanan
+                    : Tarif jasa pelayanan Keamanan dan Kebersihan
                   </span>
                 </div>
 
@@ -300,8 +300,8 @@ useEffect(() => {
               <div className="catatan">
                 <p><strong>Keterangan</strong></p>
                 <ol>
-                  <li>Pembayaran tarif jasa layanan paling lambat akhir bulan berjalan.</li>
-                  <li>Keterlambatan dikenakan denda sesuai ketentuan.</li>
+                  <li>Kuitansi ini merupakan pembayaran yang sah</li>
+                  <li>Keterlamabatan pembayaran dikenakan denda sesuai ketentuan</li>
                 </ol>
               </div>
 

@@ -19,7 +19,6 @@ export function terbilang(n) {
   return "";
 }
 
-
 export function printIframe(printRef, onFinish) {
   const content = printRef.current.outerHTML;
 
@@ -37,19 +36,23 @@ export function printIframe(printRef, onFinish) {
 
   doc.open();
   doc.write(`
-    <html>
-      <head>
-        <title>Print Kuitansi</title>
-        <style>
+<html>
+<head>
+<title>Print Kuitansi</title>
+<style>
+
 @page {
   size: 21.45cm 27.94cm;
   margin-top: 2cm;
 }
 
-body {
+html, body {
   margin: 0;
   background: #fff;
-  font-family: "Courier New", Courier, monospace;
+  font-family: Arial, Helvetica, sans-serif;
+
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 /* ================= CANVAS KERTAS ================= */
@@ -57,7 +60,7 @@ body {
 .kuitansi-paper {
   width: 100%;
 
-  padding: 14px 10px;
+  padding: 3.7mm 2.65mm;
   box-sizing: border-box;
 
   display: flex;
@@ -67,10 +70,10 @@ body {
   background: #ffffff;
   color: #000000;
 
-  font-size: 11px;
+  font-size: 8.25pt;
   line-height: 1;
 
-  overflow: hidden; /* PENTING */
+  overflow: hidden;
 }
 
 /* ================= HEADER ================= */
@@ -81,28 +84,28 @@ body {
 }
 
 .kop-center {
-	margin : 0;
+  margin: 0;
 }
 
 .kop-left {
   position: absolute;
   left: 0;
   top: 0;
-  height: 60px;
+  height: 15.9mm;
 
   display: flex;
   align-items: center;
 }
 
 .kop-logo {
-  width: 105px;
+  width: 27.8mm;
 }
 
 /* ================= BODY ================= */
 
 .kuitansi-body {
-  flex: 1; /* ISI OTOMATIS NGISI TENGAH */
-  margin-top: 6px;
+  flex: 1;
+  margin-top: 1.6mm;
   position: relative;
 }
 
@@ -110,28 +113,28 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  font-size: 10px;
-  margin-right: 18px;
+  font-size: 7.5pt;
+  margin-right: 4.75mm;
 }
 
 .content-left {
-  margin-top: 14px;
+  margin-top: 3.7mm;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 6px;
-  margin-bottom: 3px;
+  grid-template-columns: 58.2mm 1fr;
+  gap: 1.6mm;
+  margin-bottom: 0.8mm;
 }
 
 /* ================= FOOTER ================= */
 
 .kuitansi-footer {
   display: flex;
-  gap: 12px;
-  font-size: 10.5px;
-  margin-top: 6px;
+  gap: 3.2mm;
+  font-size: 7.9pt;
+  margin-top: 1.6mm;
 }
 
 .catatan {
@@ -144,7 +147,7 @@ body {
 }
 
 .ttd-space {
-  height: 38px;
+  height: 10mm;
 }
 
 .nama-petugas {
@@ -152,8 +155,8 @@ body {
 }
 
 hr {
-  border: 1px solid #000;
-  margin: 4px 0;
+  border: 0.3mm solid #000;
+  margin: 1.05mm 0;
 }
 
 /* HIDE NON PRINT UI */
@@ -166,12 +169,12 @@ button {
   display: none !important;
 }
 
-        </style>
-      </head>
-      <body>
-        ${content}
-      </body>
-    </html>
+</style>
+</head>
+<body>
+  ${content}
+</body>
+</html>
   `);
   doc.close();
 
@@ -180,10 +183,7 @@ button {
 
     win.onafterprint = function () {
       document.body.removeChild(iframe);
-
-      if (typeof onFinish === "function") {
-        onFinish();
-      }
+      if (typeof onFinish === "function") onFinish();
     };
 
     win.focus();
