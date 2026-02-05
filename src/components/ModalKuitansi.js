@@ -300,6 +300,7 @@ useEffect(() => {
               <div className="catatan">
                 <p><strong>Keterangan</strong></p>
                 <ol>
+                  <li>Tarif Jasa Pelayanan Pasar Sentra Antasari diatur oleh Peraturan Wali Kota Banjarmasin No. 91 Tahun 2025</li>
                   <li>Kuitansi ini dinyatakan sebagai bukti pembayaran yang sah.</li>
                   <li>Keterlambatan pembayaran akan dikenakan denda sesuai dengan peraturan yang berlaku.</li>
                 </ol>
