@@ -28,21 +28,30 @@ export default function LoketPage() {
   /* ===============================
      UNIQUE FILTER OPTIONS (DINAMIS)
   =============================== */
-  const jenisOptions = useMemo(() => {
-    return [...new Set(dataToko.map(r => r.objek?.jenis_objek).filter(Boolean))];
-  }, [dataToko]);
+	const jenisOptions = useMemo(() => {
+	  return [...new Set(dataToko.map(r => r.objek?.jenis_objek).filter(Boolean))]
+		.sort((a, b) => a.localeCompare(b));
+	}, [dataToko]);
 
-  const tipeOptions = useMemo(() => {
-    return [...new Set(dataToko.map(r => r.objek?.tipe).filter(Boolean))];
-  }, [dataToko]);
+	const tipeOptions = useMemo(() => {
+	  return [...new Set(dataToko.map(r => r.objek?.tipe).filter(Boolean))]
+		.sort((a, b) => a.localeCompare(b));
+	}, [dataToko]);
 
-  const lantaiOptions = useMemo(() => {
-    return [...new Set(dataToko.map(r => r.lantai?.toString()).filter(Boolean))];
-  }, [dataToko]);
+	const lantaiOptions = useMemo(() => {
+	  return [...new Set(
+		dataToko
+		  .map(r => r.lantai?.toString().trim())
+		  .filter(Boolean)
+	  )].sort((a, b) =>
+		a.localeCompare(b, "id", { numeric: true, sensitivity: "base" })
+	  );
+	}, [dataToko]);
 
-  const blokOptions = useMemo(() => {
-    return [...new Set(dataToko.map(r => r.blok).filter(Boolean))];
-  }, [dataToko]);
+	const blokOptions = useMemo(() => {
+	  return [...new Set(dataToko.map(r => r.blok).filter(Boolean))]
+		.sort((a, b) => a.localeCompare(b));
+	}, [dataToko]);
 
   /* ===============================
      FILTERED DATA

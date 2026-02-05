@@ -300,8 +300,8 @@ useEffect(() => {
               <div className="catatan">
                 <p><strong>Keterangan</strong></p>
                 <ol>
-                  <li>Kuitansi ini merupakan pembayaran yang sah</li>
-                  <li>Keterlamabatan pembayaran dikenakan denda sesuai ketentuan</li>
+                  <li>Kuitansi ini dinyatakan sebagai bukti pembayaran yang sah.</li>
+                  <li>Keterlambatan pembayaran akan dikenakan denda sesuai dengan peraturan yang berlaku.</li>
                 </ol>
               </div>
 

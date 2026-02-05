@@ -1,0 +1,178 @@
+/* ===============================
+   MASTER DATA PAGE
+   =============================== */
+
+.master-data-page {
+  padding: 24px;
+  background: #f6f7fb;
+  min-height: calc(100vh - 120px);
+}
+
+/* ===============================
+   LOADING
+   =============================== */
+.md-loading {
+  text-align: center;
+  padding: 32px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ===============================
+   TABS (BORDERLESS & SQUARE)
+================================ */
+.md-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.md-tab {
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.md-tab:hover {
+  background: #f3f4f6;
+}
+
+.md-tab.active {
+  background: #1f2937;
+  color: #fff;
+  border-color: #1f2937;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.md-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: auto; /* ⬅️ penting */
+  min-width: 1000px;  /* supaya tidak remuk */
+}
+
+.md-table th {
+  background: #f8fafc;
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.md-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.md-table tr:hover {
+  background: #f9fafb;
+}
+
+/* ===============================
+   ALIGNMENT
+================================ */
+.col-center { text-align: center; }
+.col-right  { text-align: right; }
+.col-left   { text-align: left; }
+
+/* ===============================
+   COLUMN WIDTH (MIN WIDTH, NOT FIXED)
+================================ */
+.col-id {
+  min-width: 100px;
+}
+
+.col-jenis {
+  min-width: 160px;
+}
+
+.col-dimensi {
+  min-width: 140px;
+}
+
+.col-tarif {
+  min-width: 150px;
+}
+
+.col-perhitungan {
+  min-width: 120px;
+}
+
+.col-keterangan {
+  min-width: 200px;
+}
+
+.col-aksi {
+  min-width: 160px;
+}
+
+/* ===============================
+   TARIF INPUT
+================================ */
+.tarif-input {
+  width: 100%;
+  min-width: 120px;
+  padding: 6px 8px;
+  font-size: 13px;
+  text-align: right;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.action-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.btn-edit {
+  background: #e5e7eb;
+  color: #111827;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-save {
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.btn-cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.btn-edit:hover,
+.btn-save:hover,
+.btn-cancel:hover {
+  opacity: 0.85;
+}
