@@ -43,7 +43,7 @@ export function printIframe(printRef, onFinish) {
 
 @page {
   size: 21.45cm 27.94cm;
-  margin-top: 2cm;
+  margin-top: 0;
 }
 
 html, body {
