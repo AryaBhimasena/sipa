@@ -105,11 +105,12 @@ useEffect(() => {
 }, [idReg]);
 
 const handleBayar = async () => {
-  if (!ringkasanBayar) return;
-  
+  if (!ringkasanBayar || loadingBayar) return;
+
   setLoadingBayar(true);
 
   try {
+    // 1. Generate no kuitansi terlebih dahulu
     const res = await fetch(
       `${API_URL}?path=generateNoKuitansi`,
       { cache: "no-store" }
@@ -117,11 +118,11 @@ const handleBayar = async () => {
 
     const json = await res.json();
 
-    if (!json.success) {
-      alert("Gagal generate nomor kuitansi");
-      return;
+    if (!json.success || !json.no_kuitansi) {
+      throw new Error("Gagal generate nomor kuitansi");
     }
 
+    // 2. Inject no kuitansi ke payload
     const payload = {
       ...ringkasanBayar,
       no_kuitansi: json.no_kuitansi,
@@ -130,15 +131,19 @@ const handleBayar = async () => {
       pedagang: dataPedagang,
     };
 
+    // 3. Set data lengkap dulu
     setRingkasanBayar(payload);
+
+    // 4. Baru buka modal
     setShowModal(true);
 
   } catch (err) {
-    console.error("Error generate kuitansi:", err);
+    console.error(err);
     alert("Terjadi kesalahan saat generate nomor kuitansi");
+  } finally {
+    setLoadingBayar(false);
   }
 };
-
 
   return (
     <>
