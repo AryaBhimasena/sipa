@@ -1,159 +1,143 @@
 "use client";
 
-import { useEffect, useState, Fragment } from "react";
+import { useState, useMemo } from "react";
 import Header from "../../components/Header";
 import NavBar from "../../components/NavBar";
 import ContainerCard from "../../components/ContainerCard";
-import { API_URL } from "../../lib/api";
+import ModalKuitansi from "../../components/ModalKuitansi";
+
+import { useLaporanPembayaran } from "../../lib/laporan/useLaporanPembayaran";
+import { buildKuitansi, applyDateFilter, handleExportPDF } from "../../lib/laporan/utilLaporanPembayaran";
+import LaporanPembayaranTable from "../../lib/laporan/laporanPembayaranTable";
 
 import "../../styles/layout.css";
 import "../../styles/pages/laporan.css";
 
-import { Trash2, X, AlertTriangle } from "lucide-react";
-import ModalKuitansi from "../../components/ModalKuitansi";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function LaporanPembayaranPage() {
+  const { data, loading, refetch } = useLaporanPembayaran();
+
   const [search, setSearch] = useState("");
-  const [dataAll, setDataAll] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
-  const [loading, setLoading] = useState(false);
-  
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmType, setConfirmType] = useState(""); // "header" | "detail"
-  const [selectedHeaderId, setSelectedHeaderId] = useState(null);
-  const [selectedDetail, setSelectedDetail] = useState(null);
-  
+  const [tglAwal, setTglAwal] = useState("");
+  const [tglAkhir, setTglAkhir] = useState("");
+  const [filteredByDate, setFilteredByDate] = useState(null);
+
   const [kuitansiOpen, setKuitansiOpen] = useState(false);
   const [kuitansiData, setKuitansiData] = useState(null);
   const [kuitansiPedagang, setKuitansiPedagang] = useState(null);
 
-  async function fetchAllData() {
-    setLoading(true);
+	const sourceData = filteredByDate ?? data;
+
+	const filteredData = useMemo(
+	  () =>
+		sourceData.filter((r) =>
+		  String(r.no_kuitansi || "")
+			.toLowerCase()
+			.includes(search.toLowerCase())
+		),
+	  [sourceData, search]
+	);
+
+  const openKuitansi = row => {
+    const { rincian, subtotal } = buildKuitansi(row);
+
+    setKuitansiPedagang({
+      id_reg: row.id_reg,
+      blok: row.blok,
+      no: row.no_toko,
+      nama: row.nama_pedagang,
+      objek: row.objek,
+    });
+
+    setKuitansiData({
+      no_kuitansi: row.no_kuitansi,
+      periode: row.periode_tahun,
+      jumlahBulan: row.jumlah_bulan,
+      total: row.total_bayar,
+      rincian,
+      subtotal,
+    });
+
+    setKuitansiOpen(true);
+  };
+
+const handleProsesFilter = () => {
+  try {
+    const hasil = applyDateFilter(data, tglAwal, tglAkhir);
+    setFilteredByDate(hasil);
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+const handlePreviewPDF = async () => {
+  if (!tglAwal || !tglAkhir) {
+    alert("Silakan pilih tanggal terlebih dahulu");
+    return;
+  }
+
+  const url = `/laporan/preview-pdf?start=${tglAwal}&end=${tglAkhir}`;
+
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  iframe.src = url;
+
+  document.body.appendChild(iframe);
+
+  iframe.onload = async () => {
     try {
-      const res = await fetch(
-        `${API_URL}?path=laporanPembayaran`,
-        { cache: "no-store" }
-      );
-      const json = await res.json();
-      setDataAll(json.data || []);
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      const waitForPages = () =>
+        new Promise((resolve) => {
+          const check = () => {
+            const pages = iframeDoc.querySelectorAll(".preview-paper");
+            if (pages.length > 0) resolve(pages);
+            else setTimeout(check, 300);
+          };
+          check();
+        });
+
+      const pages = await waitForPages();
+
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      });
+
+      for (let i = 0; i < pages.length; i++) {
+        const canvas = await html2canvas(pages[i], {
+          scale: 2, // tajam tapi masih < 1MB
+          backgroundColor: "#ffffff",
+          useCORS: true,
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.75);
+
+        if (i > 0) pdf.addPage();
+
+        pdf.addImage(imgData, "JPEG", 0, 0, 297, 210);
+      }
+
+      pdf.save(`Laporan_Pembayaran_${tglAwal}_${tglAkhir}.pdf`);
     } catch (err) {
-      console.error("Fetch laporan error:", err);
-      setDataAll([]);
+      console.error(err);
+      alert("Gagal generate PDF");
     } finally {
-      setLoading(false);
+      document.body.removeChild(iframe);
     }
-  }
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
-const filteredData = dataAll.filter(row => {
-  const kuitansi = row.no_kuitansi ? String(row.no_kuitansi) : "";
-  return kuitansi.toLowerCase().includes(search.toLowerCase());
-});
-
-async function handleDeleteHeader(id_transaksi) {
-  const res = await fetch(`${API_URL}?path=deleteTransaksiHeader`, {
-    method: "POST",
-    body: JSON.stringify({ id_transaksi }),
-  });
-
-  const json = await res.json();
-  fetchAllData();
-}
-
-async function handleDeleteDetail(id_transaksi, bulan) {
-  const res = await fetch(`${API_URL}?path=deleteTransaksiDetail`, {
-    method: "POST",
-    body: JSON.stringify({ id_transaksi, bulan }),
-  });
-
-  const json = await res.json();
-  fetchAllData();
-}
-
-async function confirmDelete() {
-  if (confirmType === "header") {
-    await handleDeleteHeader(selectedHeaderId);
-  }
-
-  if (confirmType === "detail") {
-    await handleDeleteDetail(
-      selectedDetail.id_transaksi,
-      selectedDetail.bulan
-    );
-  }
-
-  setConfirmOpen(false);
-  setSelectedHeaderId(null);
-  setSelectedDetail(null);
-}
-
-async function openKuitansiFromLaporan(row) {
-  const rincian = row.detail.map(d => {
-    const total =
-      d.sewa +
-      d.kebersihan +
-      d.keamanan -
-      Math.round((d.sewa + d.kebersihan + d.keamanan) * (d.diskon / 100)) +
-      d.denda;
-
-    return {
-      bulan: d.bulan,
-      sewa: d.sewa,
-      kebersihan: d.kebersihan,
-      keamanan: d.keamanan,
-      diskonPersen: d.diskon,
-      diskonNominal: Math.round(
-        (d.sewa + d.kebersihan + d.keamanan) * (d.diskon / 100)
-      ),
-      denda: d.denda,
-      total,
-      readonly: true
-    };
-  });
-
-  const subtotal = rincian.reduce(
-    (acc, r) => {
-      acc.sewa += r.sewa;
-      acc.kebersihan += r.kebersihan;
-      acc.keamanan += r.keamanan;
-      acc.diskon += r.diskonNominal;
-      acc.denda += r.denda;
-      return acc;
-    },
-    { sewa: 0, kebersihan: 0, keamanan: 0, diskon: 0, denda: 0 }
-  );
-
-	setKuitansiPedagang({
-	  id_reg: row.id_reg,
-	  blok: row.blok,
-	  no: row.no_toko,
-
-	  nama: row.nama_pedagang,
-
-	  objek: {
-		jenis_objek: row.objek.jenis_objek,
-		tipe: row.objek.tipe_objek,
-		panjang: row.objek.panjang,
-		lebar: row.objek.lebar,
-		tinggi: row.objek.tinggi,
-		luas: row.objek.dimensi
-	  }
-	});
-
-  setKuitansiData({
-	no_kuitansi: row.no_kuitansi,
-    periode: row.periode_tahun,
-    jumlahBulan: row.jumlah_bulan,
-    total: row.total_bayar,
-    rincian,
-    subtotal
-  });
-
-  setKuitansiOpen(true);
-}
+  };
+};
 
   return (
     <>
@@ -163,192 +147,95 @@ async function openKuitansiFromLaporan(row) {
       <main className="laporan-page">
         <ContainerCard
           title="Laporan Pembayaran"
-          subtitle="Pencarian data pembayaran berdasarkan nomor kuitansi"
+          subtitle="Pencarian berdasarkan nomor kuitansi"
         >
           {/* FILTER */}
-          <div className="laporan-filter">
-            <input
-              type="text"
-              placeholder="Cari nomor kuitansi..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+			<div className="laporan-filter">
+			  {/* KIRI – SEARCH */}
+			  <div className="laporan-filter-left">
+				<input
+				  type="text"
+				  placeholder="Cari nomor kuitansi..."
+				  value={search}
+				  onChange={(e) => setSearch(e.target.value)}
+				/>
+			  </div>
 
-          {/* TABLE */}
-          <div className="laporan-table-wrapper">
-            <table className="laporan-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nomor Kuitansi</th>
-                  <th>Tanggal Bayar</th>
-                  <th>Nama</th>
-                  <th>Jenis Objek</th>
-                  <th>Periode</th>
-                  <th>Jumlah Bulan</th>
-                  <th>Total Bayar</th>
-                  <th>Petugas Loket</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
+			  {/* KANAN – CONTROLLER */}
+			  <div className="laporan-filter-controls">
+				<input
+				  type="date"
+				  value={tglAwal}
+				  onChange={(e) => setTglAwal(e.target.value)}
+				/>
 
-              <tbody>
-                {loading && (
-                  <tr>
-                    <td colSpan="10">Memuat data...</td>
-                  </tr>
-                )}
+				<input
+				  type="date"
+				  value={tglAkhir}
+				  onChange={(e) => setTglAkhir(e.target.value)}
+				/>
 
-                {!loading && filteredData.length === 0 && (
-                  <tr>
-                    <td colSpan="10">Data tidak ditemukan</td>
-                  </tr>
-                )}
-
-                {!loading &&
-                  filteredData.map((row, i) => (
-                    <Fragment key={row.id_transaksi}>
-                      <tr
-                        className="laporan-row"
-                        onClick={() =>
-                          setExpandedRow(
-                            expandedRow === row.id_transaksi
-                              ? null
-                              : row.id_transaksi
-                          )
-                        }
-                      >
-                        <td>{i + 1}</td>
-                        <td>{row.no_kuitansi}</td>
-                        <td>{new Date(row.tanggal_bayar).toLocaleDateString("id-ID")}</td>
-                        <td>{row.nama_pedagang}</td>
-                        <td>{row.objek.jenis_objek}</td>
-                        <td>{row.periode_tahun}</td>
-                        <td>{row.jumlah_bulan}</td>
-                        <td>Rp {row.total_bayar.toLocaleString("id-ID")}</td>
-						<td>{row.nama_petugas || "-"}</td>
-						<td>
-						  <div className="laporan-actions">
-							  <button
-								className="btn-print"
-								onClick={(e) => {
-								  e.stopPropagation();
-								  openKuitansiFromLaporan(row);
-								}}
-							  >
-								Print
-							  </button>
-
-							  <button
-								className="btn-delete-base"
-								onClick={(e) => {
-								  e.stopPropagation();
-								  setConfirmType("header");
-								  setSelectedHeaderId(row.id_transaksi);
-								  setConfirmOpen(true);
-								}}
-							  >
-								<Trash2 size={16} />
-							  </button>
-						  </div>
-						</td>
-                      </tr>
-
-                      {expandedRow === row.id_transaksi && (
-                        <tr className="detail-strip">
-                          <td colSpan="10">
-                            <table className="strip-table">
-                              <thead>
-                                <tr>
-                                  <th>Bulan</th>
-                                  <th>Jasa Sewa</th>
-                                  <th>Kebersihan</th>
-                                  <th>Keamanan</th>
-                                  <th>Denda</th>
-                                  <th>Diskon</th>
-                                  <th>Aksi</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {row.detail?.map((d, idx) => (
-                                  <tr key={idx}>
-                                    <td>{d.bulan}</td>
-                                    <td>{d.sewa.toLocaleString("id-ID")}</td>
-                                    <td>{d.kebersihan.toLocaleString("id-ID")}</td>
-                                    <td>{d.keamanan.toLocaleString("id-ID")}</td>
-                                    <td>{d.denda.toLocaleString("id-ID")}</td>
-                                    <td>{d.diskon.toLocaleString("id-ID")} %</td>
-									<td>
-										<button
-										  className="btn-delete-strip"
-										  onClick={(e) => {
-											e.stopPropagation();
-											setConfirmType("detail");
-											setSelectedDetail({ id_transaksi: row.id_transaksi, bulan: d.bulan });
-											setConfirmOpen(true);
-										  }}
-										>
-										  Hapus
-										</button>
-									</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </ContainerCard>
-      </main>
-	  
-	  {confirmOpen && (
-		  <div className="confirm-overlay">
-			<div className="confirm-modal">
-			  <AlertTriangle size={36} className="confirm-icon" />
-
-			  <h3>Konfirmasi Hapus</h3>
-
-			  <p>
-				{confirmType === "header"
-				  ? "Yakin ingin menghapus seluruh transaksi beserta detailnya?"
-				  : `Yakin ingin menghapus detail bulan ${selectedDetail?.bulan}?`}
-			  </p>
-
-			  <div className="confirm-actions">
 				<button
-				  className="btn-cancel"
-				  onClick={() => setConfirmOpen(false)}
+				  className="laporan-btn laporan-btn-proses"
+				  onClick={handleProsesFilter}
 				>
-				  Batal
+				  Proses
 				</button>
 
 				<button
-				  className="btn-confirm"
-				  onClick={confirmDelete}
+				  className="laporan-btn laporan-btn-export"
+				  onClick={handlePreviewPDF}
 				>
-				  Hapus
+				  Export PDF
 				</button>
+
 			  </div>
 			</div>
-		  </div>
-		)}
 
-		{kuitansiOpen && kuitansiData && (
-		  <ModalKuitansi
-			dataPedagang={kuitansiPedagang}
-			ringkasan={kuitansiData}
-			onClose={() => setKuitansiOpen(false)}
-			onConfirm={() => setKuitansiOpen(false)} // hanya preview + print
-			showSimpan={false}
-		  />
-		)}
+		<div className="laporan-table-wrapper">
+		  <table className="laporan-table">
+			<thead>
+			  <tr>
+				<th>No</th>
+				<th>Nomor Kuitansi</th>
+				<th>Tanggal Bayar</th>
+				<th>Nama</th>
+				<th>Jenis Objek</th>
+				<th>Periode</th>
+				<th>Jumlah Bulan</th>
+				<th>Total Bayar</th>
+				<th>Petugas Loket</th>
+				<th>Aksi</th>
+			  </tr>
+			</thead>
 
+            <tbody>
+              <LaporanPembayaranTable
+                data={filteredData}
+                loading={loading}
+                expandedRow={expandedRow}
+                onExpand={id =>
+                  setExpandedRow(expandedRow === id ? null : id)
+                }
+                onPrint={openKuitansi}
+                onDeleteHeader={() => {}}
+                onDeleteDetail={() => {}}
+              />
+            </tbody>
+		  </table>
+		</div>
+
+        </ContainerCard>
+      </main>
+
+      {kuitansiOpen && (
+        <ModalKuitansi
+          dataPedagang={kuitansiPedagang}
+          ringkasan={kuitansiData}
+          onClose={() => setKuitansiOpen(false)}
+          showSimpan={false}
+        />
+      )}
     </>
   );
 }

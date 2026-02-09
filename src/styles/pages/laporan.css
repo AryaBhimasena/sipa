@@ -4,14 +4,34 @@
   padding: 28px 32px 40px;
 }
 
-/* ================= FILTER BAR (BORDERLESS) ================= */
-
+/* ================= FILTER BAR ================= */
 .laporan-filter {
+  display: flex;
+  justify-content: space-between; /* kiri & kanan nempel ujung */
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* KIRI */
+.laporan-filter-left {
+  display: flex;
+  align-items: center;
+}
+
+/* SEARCH WIDTH BIAR SEJAJAR TABEL */
+.laporan-filter-left input {
+  width: 500px; /* sesuaikan dengan kolom tabel */
+}
+
+/* KANAN */
+.laporan-filter-controls {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 150px 150px 100px 120px;
   gap: 12px;
 }
 
+/* INPUT DEFAULT */
 .laporan-filter input,
 .laporan-filter select {
   padding: 10px 12px;
@@ -26,6 +46,40 @@
   outline: none;
   border-color: #2563eb;
 }
+
+/* ================= BUTTON SYSTEM ================= */
+
+.laporan-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+/* PROSES */
+.laporan-btn-proses {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.laporan-btn-proses:hover {
+  background: #1d4ed8;
+}
+
+/* EXPORT */
+.laporan-btn-export {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+}
+
+.laporan-btn-export:hover {
+  background: #e5e7eb;
+}
+
 
 /* ================= TABLE ================= */
 

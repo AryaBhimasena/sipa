@@ -1,0 +1,241 @@
+/* =====================================================
+   PREVIEW WRAPPER
+   ===================================================== */
+.preview-wrapper {
+  padding: 16px;
+  background: #e5e7eb;
+  overflow: auto;
+}
+
+/* =====================================================
+   PREVIEW PAPER (A4 LANDSCAPE – SNAPSHOT SAFE)
+   ===================================================== */
+.preview-paper {
+  width: 1120px;
+  height: 790px;
+
+  background: #ffffff;
+  padding: 24px;
+  box-sizing: border-box;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000;
+
+  overflow: hidden;
+  margin: 0 auto 24px auto;
+  position: relative;
+}
+
+
+/* =====================================================
+   TITLE
+   ===================================================== */
+.preview-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.preview-subtitle {
+  text-align: center;
+  font-size: 12px;
+  margin: 6px 0 20px;
+}
+
+/* =====================================================
+   TABLE BASE
+   ===================================================== */
+.preview-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-radius: 0;
+}
+
+
+/* =====================================================
+   CELL GLOBAL
+   ===================================================== */
+.preview-table th,
+.preview-table td {
+  border: 1px solid #000;
+  padding: 6px 8px;
+  vertical-align: middle;
+  white-space: nowrap; /* default: jangan pecah */
+}
+
+.preview-table td.col-pedagang,
+.preview-table th.col-pedagang,
+.preview-table td.col-kasir,
+.preview-table th.col-kasir,
+.preview-table td.col-uang,
+.preview-table th.col-uang,
+.preview-table td.col-ket,
+.preview-table th.col-ket,
+.preview-table td.col-kuitansi,
+.preview-table th.col-kuitansi,
+.preview-table td.col-bulan,
+.preview-table th.col-bulan {
+  white-space: normal;
+}
+
+.preview-table tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+.preview-table thead th {
+  text-align: center;
+  font-weight: bold;
+  font-size: 6pt;
+  line-height: 1.2;
+}
+
+.preview-table thead tr:nth-child(2) th {
+  font-size: 8pt;
+}
+
+/* =====================================================
+   BODY
+   ===================================================== */
+.preview-table tbody td {
+  font-size: 5pt;
+}
+
+/* =====================================================
+   NUMBER
+   ===================================================== */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   RAPAT & WRAP (SESUAI PERMINTAAN)
+   ===================================================== */
+
+/* No */
+.col-no {
+  width: 20px;
+  white-space: normal;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* Tanggal */
+.col-date {
+  min-width: 50px;
+}
+
+/* Tahun */
+.col-year {
+  width: 38px;
+  white-space: normal;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* Nama Kasir (WRAP) */
+.col-kasir {
+  width: 40px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* Nama Pasar (WRAP) */
+.col-pasar {
+  min-width: 50px;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+/* Nama Pedagang (WRAP) */
+.col-pedagang {
+  width: 100px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* Bulan Bayar (WRAP, TIDAK DIPERKECIL) */
+.col-bulan {
+  width: 100px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* Jasa */
+.col-uang {
+  width: 90px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* Keterangan (WRAP) */
+.col-ket {
+  width: 50px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* =====================================================
+   BIARKAN TETAP (TIDAK DIRUBAH)
+   ===================================================== */
+
+.col-reg {
+  width: 60px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+.col-kuitansi {
+  width: 45px;
+}
+
+/* =====================================================
+   STATE MESSAGE
+   ===================================================== */
+.preview-warning,
+.preview-loading {
+  text-align: center;
+  margin-top: 80px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.page-break {
+  page-break-after: always;
+}
+
+.signature-footer {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  font-size: 12px;
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+}
+
+.sign-space {
+  height: 120px;
+}
