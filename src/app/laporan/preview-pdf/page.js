@@ -4,6 +4,7 @@ import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLaporanPembayaran } from "../../../lib/laporan/useLaporanPembayaran";
 import { applyDateFilter } from "../../../lib/laporan/utilLaporanPembayaran";
+import { useUser } from "../../../lib/context/UserContext";
 
 import "../../../styles/components/laporan-preview.css";
 
@@ -23,6 +24,7 @@ function LaporanPembayaranPreviewContent() {
   const params = useSearchParams();
   const tglAwal = params.get("start");
   const tglAkhir = params.get("end");
+  const user = useUser();
 
   const { data, loading } = useLaporanPembayaran();
 
@@ -151,7 +153,8 @@ function LaporanPembayaranPreviewContent() {
                 <div>
                   <p><b>Petugas Loket</b></p>
                   <div className="sign-space" />
-                  <p>User / Nama Petugas Loket</p>
+                  <p><b>{user?.nama || ". . ."}</b></p>
+                  <p>{user?.jabatan || "Petugas Loket"}</p>
                 </div>
 
                 <div>
