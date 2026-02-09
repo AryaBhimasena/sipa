@@ -140,26 +140,20 @@ const handlePreviewPDF = async () => {
 };
 
 const handleDeleteHeader = async (idTransaksi) => {
-  const ok = confirm(
-    `Hapus transaksi ini?`
-  );
+  const ok = confirm("Hapus transaksi ini?");
   if (!ok) return;
 
   try {
     const res = await fetch(
-      `${API_URL}?path=deleteTransaksiHeader`,
+      `${API_URL}?path=deleteTransaksiHeader&id_transaksi=${encodeURIComponent(idTransaksi)}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_transaksi: idTransaksi,
-        }),
+        cache: "no-store",
       }
     );
 
     const json = await res.json();
+    console.log("[deleteTransaksiHeader] response:", json);
 
     if (!json.success) {
       throw new Error(json.message);
@@ -173,27 +167,22 @@ const handleDeleteHeader = async (idTransaksi) => {
 };
 
 const handleDeleteDetail = async (idTransaksi, bulan) => {
-  const ok = confirm(
-    `Hapus detail bulan ${bulan}?`
-  );
+  const ok = confirm(`Hapus detail bulan ${bulan}?`);
   if (!ok) return;
 
   try {
     const res = await fetch(
-      `${API_URL}?path=deleteTransaksiDetail`,
+      `${API_URL}?path=deleteTransaksiDetail&id_transaksi=${encodeURIComponent(
+        idTransaksi
+      )}&bulan=${encodeURIComponent(bulan)}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_transaksi: idTransaksi,
-          bulan,
-        }),
+        cache: "no-store",
       }
     );
 
     const json = await res.json();
+    console.log("[deleteTransaksiDetail] response:", json);
 
     if (!json.success) {
       throw new Error(json.message);

@@ -57,17 +57,34 @@ function LaporanPembayaranPreviewContent() {
   return (
     <div className="preview-wrapper">
       {pages.map((page, pageIndex) => {
+		const startNumber = pageIndex * ROWS_PER_PAGE;
         const isLastPage = pageIndex === pages.length - 1;
 
         return (
           <div key={pageIndex} className="preview-paper page-break">
-            <h2 className="preview-title">LAPORAN PEMBAYARAN TARIF JASA LAYANAN</h2>
-            <h2 className="preview-title">PASAR ANTASARI</h2>
+			<div className="preview-header">
+			  <img
+				src="/logo-perumda-baiman.PNG"
+				alt="Logo Perumda Baiman"
+				className="preview-logo"
+			  />
 
-            <p className="preview-subtitle">
-              Periode {formatTanggalDMY(tglAwal)} s/d{" "}
-              {formatTanggalDMY(tglAkhir)}
-            </p>
+			  <div className="preview-header-text">
+				<h2 className="preview-title">
+				  PERUSAHAAN UMUM DAERAH PASAR BAIMAN BANJARMASIN
+				</h2>
+				<p className="preview-subtitle">
+				  Laporan Pembayaran Tarif Jasa Layanan
+				</p>
+				<p className="preview-title">
+				  Pasar Sentra Antasari Banjarmasin
+				</p>
+				<p className="preview-subtitle-periode">
+				  Periode {formatTanggalDMY(tglAwal)} s/d{" "}
+				  {formatTanggalDMY(tglAkhir)}
+				</p>
+			  </div>
+			</div>
 
             <table className="preview-table">
             <thead>
@@ -118,7 +135,8 @@ function LaporanPembayaranPreviewContent() {
 
                   return (
                   <tr key={i}>
-                    <td className="col-no">{i + 1}</td>
+                    <td className="col-no">{startNumber + i + 1}</td>
+
                     <td className="col-date">{formatTanggalDMY(r.tanggal_bayar)}</td>
                     <td className="col-year">{r.periode_tahun}</td>
                     <td className="col-kasir">{r.nama_petugas}</td>
