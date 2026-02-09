@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 import NavBar from "../../components/NavBar";
 import ContainerCard from "../../components/ContainerCard";
 import ModalKuitansi from "../../components/ModalKuitansi";
-
+import { API_URL } from "../../lib/api";
 import { useLaporanPembayaran } from "../../lib/laporan/useLaporanPembayaran";
 import { buildKuitansi, applyDateFilter, handleExportPDF } from "../../lib/laporan/utilLaporanPembayaran";
 import LaporanPembayaranTable from "../../lib/laporan/laporanPembayaranTable";
@@ -139,6 +139,73 @@ const handlePreviewPDF = async () => {
   };
 };
 
+const handleDeleteHeader = async (idTransaksi) => {
+  const ok = confirm(
+    `Hapus transaksi ini?`
+  );
+  if (!ok) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}?path=deleteTransaksiHeader`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_transaksi: idTransaksi,
+        }),
+      }
+    );
+
+    const json = await res.json();
+
+    if (!json.success) {
+      throw new Error(json.message);
+    }
+
+    alert(json.message);
+    refetch();
+  } catch (err) {
+    alert(err.message || "Gagal menghapus transaksi");
+  }
+};
+
+const handleDeleteDetail = async (idTransaksi, bulan) => {
+  const ok = confirm(
+    `Hapus detail bulan ${bulan}?`
+  );
+  if (!ok) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}?path=deleteTransaksiDetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_transaksi: idTransaksi,
+          bulan,
+        }),
+      }
+    );
+
+    const json = await res.json();
+
+    if (!json.success) {
+      throw new Error(json.message);
+    }
+
+    alert(json.message);
+    refetch();
+  } catch (err) {
+    alert(err.message || "Gagal menghapus detail");
+  }
+};
+
   return (
     <>
       <Header />
@@ -218,8 +285,8 @@ const handlePreviewPDF = async () => {
                   setExpandedRow(expandedRow === id ? null : id)
                 }
                 onPrint={openKuitansi}
-                onDeleteHeader={() => {}}
-                onDeleteDetail={() => {}}
+                onDeleteHeader={handleDeleteHeader}
+                onDeleteDetail={handleDeleteDetail}
               />
             </tbody>
 		  </table>
