@@ -176,3 +176,20 @@
 .btn-cancel:hover {
   opacity: 0.85;
 }
+
+.md-dev-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  margin-bottom: 14px;
+
+  background: #f5f6f8;
+  color: #555;
+
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+
+  font-size: 14px;
+}

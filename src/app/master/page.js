@@ -9,6 +9,8 @@ import ContainerCard from "../../components/ContainerCard";
 import { API_URL } from "../../lib/api";
 
 import "../../styles/pages/master-data.css";
+import { Construction } from "lucide-react";
+
 
 /* ================= HELPER ================= */
 function formatRupiah(value) {
@@ -130,114 +132,26 @@ const mergedData = useMemo(() => {
       <NavBar />
 
       <main className="master-data-page">
-        <ContainerCard
-          title="Master Data"
-          subtitle="Halaman Pengaturan untuk Master Data"
-        >
-          {loading ? (
-            <p className="md-loading">Memuat data...</p>
-          ) : (
-            <>
-			<div className="md-tabs">
-			  <button className="md-tab active">
-				Jenis Objek & Tarif
-			  </button>
-			</div>
+<ContainerCard
+  title="Master Data"
+  subtitle="Halaman Pengaturan untuk Master Data"
+>
+  <div className="md-dev-notice">
+    <Construction size={20} />
+    <span>
+      Halaman ini sedang dalam pengembangan. Beberapa fitur mungkin belum tersedia.
+    </span>
+  </div>
 
-			<section className="md-section">
-			<div className="md-table-wrapper">
-			  <table className="md-table">
-				<thead>
-				  <tr>
-					<th className="col-center">ID</th>
-					<th className="col-center">Jenis Objek</th>
-					<th className="col-center">Tipe</th>
-					<th className="col-center">Dimensi</th>
-					<th className="col-right">Tarif Sewa</th>
-					<th className="col-right">Tarif Kebersihan</th>
-					<th className="col-right">Tarif Keamanan</th>
-					<th className="col-center">Perhitungan</th>
-					<th className="col-left">Keterangan</th>
-					<th className="col-center col-aksi">Aksi</th>
-				  </tr>
-				</thead>
+  {loading ? (
+    <p className="md-loading">Memuat data...</p>
+  ) : (
+    <>
+      {/* konten existing */}
+    </>
+  )}
+</ContainerCard>
 
-				<tbody>
-				  {mergedData.map((item) => (
-					<tr key={item.id_jenis_objek}>
-					  <td className="col-center">{item.id_jenis_objek}</td>
-					  <td className="col-center">{item.jenis_objek}</td>
-					  <td className="col-center">{item.TIPE}</td>
-					  <td className="col-center">{item.dimensi}</td>
-
-						<td className="col-right">
-						  {editingTarifId === item.id_tarif ? (
-							<input
-							  className="tarif-input"
-							  value={editedTarif}
-							  onChange={(e) =>
-								setEditedTarif(
-								  formatRupiah(parseRupiah(e.target.value || "0"))
-								)
-							  }
-							/>
-						  ) : (
-							<span>Rp {formatRupiah(item.tarifSewa)}</span>
-						  )}
-						</td>
-
-						<td className="col-right">
-						  <span>Rp {formatRupiah(item.tarifKebersihan)}</span>
-						</td>
-
-						<td className="col-right">
-						  <span>Rp {formatRupiah(item.tarifKeamanan)}</span>
-						</td>
-
-					  <td className="col-center">{item.perhitungan}</td>
-					  <td className="col-left">{item.keterangan}</td>
-
-					  <td className="col-center col-aksi">
-						{editingTarifId === item.id_tarif ? (
-						  <div className="action-group">
-							<button
-							  className="btn-save"
-							  onClick={() => handleSaveTarif(item.id_tarif)}
-							>
-							  Simpan
-							</button>
-							<button
-							  className="btn-cancel"
-							  onClick={() => {
-								setEditingTarifId(null);
-								setEditedTarif("");
-							  }}
-							>
-							  Batal
-							</button>
-						  </div>
-						) : (
-						  <button
-							className="btn-edit"
-							onClick={() => {
-							  setEditingTarifId(item.id_tarif);
-							  setEditedTarif(formatRupiah(item.tarif));
-							}}
-						  >
-							Edit Tarif
-						  </button>
-						)}
-					  </td>
-					</tr>
-				  ))}
-				</tbody>
-			  </table>
-			</div>
-			</section>
-			
-					   </>
-          )}
-        </ContainerCard>
       </main>
     </>
   );
