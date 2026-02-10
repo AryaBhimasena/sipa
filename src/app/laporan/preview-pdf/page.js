@@ -96,7 +96,7 @@ function LaporanPembayaranPreviewContent() {
 
         /* ===== LOGIKA FOOTER PAGE BREAK ===== */
         const totalRowsWithJumlah = page.length + 1;
-        const footerNeedsPageBreak = totalRowsWithJumlah > 11;
+        const footerNeedsPageBreak = totalRowsWithJumlah > 12;
 
         return (
           <div key={pageIndex} className="preview-paper page-break">
