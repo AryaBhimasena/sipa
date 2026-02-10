@@ -95,7 +95,8 @@ function LaporanPembayaranPreviewContent() {
         );
 
         /* ===== LOGIKA FOOTER PAGE BREAK ===== */
-
+        const totalRowsWithJumlah = page.length + 1;
+        const footerNeedsPageBreak = totalRowsWithJumlah > 11;
 
         return (
           <div key={pageIndex} className="preview-paper page-break">
@@ -220,40 +221,41 @@ function LaporanPembayaranPreviewContent() {
             </table>
 
             {/* ===== FOOTER TANDA TANGAN ===== */}
-			{isLastPage && (
-			  <div className="preview-paper page-break signature-page">
-				<div className="signature-footer">
-				  <div>
-					<p><b>Petugas Loket</b></p>
-					<div className="sign-space" />
-					<p><b>{user?.nama || ". . ."}</b></p>
-					<p>{user?.jabatan || "Petugas Loket"}</p>
-				  </div>
+            {isLastPage && (
+              <div
+                className={`signature-footer ${
+                  footerNeedsPageBreak ? "page-break" : ""
+                }`}
+              >
+                <div>
+                  <p><b>Petugas Loket</b></p>
+                  <div className="sign-space" />
+                  <p><b>{user?.nama || ". . ."}</b></p>
+                  <p>{user?.jabatan || "Petugas Loket"}</p>
+                </div>
 
-				  <div>
-					<p><b>Verifikasi</b></p>
-					<div className="sign-space" />
-					<p><b>Juli Saputra</b></p>
-					<p>Kepala Pasar Zona 2 Antasari</p>
-				  </div>
+                <div>
+                  <p><b>Verifikasi</b></p>
+                  <div className="sign-space" />
+                  <p><b>Juli Saputra</b></p>
+                  <p>Kepala Pasar Zona 2 Antasari</p>
+                </div>
 
-				  <div>
-					<p><b>Verifikasi</b></p>
-					<div className="sign-space" />
-					<p><b>Rizali Hakim</b></p>
-					<p>Manager Operasional</p>
-				  </div>
+                <div>
+                  <p><b>Verifikasi</b></p>
+                  <div className="sign-space" />
+                  <p><b>Rizali Hakim</b></p>
+                  <p>Manager Operasional</p>
+                </div>
 
-				  <div>
-					<p><b>Mengetahui</b></p>
-					<div className="sign-space" />
-					<p><b>Azhar Budi, S.E</b></p>
-					<p>Direktur Operasional & Bisnis</p>
-				  </div>
-				</div>
-			  </div>
-			)}
-
+                <div>
+                  <p><b>Mengetahui</b></p>
+                  <div className="sign-space" />
+                  <p><b>Azhar Budi, S.E</b></p>
+                  <p>Direktur Operasional & Bisnis</p>
+                </div>
+              </div>
+            )}
           </div>
         );
       })}
