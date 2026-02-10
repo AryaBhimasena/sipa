@@ -7,27 +7,30 @@
 /* ================= FILTER BAR ================= */
 .laporan-filter {
   display: flex;
-  justify-content: space-between; /* kiri & kanan nempel ujung */
-  align-items: center;
-  gap: 16px;
+  justify-content: space-between; /* kiri vs kanan */
+  align-items: flex-end;          /* sejajar bawah (lebih rapi untuk input) */
   width: 100%;
+  gap: 24px;
+  margin-bottom: 16px;
 }
 
 /* KIRI */
 .laporan-filter-left {
+  flex: 1;                        /* ambil sisa ruang */
   display: flex;
   align-items: center;
 }
 
-/* SEARCH WIDTH BIAR SEJAJAR TABEL */
 .laporan-filter-left input {
-  width: 500px; /* sesuaikan dengan kolom tabel */
+  width: 100%;
+  max-width: 520px;               /* sejajar tabel, tapi fleksibel */
 }
 
 /* KANAN */
 .laporan-filter-controls {
   display: grid;
-  grid-template-columns: 150px 150px 100px 120px;
+  grid-template-columns: 150px 150px auto auto;
+  align-items: end;
   gap: 12px;
 }
 
