@@ -15,10 +15,12 @@ import "../../styles/pages/laporan.css";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Loader2 } from "lucide-react"
 
 export default function LaporanPembayaranPage() {
   const { data, loading, refetch } = useLaporanPembayaran();
-
+  const [isDownloading, setIsDownloading] = useState(false);
+  
   const [search, setSearch] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
   const [tglAwal, setTglAwal] = useState("");
@@ -79,6 +81,8 @@ const handlePreviewPDF = async () => {
     return;
   }
 
+  setIsDownloading(true); // ⬅ START LOADING
+
   const url = `/laporan/preview-pdf?start=${tglAwal}&end=${tglAkhir}`;
 
   const iframe = document.createElement("iframe");
@@ -117,7 +121,7 @@ const handlePreviewPDF = async () => {
 
       for (let i = 0; i < pages.length; i++) {
         const canvas = await html2canvas(pages[i], {
-          scale: 2, // tajam tapi masih < 1MB
+          scale: 2,
           backgroundColor: "#ffffff",
           useCORS: true,
         });
@@ -125,7 +129,6 @@ const handlePreviewPDF = async () => {
         const imgData = canvas.toDataURL("image/jpeg", 0.75);
 
         if (i > 0) pdf.addPage();
-
         pdf.addImage(imgData, "JPEG", 0, 0, 297, 210);
       }
 
@@ -135,6 +138,7 @@ const handlePreviewPDF = async () => {
       alert("Gagal generate PDF");
     } finally {
       document.body.removeChild(iframe);
+      setIsDownloading(false); // ⬅ STOP LOADING
     }
   };
 };
@@ -241,8 +245,9 @@ const handleDeleteDetail = async (idTransaksi, bulan) => {
 				<button
 				  className="laporan-btn laporan-btn-export"
 				  onClick={handlePreviewPDF}
+				  disabled={isDownloading}
 				>
-				  Export PDF
+				  {isDownloading ? "Memproses..." : "Export PDF"}
 				</button>
 
 			  </div>
@@ -292,6 +297,17 @@ const handleDeleteDetail = async (idTransaksi, bulan) => {
           showSimpan={false}
         />
       )}
+	  
+{isDownloading && (
+  <div className="pdf-loading-overlay">
+    <div className="pdf-loading-popup">
+      <Loader2 className="pdf-loading-icon" size={40} />
+      <p>Sedang membuat PDF...</p>
+      <span>Mohon tunggu sampai proses selesai</span>
+    </div>
+  </div>
+)}
+
     </>
   );
 }

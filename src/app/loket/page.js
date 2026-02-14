@@ -63,16 +63,22 @@ export default function LoketPage() {
     const tipe = row.objek?.tipe ?? "";
     const lantai = row.lantai?.toString() ?? "";
     const blok = row.blok ?? "";
-    const nama = row.nama?.toLowerCase() ?? "";
-    const idReg = row.id_reg?.toString() ?? "";
+	const nama = row.nama?.toLowerCase() ?? "";
+	const idReg = row.id_reg?.toString() ?? "";
+	const noToko = row.no?.toString() ?? "";
 
-    return (
-      (idReg.includes(keyword) || nama.includes(keyword)) &&
-      (!filterJenis || jenis === filterJenis) &&
-      (!filterTipe || tipe === filterTipe) &&
-      (!filterLantai || lantai === filterLantai) &&
-      (!filterBlok || blok === filterBlok)
-    );
+	return (
+	  (
+		idReg.includes(keyword) ||
+		nama.includes(keyword) ||
+		noToko.includes(keyword)
+	  ) &&
+	  (!filterJenis || jenis === filterJenis) &&
+	  (!filterTipe || tipe === filterTipe) &&
+	  (!filterLantai || lantai === filterLantai) &&
+	  (!filterBlok || blok === filterBlok)
+	);
+
   });
 
   /* ===============================
@@ -101,7 +107,7 @@ export default function LoketPage() {
           <div className="loket-filter">
             <input
               type="text"
-              placeholder="Cari no reg atau nama pedagang"
+              placeholder="Cari no reg, nama pedagang atau nomor toko"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

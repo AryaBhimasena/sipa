@@ -1,5 +1,41 @@
 "use client";
 
+import Header from "../../components/Header";
+import NavBar from "../../components/NavBar";
+import ContainerCard from "../../components/ContainerCard";
+import { Construction } from "lucide-react";
+
+import "../../styles/pages/master-data.css";
+
+export default function MasterDataPage() {
+  return (
+    <>
+      <Header />
+      <NavBar />
+
+      <main className="master-data-page">
+        <ContainerCard
+          title="Master Data"
+          subtitle="Halaman ini sedang dalam pengembangan"
+        >
+          <div className="md-under-development">
+            <Construction size={64} />
+            <h2>Halaman Sedang Dalam Pengembangan</h2>
+            <p>
+              Fitur Master Data saat ini belum tersedia dan sedang dalam tahap
+              pengembangan.
+            </p>
+            <p>Silakan kembali lagi nanti.</p>
+          </div>
+        </ContainerCard>
+      </main>
+    </>
+  );
+}
+
+/*
+"use client";
+
 import { useEffect, useState, useMemo } from "react";
 
 import Header from "../../components/Header";
@@ -12,7 +48,7 @@ import "../../styles/pages/master-data.css";
 import { Construction } from "lucide-react";
 
 
-/* ================= HELPER ================= */
+
 function formatRupiah(value) {
   if (value === null || value === undefined) return "";
   return Number(value).toLocaleString("id-ID");
@@ -244,3 +280,4 @@ const mergedData = useMemo(() => {
     </>
   );
 }
+*/

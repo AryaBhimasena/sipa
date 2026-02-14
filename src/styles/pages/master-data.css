@@ -193,3 +193,24 @@
 
   font-size: 14px;
 }
+
+.md-under-development {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #555;
+}
+
+.md-under-development h2 {
+  margin-top: 20px;
+  font-size: 22px;
+}
+
+.md-under-development p {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.8;
+}

@@ -60,39 +60,38 @@ function LaporanPembayaranPreviewContent() {
         const startNumber = pageIndex * ROWS_PER_PAGE;
         const isLastPage = pageIndex === pages.length - 1;
 
-        /* ===== TOTAL PER HALAMAN (DIPAKAI HANYA DI HALAMAN TERAKHIR) ===== */
-        const totalPage = page.reduce(
-          (acc, r) => {
-            const details = r.detail || [];
+/* ===== GRAND TOTAL SELURUH DATA ===== */
+const grandTotal = filteredData.reduce(
+  (acc, r) => {
+    const details = r.detail || [];
 
-            acc.sewa += details.reduce((s, d) => s + (d.sewa || 0), 0);
-            acc.kebersihan += details.reduce((s, d) => s + (d.kebersihan || 0), 0);
-            acc.keamanan += details.reduce((s, d) => s + (d.keamanan || 0), 0);
-            acc.denda += details.reduce((s, d) => s + (d.denda || 0), 0);
-            acc.jumlah += details.reduce((s, d) => s + (d.total || 0), 0);
+    acc.sewa += details.reduce((s, d) => s + (d.sewa || 0), 0);
+    acc.kebersihan += details.reduce((s, d) => s + (d.kebersihan || 0), 0);
+    acc.keamanan += details.reduce((s, d) => s + (d.keamanan || 0), 0);
+    acc.denda += details.reduce((s, d) => s + (d.denda || 0), 0);
+    acc.jumlah += details.reduce((s, d) => s + (d.total || 0), 0);
 
-            /* === TUNGGAKAN (SAAT INI 0, SIAP DIPAKAI) === */
-            acc.tunggakanSewa += 0;
-            acc.tunggakanKebersihan += 0;
-            acc.tunggakanKeamanan += 0;
-            acc.tunggakanDenda += 0;
-            acc.tunggakanJumlah += 0;
+    acc.tunggakanSewa += 0;
+    acc.tunggakanKebersihan += 0;
+    acc.tunggakanKeamanan += 0;
+    acc.tunggakanDenda += 0;
+    acc.tunggakanJumlah += 0;
 
-            return acc;
-          },
-          {
-            sewa: 0,
-            kebersihan: 0,
-            keamanan: 0,
-            denda: 0,
-            jumlah: 0,
-            tunggakanSewa: 0,
-            tunggakanKebersihan: 0,
-            tunggakanKeamanan: 0,
-            tunggakanDenda: 0,
-            tunggakanJumlah: 0,
-          }
-        );
+    return acc;
+  },
+  {
+    sewa: 0,
+    kebersihan: 0,
+    keamanan: 0,
+    denda: 0,
+    jumlah: 0,
+    tunggakanSewa: 0,
+    tunggakanKebersihan: 0,
+    tunggakanKeamanan: 0,
+    tunggakanDenda: 0,
+    tunggakanJumlah: 0,
+  }
+);
 
         /* ===== LOGIKA FOOTER PAGE BREAK ===== */
         const totalRowsWithJumlah = page.length + 1;
@@ -202,18 +201,18 @@ function LaporanPembayaranPreviewContent() {
                 {isLastPage && (
                   <tr className="row-jumlah">
                     <td colSpan={8}><strong>JUMLAH</strong></td>
-                    <td className="num"><strong>Rp {totalPage.sewa.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.kebersihan.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.keamanan.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.denda.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.jumlah.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.sewa.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.kebersihan.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.keamanan.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.denda.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.jumlah.toLocaleString("id-ID")}</strong></td>
 
 					<td colSpan={1} />
-					<td className="num"><strong>Rp {totalPage.tunggakanSewa.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.tunggakanKebersihan.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.tunggakanKeamanan.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.tunggakanDenda.toLocaleString("id-ID")}</strong></td>
-                    <td className="num"><strong>Rp {totalPage.tunggakanJumlah.toLocaleString("id-ID")}</strong></td>
+					<td className="num"><strong>Rp {grandTotal.tunggakanSewa.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.tunggakanKebersihan.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.tunggakanKeamanan.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.tunggakanDenda.toLocaleString("id-ID")}</strong></td>
+                    <td className="num"><strong>Rp {grandTotal.tunggakanJumlah.toLocaleString("id-ID")}</strong></td>
                     <td />
                   </tr>
                 )}

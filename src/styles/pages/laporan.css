@@ -346,3 +346,43 @@
     transform: translateY(0);
   }
 }
+
+.pdf-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.pdf-loading-popup {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  min-width: 280px;
+}
+
+.pdf-loading-icon {
+  animation: spin 1s linear infinite;
+  color: #2563eb;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pdf-loading-popup p {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.pdf-loading-popup span {
+  font-size: 13px;
+  color: #666;
+}
