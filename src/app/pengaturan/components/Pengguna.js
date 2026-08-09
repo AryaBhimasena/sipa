@@ -10,6 +10,12 @@ import {
 
 import { API_URL } from "../../../lib/api";
 
+const ROLE_OPTIONS = [
+  "Kasir",
+  "Admin",
+  "System Administrator",
+];
+
 export default function Pengguna() {
   const [users, setUsers] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -30,17 +36,36 @@ export default function Pengguna() {
       const json = await res.json();
 
       if (json.success) {
-        setUsers(json.data || []);
+        const normalizedUsers = (json.data || []).map(
+          (user) => ({
+            ...user,
+
+            /*
+             * Pastikan aktif selalu boolean
+             */
+            aktif:
+              user.aktif === true ||
+              user.aktif === "true" ||
+              user.aktif === "TRUE" ||
+              user.aktif === 1 ||
+              user.aktif === "1",
+
+            /*
+             * Pertahankan role dari API
+             */
+            role: user.role || "",
+          })
+        );
+
+        setUsers(normalizedUsers);
       } else {
         console.error(json.message);
         setUsers([]);
       }
-
-      setLoading(false);
-
     } catch (error) {
       console.error(error);
       setUsers([]);
+    } finally {
       setLoading(false);
     }
   }
@@ -116,16 +141,18 @@ export default function Pengguna() {
           json.message ||
             "Gagal memperbarui data"
         );
+
         setLoading(false);
         return;
       }
 
-      alert("Data berhasil diperbarui");
+      alert(
+        "Data berhasil diperbarui"
+      );
 
       setEditId(null);
 
       await fetchUsers();
-
     } catch (error) {
       console.error(error);
       alert("Terjadi kesalahan");
@@ -173,7 +200,6 @@ export default function Pengguna() {
       alert("User berhasil dihapus");
 
       await fetchUsers();
-
     } catch (error) {
       console.error(error);
       alert("Terjadi kesalahan");
@@ -183,16 +209,16 @@ export default function Pengguna() {
   }
 
   return (
-    <table className="setting-table">
+    <table>
       <thead>
         <tr>
-          <th width="60">No</th>
+          <th>No</th>
           <th>Nama</th>
           <th>Jabatan</th>
           <th>Username</th>
           <th>Status</th>
           <th>Role</th>
-          <th width="110">Aksi</th>
+          <th>Aksi</th>
         </tr>
       </thead>
 
@@ -221,17 +247,25 @@ export default function Pengguna() {
               <td>{index + 1}</td>
 
               <td>
-                <strong>{item.nama}</strong>
+                <strong>
+                  {item.nama}
+                </strong>
               </td>
 
-              <td>{item.jabatan}</td>
+              <td>
+                {item.jabatan}
+              </td>
 
-              <td>{item.username}</td>
+              <td>
+                {item.username}
+              </td>
 
               <td>
                 <select
                   className="table-select"
-                  value={String(item.aktif)}
+                  value={String(
+                    item.aktif
+                  )}
                   disabled={
                     editId !== item.id
                   }
@@ -256,7 +290,7 @@ export default function Pengguna() {
               <td>
                 <select
                   className="table-select"
-                  value={item.role}
+                  value={item.role || ""}
                   disabled={
                     editId !== item.id
                   }
@@ -268,13 +302,32 @@ export default function Pengguna() {
                     )
                   }
                 >
-                  <option>
-                    System Administrator
-                  </option>
+                  {/*
+                   * Role dari API akan
+                   * ditampilkan sesuai
+                   * nilainya.
+                   */}
+                  {item.role &&
+                    !ROLE_OPTIONS.includes(
+                      item.role
+                    ) && (
+                      <option
+                        value={item.role}
+                      >
+                        {item.role}
+                      </option>
+                    )}
 
-                  <option>
-                    Admin
-                  </option>
+                  {ROLE_OPTIONS.map(
+                    (role) => (
+                      <option
+                        key={role}
+                        value={role}
+                      >
+                        {role}
+                      </option>
+                    )
+                  )}
                 </select>
               </td>
 

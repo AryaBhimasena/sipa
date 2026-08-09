@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useUser } from "../lib/context/UserContext";
@@ -9,7 +9,6 @@ import "../styles/navbar.css";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const router = useRouter();
   const user = useUser();
 
   const [laporanOpen, setLaporanOpen] = useState(false);
@@ -21,11 +20,11 @@ export default function NavBar() {
    * =====================================================
    */
 
-  const role = user?.role;
+  const role = String(user?.role || "").trim();
 
   /*
    * =====================================================
-   * HAK AKSES
+   * HAK AKSES MENU
    * =====================================================
    */
 
@@ -55,62 +54,14 @@ export default function NavBar() {
    */
 
   const isActive = (path) => {
-    return pathname === path || pathname.startsWith(path + "/");
+    return (
+      pathname === path ||
+      pathname.startsWith(path + "/")
+    );
   };
 
-  const isLaporanActive = pathname.startsWith("/laporan");
-
-  /*
-   * =====================================================
-   * ROUTE GUARD
-   * =====================================================
-   *
-   * Tetap melakukan pengecekan apabila user mengetik
-   * URL halaman secara langsung.
-   */
-
-  useEffect(() => {
-    if (!user) return;
-
-    let allowed = true;
-
-    if (pathname.startsWith("/dashboard")) {
-      allowed =
-        role === "Admin" ||
-        role === "System Administrator";
-    }
-
-    else if (pathname.startsWith("/loket")) {
-      allowed =
-        role === "Kasir" ||
-        role === "Admin" ||
-        role === "System Administrator";
-    }
-
-    else if (pathname.startsWith("/laporan")) {
-      allowed =
-        role === "Admin" ||
-        role === "System Administrator";
-    }
-
-    else if (pathname.startsWith("/master")) {
-      allowed =
-        role === "System Administrator";
-    }
-
-    else if (pathname.startsWith("/pengaturan")) {
-      allowed =
-        role === "System Administrator";
-    }
-
-    if (!allowed) {
-      /*
-       * Semua role yang valid saat ini memiliki
-       * akses ke /loket.
-       */
-      router.replace("/loket");
-    }
-  }, [pathname, role, user, router]);
+  const isLaporanActive =
+    pathname.startsWith("/laporan");
 
   /*
    * =====================================================
@@ -128,10 +79,16 @@ export default function NavBar() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
     };
   }, []);
 
@@ -146,7 +103,9 @@ export default function NavBar() {
         <Link
           href="/dashboard"
           className={`nav-item ${
-            isActive("/dashboard") ? "active" : ""
+            isActive("/dashboard")
+              ? "active"
+              : ""
           }`}
         >
           Dashboard
@@ -161,7 +120,9 @@ export default function NavBar() {
         <Link
           href="/loket"
           className={`nav-item ${
-            isActive("/loket") ? "active" : ""
+            isActive("/loket")
+              ? "active"
+              : ""
           }`}
         >
           Loket
@@ -173,21 +134,30 @@ export default function NavBar() {
       ================================================= */}
 
       {canAccessLaporan && (
-        <div className="nav-dropdown" ref={laporanRef}>
+        <div
+          className="nav-dropdown"
+          ref={laporanRef}
+        >
           <button
             type="button"
             className={`nav-item nav-dropdown-button ${
-              isLaporanActive ? "active" : ""
+              isLaporanActive
+                ? "active"
+                : ""
             }`}
             onClick={() =>
-              setLaporanOpen((prev) => !prev)
+              setLaporanOpen(
+                (prev) => !prev
+              )
             }
           >
             Laporan
 
             <span
               className={`nav-dropdown-arrow ${
-                laporanOpen ? "open" : ""
+                laporanOpen
+                  ? "open"
+                  : ""
               }`}
             >
               ▼
@@ -240,7 +210,9 @@ export default function NavBar() {
         <Link
           href="/master"
           className={`nav-item ${
-            isActive("/master") ? "active" : ""
+            isActive("/master")
+              ? "active"
+              : ""
           }`}
         >
           Master Data
@@ -255,7 +227,9 @@ export default function NavBar() {
         <Link
           href="/pengaturan"
           className={`nav-item ${
-            isActive("/pengaturan") ? "active" : ""
+            isActive("/pengaturan")
+              ? "active"
+              : ""
           }`}
         >
           Pengaturan
