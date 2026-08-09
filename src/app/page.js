@@ -1,6 +1,9 @@
 "use client";
+
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { API_URL } from "../lib/api";
+
 import "../styles/login.css";
 
 export default function LoginPage() {
@@ -16,7 +19,7 @@ export default function LoginPage() {
 
     try {
       const url =
-        `${process.env.NEXT_PUBLIC_API_URL}` +
+        `${API_URL}` +
         `?path=login` +
         `&username=${encodeURIComponent(username)}` +
         `&password=${encodeURIComponent(password)}`;
@@ -31,20 +34,43 @@ export default function LoginPage() {
         return;
       }
 
+      /* ==========================
+         SIMPAN SESSION
+      ========================== */
+
       localStorage.setItem(
         "session",
         JSON.stringify({
           token: json.data.token,
-          user: json.data.user,
+
+          user: {
+            id: json.data.user.id,
+            nama: json.data.user.nama,
+            jabatan: json.data.user.jabatan,
+            username: json.data.user.username,
+            aktif: json.data.user.aktif,
+            role: json.data.user.role,
+          },
         })
       );
 
-      document.cookie = `session=${json.data.token}; path=/`;
+      /* ==========================
+         COOKIE
+      ========================== */
+
+      document.cookie =
+        `session=${json.data.token}; path=/`;
+
+      document.cookie =
+        `role=${encodeURIComponent(
+          json.data.user.role
+        )}; path=/`;
 
       router.push("/dashboard");
 
     } catch (err) {
       setLoading(false);
+
       alert("Gagal koneksi ke server");
       console.error(err);
     }

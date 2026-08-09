@@ -101,14 +101,14 @@ const grandTotal = filteredData.reduce(
           <div key={pageIndex} className="preview-paper page-break">
             <div className="preview-header">
               <img
-                src="/logo-perumda-baiman.PNG"
-                alt="Logo Perumda Baiman"
+                src="/logo-perumda-banjarmasin.PNG"
+                alt="Logo Perumda Banjarmasin"
                 className="preview-logo"
               />
 
               <div className="preview-header-text">
                 <h2 className="preview-title">
-                  PERUSAHAAN UMUM DAERAH PASAR BAIMAN BANJARMASIN
+                  PERUSAHAAN UMUM DAERAH PASAR BANJARMASIN
                 </h2>
                 <p className="preview-subtitle">
                   Laporan Pembayaran Tarif Jasa Layanan
@@ -236,7 +236,7 @@ const grandTotal = filteredData.reduce(
                 <div>
                   <p><b>Verifikasi</b></p>
                   <div className="sign-space" />
-                  <p><b>Juli Saputra</b></p>
+                  <p><b>Helmawan</b></p>
                   <p>Kepala Pasar Zona 2 Antasari</p>
                 </div>
 
@@ -250,7 +250,7 @@ const grandTotal = filteredData.reduce(
                 <div>
                   <p><b>Mengetahui</b></p>
                   <div className="sign-space" />
-                  <p><b>Azhar Budi, S.E</b></p>
+                  <p><b>Azhar Budi</b></p>
                   <p>Direktur Operasional & Bisnis</p>
                 </div>
               </div>

@@ -171,14 +171,14 @@ useEffect(() => {
             <div className="kuitansi-header">
               <div className="kop-left">
                 <img
-                  src="/logo-perumda-baiman.PNG"
-                  alt="Logo Perumda Pasar Baiman"
+                  src="/logo-perumda-banjarmasin.PNG"
+                  alt="Logo Perumda Pasar Banjarmasin"
                   className="kop-logo"
                 />
               </div>
 
               <div className="kop-center">
-                <h3>PERUSAHAAN UMUM DAERAH PASAR BAIMAN BANJARMASIN</h3>
+                <h3>PERUSAHAAN UMUM DAERAH PASAR BANJARMASIN</h3>
                 <p>Pasar Sentra Antasari Banjarmasin</p>
                 <h4>KUITANSI TARIF JASA PELAYANAN</h4>
                 <p className="subtitle">( TANDA BUKTI PEMBAYARAN )</p>

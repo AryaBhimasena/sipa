@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Header from "../../components/Header";
-import NavBar from "../../components/NavBar";
-import ContainerCard from "../../components/ContainerCard";
-import ModalKuitansi from "../../components/ModalKuitansi";
-import { API_URL } from "../../lib/api";
-import { useLaporanPembayaran } from "../../lib/laporan/useLaporanPembayaran";
-import { buildKuitansi, applyDateFilter, handleExportPDF } from "../../lib/laporan/utilLaporanPembayaran";
-import LaporanPembayaranTable from "../../lib/laporan/laporanPembayaranTable";
+import { useState, useMemo, useEffect } from "react";
+import Header from "../../../components/Header";
+import NavBar from "../../../components/NavBar";
+import ContainerCard from "../../../components/ContainerCard";
+import ModalKuitansi from "../../../components/ModalKuitansi";
+import { API_URL } from "../../../lib/api";
+import { useLaporanPembayaran } from "../../../lib/laporan/useLaporanPembayaran";
+import { buildKuitansi, applyDateFilter, handleExportPDF } from "../../../lib/laporan/utilLaporanPembayaran";
+import LaporanPembayaranTable from "../../../lib/laporan/laporanPembayaranTable";
+import {
+  PERIODE,
+  applyPeriode,
+  syncPeriode,
+} from "../../../lib/laporan/utilPeriodeFilter";
 
-import "../../styles/layout.css";
-import "../../styles/pages/laporan.css";
+import "../../../styles/layout.css";
+import "../../../styles/pages/laporan.css";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -25,11 +30,26 @@ export default function LaporanPembayaranPage() {
   const [expandedRow, setExpandedRow] = useState(null);
   const [tglAwal, setTglAwal] = useState("");
   const [tglAkhir, setTglAkhir] = useState("");
+  const [periode, setPeriode] = useState(PERIODE.HARIAN);
   const [filteredByDate, setFilteredByDate] = useState(null);
 
   const [kuitansiOpen, setKuitansiOpen] = useState(false);
   const [kuitansiData, setKuitansiData] = useState(null);
   const [kuitansiPedagang, setKuitansiPedagang] = useState(null);
+  
+	useEffect(() => {
+	  applyPeriode(PERIODE.HARIAN, setTglAwal, setTglAkhir);
+	}, []);
+
+const handlePeriodeChange = (e) => {
+  const value = e.target.value;
+
+  setPeriode(value);
+
+  if (value !== PERIODE.CUSTOM) {
+    applyPeriode(value, setTglAwal, setTglAkhir);
+  }
+};
 
 	const sourceData = filteredByDate ?? data;
 
@@ -223,16 +243,39 @@ const handleDeleteDetail = async (idTransaksi, bulan) => {
 
 			  {/* KANAN – CONTROLLER */}
 			  <div className="laporan-filter-controls">
+				<select
+				  value={periode}
+				  onChange={handlePeriodeChange}
+				>
+				  <option value={PERIODE.HARIAN}>Harian</option>
+				  <option value={PERIODE.MINGGUAN}>Mingguan</option>
+				  <option value={PERIODE.BULANAN}>Bulanan</option>
+				  <option value={PERIODE.TAHUNAN}>Tahunan</option>
+				  <option value={PERIODE.CUSTOM}>Custom</option>
+				</select>
+				
 				<input
 				  type="date"
 				  value={tglAwal}
-				  onChange={(e) => setTglAwal(e.target.value)}
+				  onChange={(e) => {
+					  const value = e.target.value;
+
+					  setTglAwal(value);
+
+					  syncPeriode(value, tglAkhir, setPeriode);
+					}}
 				/>
 
 				<input
 				  type="date"
 				  value={tglAkhir}
-				  onChange={(e) => setTglAkhir(e.target.value)}
+				  onChange={(e) => {
+					  const value = e.target.value;
+
+					  setTglAkhir(value);
+
+					  syncPeriode(tglAwal, value, setPeriode);
+					}}
 				/>
 
 				<button

@@ -1,283 +1,1100 @@
 "use client";
 
-import Header from "../../components/Header";
-import NavBar from "../../components/NavBar";
-import ContainerCard from "../../components/ContainerCard";
-import { Construction } from "lucide-react";
-
-import "../../styles/pages/master-data.css";
-
-export default function MasterDataPage() {
-  return (
-    <>
-      <Header />
-      <NavBar />
-
-      <main className="master-data-page">
-        <ContainerCard
-          title="Master Data"
-          subtitle="Halaman ini sedang dalam pengembangan"
-        >
-          <div className="md-under-development">
-            <Construction size={64} />
-            <h2>Halaman Sedang Dalam Pengembangan</h2>
-            <p>
-              Fitur Master Data saat ini belum tersedia dan sedang dalam tahap
-              pengembangan.
-            </p>
-            <p>Silakan kembali lagi nanti.</p>
-          </div>
-        </ContainerCard>
-      </main>
-    </>
-  );
-}
-
-/*
-"use client";
-
 import { useEffect, useState, useMemo } from "react";
 
 import Header from "../../components/Header";
 import NavBar from "../../components/NavBar";
 import ContainerCard from "../../components/ContainerCard";
+import MasterDataModal from "../../components/MasterDataModal";
 
 import { API_URL } from "../../lib/api";
 
 import "../../styles/pages/master-data.css";
-import { Construction } from "lucide-react";
 
-
+import {
+  Pencil,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Search,
+  RefreshCw,
+} from "lucide-react";
 
 function formatRupiah(value) {
-  if (value === null || value === undefined) return "";
-  return Number(value).toLocaleString("id-ID");
-}
+  if (!value) return "0";
 
-function parseRupiah(value) {
-  return Number(value.replace(/\./g, ""));
+  return Number(value).toLocaleString(
+    "id-ID"
+  );
 }
 
 export default function MasterDataPage() {
-  const [activeTab, setActiveTab] = useState("jenisObjek");
-  const [jenisObjek, setJenisObjek] = useState([]);
-  const [tarif, setTarif] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [masterData, setMasterData] =
+    useState([]);
 
-  const [editingTarifId, setEditingTarifId] = useState(null);
-  const [editedTarif, setEditedTarif] = useState("");
-  
-const mergedData = useMemo(() => {
-  const tarifKebersihan = tarif.find((t) => t.id_tarif === "KBS-01");
-  const tarifKeamanan = tarif.find((t) => t.id_tarif === "KAM-01");
+  const [loading, setLoading] =
+    useState(true);
 
-  const data = jenisObjek.map((jo) => {
-    const tarifSewa = tarif.find((t) => t.id_tarif === jo.id_tarif);
+  const [showModal, setShowModal] =
+    useState(false);
 
-    return {
-      ...jo,
-      tarifSewa: tarifSewa?.tarif ?? 0,
-      perhitungan: tarifSewa?.perhitungan ?? "",
-      keterangan: tarifSewa?.keterangan ?? "",
-      tarifKebersihan: tarifKebersihan?.tarif ?? 0,
-      tarifKeamanan: tarifKeamanan?.tarif ?? 0,
-    };
-  });
+  const [modalMode, setModalMode] =
+    useState("add");
 
-  // ✅ SORT: jenis_objek dulu, lalu TIPE
-  return data.sort((a, b) => {
-    const jenisCompare = (a.jenis_objek || "").localeCompare(
-      b.jenis_objek || "",
-      "id",
-      { sensitivity: "base" }
-    );
+  const [selectedData, setSelectedData] =
+    useState(null);
 
-    if (jenisCompare !== 0) return jenisCompare;
+  /* =====================================
+     SEARCH + FILTERS
+  ===================================== */
 
-    return (a.TIPE || "").localeCompare(
-      b.TIPE || "",
-      "id",
-      { sensitivity: "base" }
-    );
-  });
-}, [jenisObjek, tarif]);
+  const [searchTerm, setSearchTerm] =
+    useState("");
+
+  const [filterJenis, setFilterJenis] =
+    useState("");
+
+  const [filterTipe, setFilterTipe] =
+    useState("");
+
+  const [filterLantai, setFilterLantai] =
+    useState("");
+
+  const [filterBlok, setFilterBlok] =
+    useState("");
+
+  const [
+    filterStatus,
+    setFilterStatus,
+  ] = useState("");
+
+  /* =====================================
+     PAGINATION
+  ===================================== */
+
+  const ITEMS_PER_PAGE = 20;
+
+  const [currentPage, setCurrentPage] =
+    useState(1);
+
+  /* =====================================
+     FETCH DATA
+     
+     Digunakan oleh:
+     - initial load
+     - tombol reload
+     - setelah CREATE
+     - setelah UPDATE
+  ===================================== */
+
+  async function fetchData() {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `${API_URL}?path=dataJoin`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          `HTTP ${res.status}`
+        );
+      }
+
+      const json =
+        await res.json();
+
+      if (json.success) {
+        setMasterData(
+          Array.isArray(json.data)
+            ? json.data
+            : []
+        );
+
+        setCurrentPage(1);
+      } else {
+        console.error(
+          "Gagal mengambil data:",
+          json.message
+        );
+
+        setMasterData([]);
+        setCurrentPage(1);
+
+        throw new Error(
+          json.message ||
+            "Gagal mengambil data master."
+        );
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Gagal mengambil data:",
+        error
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  }
+
+  /* =====================================
+     INITIAL LOAD
+  ===================================== */
 
   useEffect(() => {
-    async function fetchMasterData() {
-      try {
-        const [resJenisObjek, resTarif] = await Promise.all([
-          fetch(`${API_URL}?path=jenisObjek`),
-          fetch(`${API_URL}?path=tarif`),
-        ]);
-
-        const jsonJenisObjek = await resJenisObjek.json();
-        const jsonTarif = await resTarif.json();
-
-        if (jsonJenisObjek.success) {
-          setJenisObjek(jsonJenisObjek.data);
-        }
-
-        if (jsonTarif.success) {
-          setTarif(jsonTarif.data);
-        }
-      } catch (error) {
-        console.error("Gagal memuat master data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMasterData();
+    fetchData();
   }, []);
 
-	async function handleSaveTarif(id_tarif) {
-	  try {
-		const formData = new FormData();
-		formData.append("id_tarif", id_tarif);
-		formData.append("tarif", parseRupiah(editedTarif)); // boleh 0
+  /* =====================================
+     DYNAMIC FILTER OPTIONS
+  ===================================== */
 
-		const res = await fetch(`${API_URL}?path=updateTarif`, {
-		  method: "POST",
-		  body: formData, // ✅ tanpa headers JSON
-		});
+  function createFilterOptions(values) {
 
-		const json = await res.json();
+    return [
+      ...new Set(
+        values
+          .map((value) =>
+            String(
+              value ?? ""
+            ).trim()
+          )
+          .filter(
+            (value) =>
+              value !== "" &&
+              value !== "-" &&
+              value !== "null" &&
+              value !== "undefined"
+          )
+      ),
+    ].sort((a, b) =>
+      a.localeCompare(
+        b,
+        "id",
+        {
+          sensitivity: "base",
+          numeric: true,
+        }
+      )
+    );
+  }
 
-		if (!json.success) {
-		  throw new Error(json.message || "Gagal update tarif");
-		}
+  /* =====================================
+     FILTER OPTION:
+     JENIS OBJEK
+  ===================================== */
 
-		setTarif((prev) =>
-		  prev.map((item) =>
-			item.id_tarif === id_tarif
-			  ? { ...item, tarif: parseRupiah(editedTarif) }
-			  : item
-		  )
-		);
+  const jenisOptions =
+    useMemo(() => {
 
-		setEditingTarifId(null);
-		setEditedTarif("");
-	  } catch (err) {
-		console.error("Gagal menyimpan tarif:", err.message);
-	  }
-	}
+      return createFilterOptions(
+        masterData.map(
+          (item) =>
+            item.objek?.jenis
+        )
+      );
+
+    }, [masterData]);
+
+  /* =====================================
+     FILTER OPTION:
+     TIPE
+  ===================================== */
+
+  const tipeOptions =
+    useMemo(() => {
+
+      return createFilterOptions(
+        masterData.map(
+          (item) =>
+            item.objek?.tipe
+        )
+      );
+
+    }, [masterData]);
+
+  /* =====================================
+     FILTER OPTION:
+     LANTAI
+  ===================================== */
+
+  const lantaiOptions =
+    useMemo(() => {
+
+      return createFilterOptions(
+        masterData.map(
+          (item) =>
+            item.lantai
+        )
+      );
+
+    }, [masterData]);
+
+  /* =====================================
+     FILTER OPTION:
+     BLOK
+  ===================================== */
+
+  const blokOptions =
+    useMemo(() => {
+
+      return createFilterOptions(
+        masterData.map(
+          (item) =>
+            item.blok
+        )
+      );
+
+    }, [masterData]);
+
+  /* =====================================
+     FILTER OPTION:
+     STATUS PEMBAYARAN
+  ===================================== */
+
+  const statusOptions =
+    useMemo(() => {
+
+      return createFilterOptions(
+        masterData.map(
+          (item) =>
+            item.status_pembayaran
+        )
+      );
+
+    }, [masterData]);
+
+  /* =====================================
+     FILTER DATA
+  ===================================== */
+
+  const filteredData =
+    useMemo(() => {
+
+      return masterData.filter(
+        (item) => {
+
+          const search =
+            searchTerm
+              .toLowerCase()
+              .trim();
+
+          const matchSearch =
+            item.id_reg
+              ?.toString()
+              .toLowerCase()
+              .includes(search) ||
+
+            item.nama
+              ?.toString()
+              .toLowerCase()
+              .includes(search) ||
+
+            String(item.no ?? "")
+              .toLowerCase()
+              .includes(search);
+
+          const matchJenis =
+            !filterJenis ||
+            item.objek?.jenis ===
+              filterJenis;
+
+          const matchTipe =
+            !filterTipe ||
+            item.objek?.tipe ===
+              filterTipe;
+
+          const matchLantai =
+            !filterLantai ||
+            String(
+              item.lantai ?? ""
+            ) === filterLantai;
+
+          const matchBlok =
+            !filterBlok ||
+            String(
+              item.blok ?? ""
+            ) === filterBlok;
+
+          const matchStatus =
+            !filterStatus ||
+            item.status_pembayaran ===
+              filterStatus;
+
+          return (
+            matchSearch &&
+            matchJenis &&
+            matchTipe &&
+            matchLantai &&
+            matchBlok &&
+            matchStatus
+          );
+        }
+      );
+
+    }, [
+      masterData,
+      searchTerm,
+      filterJenis,
+      filterTipe,
+      filterLantai,
+      filterBlok,
+      filterStatus,
+    ]);
+
+  /* =====================================
+     RESET PAGE IF FILTER CHANGED
+  ===================================== */
+
+  useEffect(() => {
+
+    setCurrentPage(1);
+
+  }, [
+    searchTerm,
+    filterJenis,
+    filterTipe,
+    filterLantai,
+    filterBlok,
+    filterStatus,
+  ]);
+
+  /* =====================================
+     PAGINATION
+  ===================================== */
+
+  const totalPages =
+    Math.ceil(
+      filteredData.length /
+        ITEMS_PER_PAGE
+    );
+
+  const paginatedData =
+    useMemo(() => {
+
+      const start =
+        (currentPage - 1) *
+        ITEMS_PER_PAGE;
+
+      return filteredData.slice(
+        start,
+        start + ITEMS_PER_PAGE
+      );
+
+    }, [
+      filteredData,
+      currentPage,
+    ]);
+
+  /* =====================================
+     PAGINATION HANDLER
+  ===================================== */
+
+  function handlePrevPage() {
+
+    if (currentPage > 1) {
+
+      setCurrentPage(
+        (p) => p - 1
+      );
+
+    }
+  }
+
+  function handleNextPage() {
+
+    if (
+      currentPage <
+      totalPages
+    ) {
+
+      setCurrentPage(
+        (p) => p + 1
+      );
+
+    }
+  }
+
+  /* =====================================
+     EDIT
+  ===================================== */
+
+  function handleEdit(data) {
+
+    setModalMode("edit");
+
+    setSelectedData(data);
+
+    setShowModal(true);
+
+  }
+
+  /* =====================================
+     DELETE
+  ===================================== */
+
+  function handleDelete(data) {
+
+    /*
+      DELETE belum diaktifkan pada
+      tahap ini karena fokus sekarang
+      adalah CREATE dan UPDATE.
+    */
+
+    console.log(
+      "Delete:",
+      data
+    );
+
+  }
+
+  /* =====================================
+     ADD DATA
+  ===================================== */
+
+  function handleAddData() {
+
+    setModalMode("add");
+
+    setSelectedData(null);
+
+    setShowModal(true);
+
+  }
+
+  /* =====================================
+     SAVE MODAL
+     
+     Mode:
+     - add  -> apiCreateMasterData
+     - edit -> apiUpdateMasterData
+  ===================================== */
+
+  async function handleSaveModal(data) {
+
+    try {
+
+      /*
+        Tentukan endpoint berdasarkan
+        mode modal.
+      */
+
+      const path =
+        modalMode === "edit"
+          ? "updateMasterData"
+          : "createMasterData";
+
+      /*
+        Payload tetap menggunakan
+        struktur nested dari modal.
+
+        Contoh:
+
+        {
+          id_reg: "...",
+          nama: "...",
+          objek: {
+            id: "..."
+          },
+          tarif: {
+            keamanan: {
+              id: "..."
+            },
+            kebersihan: {
+              id: "..."
+            }
+          }
+        }
+
+        Endpoint GAS sudah memiliki
+        getMasterDataPayload()
+        yang dapat membaca struktur ini.
+      */
+
+      const res = await fetch(
+        `${API_URL}?path=${path}`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            data,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          `HTTP ${res.status}`
+        );
+      }
+
+      const json =
+        await res.json();
+
+      /*
+        Validasi response dari GAS.
+      */
+
+      if (!json.success) {
+
+        throw new Error(
+          json.message ||
+            (
+              modalMode === "edit"
+                ? "Gagal memperbarui data."
+                : "Gagal menambahkan data."
+            )
+        );
+
+      }
+
+      /*
+        Berhasil:
+        - tutup modal
+        - reset selected data
+        - reload data terbaru
+      */
+
+      setShowModal(false);
+
+      setSelectedData(null);
+
+      await fetchData();
+
+    } catch (error) {
+
+      console.error(
+        "Gagal menyimpan master data:",
+        error
+      );
+
+      /*
+        Error dilempar kembali ke modal.
+
+        Dengan begitu:
+        MasterDataModal akan menampilkan
+        "Data gagal disimpan."
+      */
+
+      throw error;
+    }
+  }
+
+  /* =====================================
+     RENDER
+  ===================================== */
 
   return (
     <>
       <Header />
+
       <NavBar />
 
       <main className="master-data-page">
+
         <ContainerCard
           title="Master Data"
-          subtitle="Halaman Pengaturan untuk Master Data"
+          subtitle="Data Penyewa dan Informasi Tarif"
         >
-          {loading ? (
-            <p className="md-loading">Memuat data...</p>
-          ) : (
-            <>
-			<div className="md-tabs">
-			  <button className="md-tab active">
-				Jenis Objek & Tarif
-			  </button>
-			</div>
 
-			<section className="md-section">
-			<div className="md-table-wrapper">
-			  <table className="md-table">
-				<thead>
-				  <tr>
-					<th className="col-center">ID</th>
-					<th className="col-center">Jenis Objek</th>
-					<th className="col-center">Tipe</th>
-					<th className="col-center">Dimensi</th>
-					<th className="col-right">Tarif Sewa</th>
-					<th className="col-right">Tarif Kebersihan</th>
-					<th className="col-right">Tarif Keamanan</th>
-					<th className="col-center">Perhitungan</th>
-					<th className="col-left">Keterangan</th>
-					<th className="col-center col-aksi">Aksi</th>
-				  </tr>
-				</thead>
+          <section className="md-section">
 
-				<tbody>
-				  {mergedData.map((item) => (
-					<tr key={item.id_jenis_objek}>
-					  <td className="col-center">{item.id_jenis_objek}</td>
-					  <td className="col-center">{item.jenis_objek}</td>
-					  <td className="col-center">{item.TIPE}</td>
-					  <td className="col-center">{item.dimensi}</td>
+            {/* ==========================
+                TOOLBAR
+            ========================== */}
 
-						<td className="col-right">
-						  {editingTarifId === item.id_tarif ? (
-							<input
-							  className="tarif-input"
-							  value={editedTarif}
-							  onChange={(e) =>
-								setEditedTarif(
-								  formatRupiah(parseRupiah(e.target.value || "0"))
-								)
-							  }
-							/>
-						  ) : (
-							<span>Rp {formatRupiah(item.tarifSewa)}</span>
-						  )}
-						</td>
+            <div className="md-toolbar">
 
-						<td className="col-right">
-						  <span>Rp {formatRupiah(item.tarifKebersihan)}</span>
-						</td>
+              {/* ========================
+                  LEFT
+              ======================== */}
 
-						<td className="col-right">
-						  <span>Rp {formatRupiah(item.tarifKeamanan)}</span>
-						</td>
+              <div className="toolbar-left">
 
-					  <td className="col-center">{item.perhitungan}</td>
-					  <td className="col-left">{item.keterangan}</td>
+                <div className="search-box">
 
-					  <td className="col-center col-aksi">
-						{editingTarifId === item.id_tarif ? (
-						  <div className="action-group">
-							<button
-							  className="btn-save"
-							  onClick={() => handleSaveTarif(item.id_tarif)}
-							>
-							  Simpan
-							</button>
-							<button
-							  className="btn-cancel"
-							  onClick={() => {
-								setEditingTarifId(null);
-								setEditedTarif("");
-							  }}
-							>
-							  Batal
-							</button>
-						  </div>
-						) : (
-						  <button
-							className="btn-edit"
-							onClick={() => {
-							  setEditingTarifId(item.id_tarif);
-							  setEditedTarif(formatRupiah(item.tarif));
-							}}
-						  >
-							Edit Tarif
-						  </button>
-						)}
-					  </td>
-					</tr>
-				  ))}
-				</tbody>
-			  </table>
-			</div>
-			</section>
-			
-					   </>
-          )}
+                  <Search size={16} />
+
+                  <input
+                    type="text"
+                    placeholder="Cari ID, Nama, Nomor Toko..."
+                    value={searchTerm}
+                    onChange={(e) =>
+                      setSearchTerm(
+                        e.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
+                <select
+                  value={filterJenis}
+                  onChange={(e) =>
+                    setFilterJenis(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Semua Objek
+                  </option>
+
+                  {jenisOptions.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+                <select
+                  value={filterTipe}
+                  onChange={(e) =>
+                    setFilterTipe(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Semua Tipe
+                  </option>
+
+                  {tipeOptions.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+                <select
+                  value={filterLantai}
+                  onChange={(e) =>
+                    setFilterLantai(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Semua Lantai
+                  </option>
+
+                  {lantaiOptions.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+                <select
+                  value={filterBlok}
+                  onChange={(e) =>
+                    setFilterBlok(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Semua Blok
+                  </option>
+
+                  {blokOptions.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+                <select
+                  value={filterStatus}
+                  onChange={(e) =>
+                    setFilterStatus(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Semua Status
+                  </option>
+
+                  {statusOptions.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+              </div>
+
+              {/* ========================
+                  RIGHT
+              ======================== */}
+
+              <div className="toolbar-right">
+
+                <button
+                  type="button"
+                  className="btn-reload-data"
+                  onClick={fetchData}
+                  disabled={loading}
+                  title="Muat ulang data"
+                >
+                  <RefreshCw
+                    size={17}
+                    className={
+                      loading
+                        ? "icon-spin"
+                        : ""
+                    }
+                  />
+
+                  <span>
+                    Reload
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-add-data"
+                  onClick={
+                    handleAddData
+                  }
+                >
+                  <Plus size={18} />
+
+                  <span>
+                    Tambah Data
+                  </span>
+                </button>
+
+                <div className="md-pagination">
+
+                  <button
+                    type="button"
+                    onClick={
+                      handlePrevPage
+                    }
+                    disabled={
+                      currentPage === 1
+                    }
+                    className="pg-btn"
+                    title="Halaman sebelumnya"
+                  >
+                    <ChevronLeft
+                      size={18}
+                    />
+                  </button>
+
+                  <span className="pg-info">
+                    Page{" "}
+                    {currentPage}
+                    {" / "}
+                    {totalPages || 1}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={
+                      handleNextPage
+                    }
+                    disabled={
+                      currentPage ===
+                        totalPages ||
+                      totalPages === 0
+                    }
+                    className="pg-btn"
+                    title="Halaman berikutnya"
+                  >
+                    <ChevronRight
+                      size={18}
+                    />
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* ==========================
+                TABLE
+            ========================== */}
+
+            <div className="md-table-wrapper">
+
+              {loading ? (
+
+                <div className="md-table-loading">
+
+                  <div className="md-loading-spinner">
+                    <RefreshCw
+                      size={22}
+                    />
+                  </div>
+
+                  <span>
+                    Memuat data...
+                  </span>
+
+                </div>
+
+              ) : filteredData.length === 0 ? (
+
+                <div className="md-empty">
+                  Tidak ada data yang sesuai
+                  dengan filter.
+                </div>
+
+              ) : (
+
+                <table className="md-table">
+
+                  <thead>
+                    <tr>
+
+                      <th>ID Reg</th>
+                      <th>Nama</th>
+                      <th>Objek</th>
+                      <th>Tipe</th>
+                      <th>Lantai</th>
+                      <th>Blok</th>
+                      <th>No</th>
+                      <th>Dimensi</th>
+                      <th>Tarif Sewa</th>
+                      <th>Keamanan</th>
+                      <th>Kebersihan</th>
+                      <th>Status</th>
+
+                      <th className="col-center">
+                        Aksi
+                      </th>
+
+                    </tr>
+                  </thead>
+
+                  <tbody>
+
+                    {paginatedData.map(
+                      (item) => (
+
+                        <tr
+                          key={
+                            item.id_reg
+                          }
+                        >
+
+                          <td>
+                            {
+                              item.id_reg
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.nama
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.objek
+                                ?.jenis
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.objek
+                                ?.tipe
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.lantai ||
+                              "-"
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.blok ||
+                              "-"
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.no ||
+                              "-"
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              item.objek
+                                ?.dimensi ||
+                              "-"
+                            }
+                          </td>
+
+                          <td>
+                            Rp{" "}
+                            {formatRupiah(
+                              item.tarif
+                                ?.sewa
+                                ?.nominal
+                            )}
+                          </td>
+
+                          <td>
+                            Rp{" "}
+                            {formatRupiah(
+                              item.tarif
+                                ?.keamanan
+                                ?.nominal
+                            )}
+                          </td>
+
+                          <td>
+                            Rp{" "}
+                            {formatRupiah(
+                              item.tarif
+                                ?.kebersihan
+                                ?.nominal
+                            )}
+                          </td>
+
+                          <td>
+                            <span
+                              className={`status-badge status-${String(
+                                item.status_pembayaran ||
+                                  "unknown"
+                              )
+                                .toLowerCase()
+                                .replace(
+                                  /\s+/g,
+                                  "-"
+                                )}`}
+                            >
+                              {
+                                item.status_pembayaran ||
+                                "-"
+                              }
+                            </span>
+                          </td>
+
+                          <td className="col-center">
+
+                            <div className="action-group">
+
+                              <button
+                                type="button"
+                                className="btn-icon-edit"
+                                onClick={() =>
+                                  handleEdit(
+                                    item
+                                  )
+                                }
+                                title="Edit data"
+                              >
+                                <Pencil
+                                  size={17}
+                                />
+                              </button>
+
+                              <button
+                                type="button"
+                                className="btn-icon-delete"
+                                onClick={() =>
+                                  handleDelete(
+                                    item
+                                  )
+                                }
+                                title="Hapus data"
+                              >
+                                <Trash2
+                                  size={17}
+                                />
+                              </button>
+
+                            </div>
+
+                          </td>
+
+                        </tr>
+
+                      )
+                    )}
+
+                  </tbody>
+
+                </table>
+
+              )}
+
+            </div>
+
+          </section>
+
         </ContainerCard>
+
       </main>
+
+      <MasterDataModal
+        isOpen={showModal}
+        mode={modalMode}
+        initialData={selectedData}
+        onClose={() =>
+          setShowModal(false)
+        }
+        onSave={
+          handleSaveModal
+        }
+      />
+
     </>
   );
 }
-*/

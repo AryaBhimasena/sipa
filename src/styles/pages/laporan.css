@@ -29,7 +29,7 @@
 /* KANAN */
 .laporan-filter-controls {
   display: grid;
-  grid-template-columns: 150px 150px auto auto;
+  grid-template-columns: 160px 150px 150px auto auto;
   align-items: end;
   gap: 12px;
 }

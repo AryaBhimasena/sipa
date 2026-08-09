@@ -1,0 +1,758 @@
+/* ==========================================
+   STATUS PEMBAYARAN PAGE
+========================================== */
+.status-pembayaran-page {
+  padding: 24px;
+  background: #f6f7fb;
+  min-height: calc(100vh - 120px);
+}
+/* ==========================================
+   LOADING
+========================================== */
+.sp-loading-row {
+  height: 180px;
+  text-align: center;
+}
+
+.sp-loading-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.sp-spin {
+  animation: sp-spin 0.9s linear infinite;
+}
+
+@keyframes sp-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sp-error-row {
+  height: 180px;
+  text-align: center;
+}
+
+/* ==========================================
+   SECTION
+========================================== */
+.sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* ==========================================
+   TOOLBAR
+========================================== */
+.sp-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+/* ==========================================
+   TOOLBAR LEFT
+========================================== */
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+/* ==========================================
+   SEARCH
+========================================== */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 270px;
+  height: 38px;
+  padding: 0 11px;
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+.search-box:hover {
+  border-color: #c7ced8;
+}
+.search-box:focus-within {
+  border-color: #1f2937;
+  box-shadow: 0 0 0 2px rgba(31, 41, 55, 0.05);
+}
+.search-box svg {
+  flex-shrink: 0;
+  color: #6b7280;
+}
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: #374151;
+}
+.search-box input::placeholder {
+  color: #9ca3af;
+}
+/* ==========================================
+   SELECT
+========================================== */
+.toolbar-left select,
+.toolbar-right select {
+  height: 38px;
+  padding: 0 11px;
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+.toolbar-left select {
+  min-width: 118px;
+}
+.toolbar-left select:hover,
+.toolbar-right select:hover {
+  border-color: #c7ced8;
+}
+.toolbar-left select:focus,
+.toolbar-right select:focus {
+  border-color: #1f2937;
+  box-shadow: 0 0 0 2px rgba(31, 41, 55, 0.05);
+}
+/* ==========================================
+   TOOLBAR RIGHT
+========================================== */
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+/* ==========================================
+   PERIOD SELECT
+========================================== */
+.toolbar-right select {
+  min-width: 112px;
+}
+/* ==========================================
+   REFRESH BUTTON
+========================================== */
+.sp-refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #4b5563;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+.sp-refresh-button:hover {
+  background: #f9fafb;
+  border-color: #c7ced8;
+  color: #1f2937;
+}
+.sp-refresh-button:active {
+  transform: scale(0.97);
+}
+/* ==========================================
+   PERIOD INFORMATION
+========================================== */
+.sp-period-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  padding: 0 2px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.sp-period-info > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sp-period-info strong {
+  font-weight: 500;
+  color: #374151;
+}
+.sp-total-info {
+  margin-left: auto;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.sp-loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+
+/* ==========================================
+   SECTION
+========================================== */
+
+.sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+/* ==========================================
+   TOOLBAR
+========================================== */
+
+.sp-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+
+/* ==========================================
+   TOOLBAR LEFT
+========================================== */
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: 270px;
+  height: 38px;
+
+  padding: 0 11px;
+
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  flex-shrink: 0;
+}
+
+.search-box:hover {
+  border-color: #c7ced8;
+}
+
+.search-box:focus-within {
+  border-color: #1f2937;
+  box-shadow: 0 0 0 2px rgba(31, 41, 55, 0.05);
+}
+
+.search-box svg {
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: #374151;
+}
+
+.search-box input::placeholder {
+  color: #9ca3af;
+}
+
+
+/* ==========================================
+   SELECT
+========================================== */
+
+.toolbar-left select,
+.toolbar-right select {
+  height: 38px;
+  padding: 0 11px;
+
+  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+
+  font-size: 13px;
+  color: #374151;
+
+  cursor: pointer;
+  outline: none;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  flex-shrink: 0;
+}
+
+.toolbar-left select {
+  min-width: 118px;
+}
+
+.toolbar-left select:hover,
+.toolbar-right select:hover {
+  border-color: #c7ced8;
+}
+
+.toolbar-left select:focus,
+.toolbar-right select:focus {
+  border-color: #1f2937;
+  box-shadow: 0 0 0 2px rgba(31, 41, 55, 0.05);
+}
+
+
+/* ==========================================
+   TOOLBAR RIGHT
+========================================== */
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+
+/* ==========================================
+   REFRESH BUTTON
+========================================== */
+
+.sp-refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.sp-refresh-button:hover {
+  background: #f9fafb;
+  border-color: #c7ced8;
+  color: #1f2937;
+}
+
+.sp-refresh-button:active {
+  transform: scale(0.97);
+}
+
+
+/* ==========================================
+   PERIOD INFO
+========================================== */
+
+.sp-period-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 36px;
+
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sp-period-info strong {
+  font-weight: 500;
+  color: #374151;
+}
+
+.sp-total-info {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   TABLE WRAPPER
+========================================== */
+
+.sp-table-wrapper {
+  width: 100%;
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  overflow-x: auto;
+  position: relative;
+}
+
+
+/* ==========================================
+   TABLE
+========================================== */
+
+.sp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-size: 12.5px;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.sp-table thead th {
+  position: sticky;
+  top: 0;
+
+  height: 42px;
+  padding: 10px;
+
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+
+  font-weight: 500;
+  color: #374151;
+
+  text-align: left;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+
+/* ==========================================
+   COLUMN WIDTH (UPDATED)
+========================================== */
+
+.sp-table thead th:nth-child(1) { width: 10%; } /* ID */
+.sp-table thead th:nth-child(2) { width: 14%; } /* Nama */
+.sp-table thead th:nth-child(3) { width: 6%; }  /* Objek */
+.sp-table thead th:nth-child(4) { width: 6%; }  /* Tipe */
+.sp-table thead th:nth-child(5) { width: 5%; }  /* Lantai */
+.sp-table thead th:nth-child(6) { width: 4%; }  /* Blok */
+.sp-table thead th:nth-child(7) { width: 4%; }  /* No */
+.sp-table thead th:nth-child(8) { width: 10%; } /* Status */
+.sp-table thead th:nth-child(9) { width: 23%; } /* Keterangan */
+.sp-table thead th:nth-child(10){ width: 18%; } /* Aksi */
+
+
+/* ==========================================
+   ROW
+========================================== */
+
+.sp-table tbody tr.main-row td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #eef2f7;
+  color: #4b5563;
+  vertical-align: middle;
+  overflow-wrap: break-word;
+}
+
+.sp-table tbody tr.main-row:hover {
+  background: #fafbfc;
+}
+
+
+/* ==========================================
+   CELLS
+========================================== */
+
+.id-reg-cell,
+.name-cell {
+  font-weight: 500;
+  color: #374151 !important;
+  white-space: nowrap;
+}
+
+.name-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp-table td:nth-child(3),
+.sp-table td:nth-child(4) {
+  color: #4b5563;
+}
+
+.sp-table td:nth-child(5),
+.sp-table td:nth-child(6),
+.sp-table td:nth-child(7) {
+  text-align: center;
+}
+
+.sp-table td:nth-child(8) {
+  text-align: center;
+}
+
+
+/* ==========================================
+   KETERANGAN
+========================================== */
+
+.keterangan-cell {
+  white-space: normal !important;
+  line-height: 1.45;
+  color: #6b7280 !important;
+  overflow-wrap: anywhere;
+}
+
+
+/* ==========================================
+   ACTION COLUMN
+========================================== */
+
+.col-action {
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+
+/* ==========================================
+   ACTION GROUP
+========================================== */
+
+.action-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+
+/* ==========================================
+   BUTTON BASE
+========================================== */
+
+.btn-detail,
+.btn-pdf,
+.btn-excel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 29px;
+
+  border-radius: 5px;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.btn-detail:active,
+.btn-pdf:active,
+.btn-excel:active {
+  transform: scale(0.97);
+}
+
+
+/* ==========================================
+   DETAIL BUTTON
+========================================== */
+
+.btn-detail {
+  padding: 0 8px;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-detail:hover {
+  background: #e5e7eb;
+}
+
+
+/* ==========================================
+   PDF BUTTON
+========================================== */
+
+.btn-pdf {
+  width: 30px;
+  border: 1px solid #fee2e2;
+  background: #fff5f5;
+  color: #dc2626;
+}
+
+.btn-pdf:hover {
+  background: #fee2e2;
+}
+
+
+/* ==========================================
+   EXCEL BUTTON
+========================================== */
+
+.btn-excel {
+  width: 30px;
+  border: 1px solid #dcfce7;
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.btn-excel:hover {
+  background: #dcfce7;
+}
+
+
+/* ==========================================
+   STATUS BADGE
+========================================== */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 78px;
+  min-height: 25px;
+
+  padding: 4px 7px;
+
+  border-radius: 5px;
+
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   STATUS COLORS
+========================================== */
+
+.status-paid { background: #ecfdf5; color: #047857; }
+.status-overdue { background: #fef2f2; color: #dc2626; }
+.status-unpaid { background: #fff7ed; color: #c2410c; }
+.status-none { background: #f3f4f6; color: #6b7280; }
+
+
+/* ==========================================
+   DETAIL ROW
+========================================== */
+
+.detail-row > td {
+  padding: 0 !important;
+  background: #fafbfc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* ==========================================
+   DETAIL CONTAINER
+========================================== */
+
+.detail-container {
+  padding: 14px 16px;
+  background: #fafbfc;
+}
+
+
+/* ==========================================
+   PAGINATION
+========================================== */
+
+.sp-pagination {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pg-btn {
+  width: 32px;
+  height: 32px;
+
+  border: 1px solid #dfe3ea;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pg-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #c7ced8;
+}
+
+.pg-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1200px) {
+  .sp-table { min-width: 1050px; }
+}
+
+@media (max-width: 600px) {
+  .sp-table { min-width: 1050px; }
+}
