@@ -1,5 +1,3 @@
-//app/loket/pembayaran/[idReg]/page.js
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -37,186 +35,213 @@ export default function PembayaranPage() {
   // ================================
   const [gunakanDenda, setGunakanDenda] = useState(true);
 
-const handlePaymentData = (payload) => {
-  if (!payload || typeof payload.total !== "number") {
-    setTotalDibayar(0);
-    setRingkasanBayar(null);
-    return;
-  }
+  // ================================
+  // TOGGLE PPN
+  // ================================
+  const [gunakanPPN, setGunakanPPN] = useState(true);
 
-  // ======================================
-  // PAKSA DENDA = 0 SAAT TOGGLE OFF
-  // ======================================
-  const rincianFinal = (payload.rincian || []).map((item) => ({
-    ...item,
-    denda: gunakanDenda
-      ? Number(item.denda || 0)
-      : 0,
-  }));
-
-  const subtotalDenda = gunakanDenda
-    ? Number(payload.subtotal?.denda || 0)
-    : 0;
-
-  const totalFinal =
-    rincianFinal.reduce(
-      (sum, item) => sum + Number(item.total || 0),
-      0
-    );
-
-  const finalPayload = {
-    ...payload,
-
-    rincian: rincianFinal,
-
-    subtotal: {
-      ...payload.subtotal,
-      denda: subtotalDenda,
-    },
-
-    gunakan_denda: gunakanDenda,
-
-    total: totalFinal,
-  };
-
-  setRingkasanBayar(finalPayload);
-  setTotalDibayar(totalFinal);
-};
-
-useEffect(() => {
-  if (!idReg) return;
-
-  async function fetchDetailPedagang() {
-    try {
-      // ======================
-      // 1. Fetch data pedagang
-      // ======================
-      const res = await fetch(
-        `${API_URL}?path=dataToko&id=${idReg}`,
-        { cache: "no-store" }
-      );
-
-      const json = await res.json();
-
-      if (json.success && Array.isArray(json.data)) {
-        const found = json.data.find(
-          (item) => String(item.id_reg) === String(idReg)
-        );
-
-        setDataPedagang(found ?? null);
-      } else {
-        setDataPedagang(null);
-      }
-
-      // ======================
-      // 2. Fetch bulan terbayar
-      // ======================
-      const resBayar = await fetch(
-        `${API_URL}?path=transaksiPembayaranByIdReg&id_reg=${idReg}`,
-        { cache: "no-store" }
-      );
-
-      const jsonBayar = await resBayar.json();
-
-      if (jsonBayar.success && Array.isArray(jsonBayar.data)) {
-        const paidMap = jsonBayar.data.map((r) => ({
-          key: `${r.bulan}-${r.tahun}`,
-          bulan: r.bulan,
-          tahun: r.tahun,
-          denda: Number(r.denda) || 0,
-          diskon: Number(r.diskon) || 0,
-        }));
-
-        setBulanTerbayar(paidMap);
-      } else {
-        setBulanTerbayar([]);
-      }
-
-    } catch (err) {
-      console.error(err);
-
-      setDataPedagang(null);
-      setBulanTerbayar([]);
-
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  fetchDetailPedagang();
-}, [idReg]);
-
-const handleBayar = async () => {
-  if (!ringkasanBayar || loadingBayar) return;
-
-  setLoadingBayar(true);
-
-  try {
-    // 1. Generate no kuitansi terlebih dahulu
-    const res = await fetch(
-      `${API_URL}?path=generateNoKuitansi`,
-      { cache: "no-store" }
-    );
-
-    const json = await res.json();
-
-    if (!json.success || !json.no_kuitansi) {
-      throw new Error("Gagal generate nomor kuitansi");
+  const handlePaymentData = (payload) => {
+    if (!payload || typeof payload.total !== "number") {
+      setTotalDibayar(0);
+      setRingkasanBayar(null);
+      return;
     }
 
     // ======================================
-    // FINAL PAYLOAD
+    // PAKSA DENDA = 0 SAAT TOGGLE OFF
     // ======================================
-    const rincianFinal = (ringkasanBayar.rincian || []).map((item) => ({
+    const rincianFinal = (payload.rincian || []).map((item) => ({
       ...item,
+
       denda: gunakanDenda
         ? Number(item.denda || 0)
         : 0,
+
+      ppn: gunakanPPN
+        ? Number(item.ppn || 0)
+        : 0,
     }));
 
-    const subtotalFinal = {
-      ...ringkasanBayar.subtotal,
-      denda: gunakanDenda
-        ? Number(ringkasanBayar.subtotal?.denda || 0)
-        : 0,
-    };
+    const subtotalDenda = gunakanDenda
+      ? Number(payload.subtotal?.denda || 0)
+      : 0;
+
+    const subtotalPPN = gunakanPPN
+      ? Number(payload.subtotal?.ppn || 0)
+      : 0;
 
     const totalFinal = rincianFinal.reduce(
       (sum, item) => sum + Number(item.total || 0),
       0
     );
 
-    // 2. Inject no kuitansi ke payload
-    const payload = {
-      ...ringkasanBayar,
+    const finalPayload = {
+      ...payload,
 
       rincian: rincianFinal,
 
-      subtotal: subtotalFinal,
+      subtotal: {
+        ...payload.subtotal,
+        denda: subtotalDenda,
+        ppn: subtotalPPN,
+      },
 
       gunakan_denda: gunakanDenda,
+      gunakan_ppn: gunakanPPN,
 
       total: totalFinal,
-
-      no_kuitansi: json.no_kuitansi,
-      id_reg: idReg,
-      tanggal: new Date().toISOString(),
-      pedagang: dataPedagang,
     };
 
-    // 3. Set data lengkap dulu
-    setRingkasanBayar(payload);
+    setRingkasanBayar(finalPayload);
+    setTotalDibayar(totalFinal);
+  };
 
-    // 4. Baru buka modal
-    setShowModal(true);
+  useEffect(() => {
+    if (!idReg) return;
 
-  } catch (err) {
-    console.error(err);
-    alert("Terjadi kesalahan saat generate nomor kuitansi");
-  } finally {
-    setLoadingBayar(false);
-  }
-};
+    async function fetchDetailPedagang() {
+      try {
+        // ======================
+        // 1. Fetch data pedagang
+        // ======================
+        const res = await fetch(
+          `${API_URL}?path=dataToko&id=${idReg}`,
+          { cache: "no-store" }
+        );
+
+        const json = await res.json();
+
+        if (json.success && Array.isArray(json.data)) {
+          const found = json.data.find(
+            (item) => String(item.id_reg) === String(idReg)
+          );
+
+          setDataPedagang(found ?? null);
+        } else {
+          setDataPedagang(null);
+        }
+
+        // ======================
+        // 2. Fetch bulan terbayar
+        // ======================
+        const resBayar = await fetch(
+          `${API_URL}?path=transaksiPembayaranByIdReg&id_reg=${idReg}`,
+          { cache: "no-store" }
+        );
+
+        const jsonBayar = await resBayar.json();
+
+        if (jsonBayar.success && Array.isArray(jsonBayar.data)) {
+          const paidMap = jsonBayar.data.map((r) => ({
+            key: `${r.bulan}-${r.tahun}`,
+            bulan: r.bulan,
+            tahun: r.tahun,
+            denda: Number(r.denda) || 0,
+            diskon: Number(r.diskon) || 0,
+            ppn: Number(r.ppn) || 0,
+          }));
+
+          setBulanTerbayar(paidMap);
+        } else {
+          setBulanTerbayar([]);
+        }
+
+      } catch (err) {
+        console.error(err);
+
+        setDataPedagang(null);
+        setBulanTerbayar([]);
+
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDetailPedagang();
+  }, [idReg]);
+
+  const handleBayar = async () => {
+    if (!ringkasanBayar || loadingBayar) return;
+
+    setLoadingBayar(true);
+
+    try {
+      // 1. Generate no kuitansi terlebih dahulu
+      const res = await fetch(
+        `${API_URL}?path=generateNoKuitansi`,
+        { cache: "no-store" }
+      );
+
+      const json = await res.json();
+
+      if (!json.success || !json.no_kuitansi) {
+        throw new Error("Gagal generate nomor kuitansi");
+      }
+
+      // ======================================
+      // FINAL RINCIAN
+      // ======================================
+      const rincianFinal = (ringkasanBayar.rincian || []).map((item) => ({
+        ...item,
+
+        denda: gunakanDenda
+          ? Number(item.denda || 0)
+          : 0,
+
+        ppn: gunakanPPN
+          ? Number(item.ppn || 0)
+          : 0,
+      }));
+
+      const subtotalFinal = {
+        ...ringkasanBayar.subtotal,
+
+        denda: gunakanDenda
+          ? Number(ringkasanBayar.subtotal?.denda || 0)
+          : 0,
+
+        ppn: gunakanPPN
+          ? Number(ringkasanBayar.subtotal?.ppn || 0)
+          : 0,
+      };
+
+      const totalFinal = rincianFinal.reduce(
+        (sum, item) => sum + Number(item.total || 0),
+        0
+      );
+
+      // 2. Inject data tambahan ke payload
+      const payload = {
+        ...ringkasanBayar,
+
+        rincian: rincianFinal,
+
+        subtotal: subtotalFinal,
+
+        gunakan_denda: gunakanDenda,
+        gunakan_ppn: gunakanPPN,
+
+        total: totalFinal,
+
+        no_kuitansi: json.no_kuitansi,
+        id_reg: idReg,
+        tanggal: new Date().toISOString(),
+        pedagang: dataPedagang,
+      };
+
+      // 3. Set data lengkap dulu
+      setRingkasanBayar(payload);
+
+      // 4. Baru buka modal
+      setShowModal(true);
+
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat generate nomor kuitansi");
+    } finally {
+      setLoadingBayar(false);
+    }
+  };
 
   return (
     <>
@@ -267,6 +292,21 @@ const handleBayar = async () => {
                 </span>
               </label>
 
+              {/* TOGGLE PPN */}
+              <label className="toggle-denda">
+                <input
+                  type="checkbox"
+                  checked={gunakanPPN}
+                  onChange={(e) =>
+                    setGunakanPPN(e.target.checked)
+                  }
+                />
+
+                <span>
+                  Terapkan PPN
+                </span>
+              </label>
+
               <div className="total-amount">
                 Total Dibayar:
                 <strong>
@@ -302,6 +342,7 @@ const handleBayar = async () => {
                 bulanTerbayar={bulanTerbayar}
                 onTotalChange={handlePaymentData}
                 gunakanDenda={gunakanDenda}
+                gunakanPPN={gunakanPPN}
               />
             )}
 

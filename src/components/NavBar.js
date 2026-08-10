@@ -38,6 +38,7 @@ export default function NavBar() {
     role === "System Administrator";
 
   const canAccessLaporan =
+    role === "Kasir" ||
     role === "Admin" ||
     role === "System Administrator";
 

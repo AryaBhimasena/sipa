@@ -607,7 +607,7 @@ export default function MasterDataPage() {
 
         <ContainerCard
           title="Master Data"
-          subtitle="Data Penyewa dan Informasi Tarif"
+          subtitle="Data Pedagang dan Informasi Tarif"
         >
 
           <section className="md-section">

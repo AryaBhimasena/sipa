@@ -154,7 +154,7 @@ setError("");
 
   if (!joinResponse.ok) {
     throw new Error(
-      `Gagal mengambil data penyewa (${joinResponse.status})`
+      `Gagal mengambil data Pedagang (${joinResponse.status})`
     );
   }
 
@@ -174,7 +174,7 @@ setError("");
   if (!joinResult.success) {
     throw new Error(
       joinResult.message ||
-      "Gagal mengambil data penyewa."
+      "Gagal mengambil data Pedagang."
     );
   }
 
@@ -809,7 +809,7 @@ EXPORT DATA
 
 * EXPORT PDF DETAIL
 *
-* Hanya satu item / penyewa
+* Hanya satu item / Pedagang
 * yang dipilih pada baris.
   */
   function handleExportDetailPDF(
@@ -829,7 +829,7 @@ EXPORT DATA
 
 * EXPORT EXCEL DETAIL
 *
-* Hanya satu item / penyewa
+* Hanya satu item / Pedagang
 * yang dipilih pada baris.
   */
   function handleExportDetailExcel(
@@ -858,7 +858,7 @@ return (
   >
     <ContainerCard
       title="Status Pembayaran"
-      subtitle="Monitoring Status Pembayaran Penyewa"
+      subtitle="Monitoring Status Pembayaran Pedagang"
     >
       <section
         className="sp-section"
@@ -1324,7 +1324,7 @@ return (
                   filteredData.length
                 }
               </strong>{" "}
-              penyewa
+              Pedagang
             </span>
           </div>
         </div>

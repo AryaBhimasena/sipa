@@ -44,15 +44,9 @@ export default function RouteGuard({ children }) {
         role === "System Administrator";
     }
 
-    /*
-     * ==========================================
-     * LAPORAN
-     * Admin + System Administrator
-     * ==========================================
-     */
-
     else if (pathname.startsWith("/laporan")) {
       allowed =
+	    role === "Kasir" ||
         role === "Admin" ||
         role === "System Administrator";
     }
