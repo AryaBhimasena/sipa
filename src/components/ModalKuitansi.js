@@ -171,7 +171,7 @@ useEffect(() => {
             <div className="kuitansi-header">
               <div className="kop-left">
                 <img
-                  src="/logo-perumda-banjarmasin.PNG"
+                  src="/logo-perumda-banjarmasin.png"
                   alt="Logo Perumda Pasar Banjarmasin"
                   className="kop-logo"
                 />
