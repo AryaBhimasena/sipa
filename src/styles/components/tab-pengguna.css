@@ -1,0 +1,386 @@
+/* ==========================================================
+   PENGATURAN - TAB PENGGUNA
+========================================================== */
+
+/* ==========================================================
+   TOOLBAR
+========================================================== */
+
+.pengguna-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #eef2f7;
+}
+
+.pengguna-toolbar-info {
+  min-width: 0;
+}
+
+.pengguna-toolbar-title {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.pengguna-toolbar-description {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #94a3b8;
+}
+
+.pengguna-toolbar-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   ADD BUTTON
+========================================================== */
+
+.pengguna-btn-add {
+  height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 16px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.05s ease;
+}
+
+.pengguna-btn-add:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  box-shadow:
+    0 3px 8px rgba(37, 99, 235, 0.16);
+}
+
+.pengguna-btn-add:active {
+  transform: translateY(1px);
+}
+
+.pengguna-btn-add:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==========================================================
+   TABLE WRAPPER
+========================================================== */
+
+.pengguna-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  padding: 10px;
+}
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.pengguna-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: auto;
+}
+
+/* ==========================================================
+   TABLE HEADER
+========================================================== */
+
+.pengguna-table thead th {
+  height: 46px;
+
+  padding: 0 16px;
+
+  background: #f8fafc;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  text-align: left;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #64748b;
+
+  white-space: nowrap;
+}
+
+.pengguna-table thead th:first-child {
+  width: 56px;
+
+  text-align: center;
+}
+
+.pengguna-table thead th:last-child {
+  width: 100px;
+
+  text-align: center;
+}
+
+/* ==========================================================
+   TABLE BODY
+========================================================== */
+
+.pengguna-table tbody td {
+  height: 58px;
+
+  padding: 0 16px;
+
+  border-bottom: 1px solid #eef2f7;
+
+  font-size: 13px;
+
+  color: #1e293b;
+
+  vertical-align: middle;
+}
+
+.pengguna-table tbody tr {
+  transition: background-color 0.18s ease;
+}
+
+.pengguna-table tbody tr:hover {
+  background: #fafcff;
+}
+
+.pengguna-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pengguna-table tbody td:first-child {
+  text-align: center;
+
+  color: #94a3b8;
+}
+
+.pengguna-table tbody td:last-child {
+  text-align: center;
+}
+
+/* ==========================================================
+   USER NAME
+========================================================== */
+
+.pengguna-name {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #0f172a;
+
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   USERNAME
+========================================================== */
+
+.pengguna-username {
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+/* ==========================================================
+   STATUS BADGE
+========================================================== */
+
+.pengguna-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-width: 72px;
+  height: 26px;
+
+  justify-content: center;
+
+  padding: 0 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pengguna-status.active {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.pengguna-status.inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ==========================================================
+   ROLE BADGE
+========================================================== */
+
+.pengguna-role {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 26px;
+
+  padding: 0 10px;
+
+  border-radius: 7px;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   TABLE ACTION
+========================================================== */
+
+.pengguna-table-action {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.pengguna-btn-action {
+  width: 36px;
+  height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.pengguna-btn-action:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.pengguna-btn-action.danger:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.pengguna-btn-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   EMPTY DATA
+========================================================== */
+
+.pengguna-empty {
+  height: 220px !important;
+
+  text-align: center !important;
+
+  color: #94a3b8 !important;
+
+  font-size: 13px !important;
+}
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.pengguna-loading {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #64748b;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+  .pengguna-toolbar {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .pengguna-toolbar-actions {
+    width: 100%;
+  }
+
+  .pengguna-btn-add {
+    width: 100%;
+  }
+
+  .pengguna-table-wrapper {
+    padding: 6px;
+  }
+
+  .pengguna-table {
+    min-width: 760px;
+  }
+}

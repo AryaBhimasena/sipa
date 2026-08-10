@@ -3,23 +3,40 @@
 import { useEffect, useState } from "react";
 
 import {
+  Plus,
   Pencil,
   Trash2,
-  Save,
 } from "lucide-react";
 
 import { API_URL } from "../../../lib/api";
 
-const ROLE_OPTIONS = [
-  "Kasir",
-  "Admin",
-  "System Administrator",
-];
+import FormPengguna from "./FormPengguna";
+import "../../../styles/components/tab-pengguna.css";
 
 export default function Pengguna() {
   const [users, setUsers] = useState([]);
-  const [editId, setEditId] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
+  /*
+   * ==========================================
+   * MODAL
+   * ==========================================
+   *
+   * null  = modal tertutup
+   * "add" = tambah pengguna
+   * "edit" = edit pengguna
+   */
+
+  const [modalMode, setModalMode] = useState(null);
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  /*
+   * ==========================================
+   * LOAD DATA
+   * ==========================================
+   */
 
   useEffect(() => {
     fetchUsers();
@@ -36,130 +53,107 @@ export default function Pengguna() {
       const json = await res.json();
 
       if (json.success) {
-        const normalizedUsers = (json.data || []).map(
-          (user) => ({
-            ...user,
+        const normalizedUsers =
+          (json.data || []).map(
+            (user) => ({
+              ...user,
 
-            /*
-             * Pastikan aktif selalu boolean
-             */
-            aktif:
-              user.aktif === true ||
-              user.aktif === "true" ||
-              user.aktif === "TRUE" ||
-              user.aktif === 1 ||
-              user.aktif === "1",
+              /*
+               * Pastikan aktif
+               * selalu boolean.
+               */
+              aktif:
+                user.aktif === true ||
+                user.aktif === "true" ||
+                user.aktif === "TRUE" ||
+                user.aktif === 1 ||
+                user.aktif === "1",
 
-            /*
-             * Pertahankan role dari API
-             */
-            role: user.role || "",
-          })
+              /*
+               * Pertahankan role
+               * dari API.
+               */
+              role:
+                user.role || "",
+            })
+          );
+
+        setUsers(
+          normalizedUsers
+        );
+      } else {
+        console.error(
+          json.message
         );
 
-        setUsers(normalizedUsers);
-      } else {
-        console.error(json.message);
         setUsers([]);
       }
     } catch (error) {
       console.error(error);
+
       setUsers([]);
     } finally {
       setLoading(false);
     }
   }
 
-  const handleChange = (
-    id,
-    field,
-    value
-  ) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              [field]:
-                field === "aktif"
-                  ? value === "true"
-                  : value,
-            }
-          : user
-      )
-    );
-  };
+  /*
+   * ==========================================
+   * TAMBAH PENGGUNA
+   * ==========================================
+   */
 
-  const handleEdit = (id) => {
-    setEditId(id);
-  };
-
-  async function handleSave(id) {
-    try {
-      const user = users.find(
-        (item) => item.id === id
-      );
-
-      if (!user) return;
-
-      setLoading(true);
-
-      const formData =
-        new URLSearchParams();
-
-      formData.append("id", user.id);
-      formData.append("nama", user.nama);
-      formData.append(
-        "jabatan",
-        user.jabatan
-      );
-      formData.append(
-        "username",
-        user.username
-      );
-      formData.append(
-        "aktif",
-        String(user.aktif)
-      );
-      formData.append(
-        "role",
-        user.role
-      );
-
-      const res = await fetch(
-        `${API_URL}?path=updateUser`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const json = await res.json();
-
-      if (!json.success) {
-        alert(
-          json.message ||
-            "Gagal memperbarui data"
-        );
-
-        setLoading(false);
-        return;
-      }
-
-      alert(
-        "Data berhasil diperbarui"
-      );
-
-      setEditId(null);
-
-      await fetchUsers();
-    } catch (error) {
-      console.error(error);
-      alert("Terjadi kesalahan");
-
-      setLoading(false);
-    }
+  function handleAdd() {
+    setSelectedUser(null);
+    setModalMode("add");
   }
+
+  /*
+   * ==========================================
+   * EDIT PENGGUNA
+   * ==========================================
+   */
+
+  function handleEdit(user) {
+    setSelectedUser(user);
+    setModalMode("edit");
+  }
+
+  /*
+   * ==========================================
+   * TUTUP MODAL
+   * ==========================================
+   */
+
+  function handleCloseModal() {
+    setModalMode(null);
+    setSelectedUser(null);
+  }
+
+  /*
+   * ==========================================
+   * SUCCESS FORM
+   * ==========================================
+   *
+   * Digunakan oleh FormPengguna setelah
+   * proses tambah / edit berhasil.
+   *
+   * Setelah berhasil:
+   * 1. Refresh data tabel
+   * 2. Tutup modal
+   */
+
+  async function handleFormSuccess() {
+    await fetchUsers();
+
+    handleCloseModal();
+  }
+
+  /*
+   * ==========================================
+   * DELETE
+   * ==========================================
+   */
 
   async function handleDelete(id) {
     const confirmDelete =
@@ -167,7 +161,9 @@ export default function Pengguna() {
         "Apakah Anda yakin ingin menghapus user ini?"
       );
 
-    if (!confirmDelete) return;
+    if (!confirmDelete) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -175,7 +171,10 @@ export default function Pengguna() {
       const formData =
         new URLSearchParams();
 
-      formData.append("id", id);
+      formData.append(
+        "id",
+        id
+      );
 
       const res = await fetch(
         `${API_URL}?path=deleteUser`,
@@ -185,7 +184,8 @@ export default function Pengguna() {
         }
       );
 
-      const json = await res.json();
+      const json =
+        await res.json();
 
       if (!json.success) {
         alert(
@@ -193,189 +193,235 @@ export default function Pengguna() {
             "Gagal menghapus data"
         );
 
-        setLoading(false);
         return;
       }
 
-      alert("User berhasil dihapus");
+      alert(
+        "User berhasil dihapus"
+      );
 
       await fetchUsers();
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan");
 
+      alert(
+        "Terjadi kesalahan"
+      );
+    } finally {
       setLoading(false);
     }
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Nama</th>
-          <th>Jabatan</th>
-          <th>Username</th>
-          <th>Status</th>
-          <th>Role</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
+    <>
+      {/* ======================================
+          TOOLBAR
+      ======================================= */}
 
-      <tbody>
-        {loading ? (
-          <tr>
-            <td
-              colSpan={7}
-              className="empty-data"
-            >
-              Memuat data pengguna...
-            </td>
-          </tr>
-        ) : users.length === 0 ? (
-          <tr>
-            <td
-              colSpan={7}
-              className="empty-data"
-            >
-              Tidak ada data.
-            </td>
-          </tr>
-        ) : (
-          users.map((item, index) => (
-            <tr key={item.id}>
-              <td>{index + 1}</td>
+      <div className="pengguna-toolbar">
 
-              <td>
-                <strong>
-                  {item.nama}
-                </strong>
-              </td>
+        <div className="pengguna-toolbar-info">
 
-              <td>
-                {item.jabatan}
-              </td>
+          <h2 className="pengguna-toolbar-title">
+            Pengguna
+          </h2>
 
-              <td>
-                {item.username}
-              </td>
+          <p className="pengguna-toolbar-description">
+            Kelola pengguna dan hak akses aplikasi.
+          </p>
 
-              <td>
-                <select
-                  className="table-select"
-                  value={String(
-                    item.aktif
-                  )}
-                  disabled={
-                    editId !== item.id
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      item.id,
-                      "aktif",
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="true">
-                    Aktif
-                  </option>
+        </div>
 
-                  <option value="false">
-                    Non Aktif
-                  </option>
-                </select>
-              </td>
+        <div className="pengguna-toolbar-actions">
 
-              <td>
-                <select
-                  className="table-select"
-                  value={item.role || ""}
-                  disabled={
-                    editId !== item.id
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      item.id,
-                      "role",
-                      e.target.value
-                    )
-                  }
-                >
-                  {/*
-                   * Role dari API akan
-                   * ditampilkan sesuai
-                   * nilainya.
-                   */}
-                  {item.role &&
-                    !ROLE_OPTIONS.includes(
-                      item.role
-                    ) && (
-                      <option
-                        value={item.role}
-                      >
-                        {item.role}
-                      </option>
-                    )}
+          <button
+            type="button"
+            className="pengguna-btn-add"
+            onClick={handleAdd}
+            disabled={loading}
+          >
+            <Plus size={18} />
 
-                  {ROLE_OPTIONS.map(
-                    (role) => (
-                      <option
-                        key={role}
-                        value={role}
-                      >
-                        {role}
-                      </option>
-                    )
-                  )}
-                </select>
-              </td>
+            <span>
+              Tambah Pengguna
+            </span>
+          </button>
 
-              <td>
-                <div className="table-action">
-                  <button
-                    className="btn-action"
-                    disabled={loading}
-                    onClick={() =>
-                      editId === item.id
-                        ? handleSave(
-                            item.id
-                          )
-                        : handleEdit(
-                            item.id
-                          )
-                    }
-                    title={
-                      editId === item.id
-                        ? "Simpan"
-                        : "Edit"
-                    }
-                  >
-                    {editId === item.id ? (
-                      <Save size={18} />
-                    ) : (
-                      <Pencil size={18} />
-                    )}
-                  </button>
+        </div>
 
-                  <button
-                    className="btn-action danger"
-                    disabled={loading}
-                    onClick={() =>
-                      handleDelete(
-                        item.id
-                      )
-                    }
-                    title="Hapus"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </td>
+      </div>
+
+      {/* ======================================
+          TABLE
+      ======================================= */}
+
+      <div className="pengguna-table-wrapper">
+
+        <table className="pengguna-table">
+
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Jabatan</th>
+              <th>Username</th>
+              <th>Status</th>
+              <th>Role</th>
+              <th>Aksi</th>
             </tr>
-          ))
-        )}
-      </tbody>
-    </table>
+          </thead>
+
+          <tbody>
+
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="pengguna-empty"
+                >
+                  <span className="pengguna-loading">
+                    Memuat data pengguna...
+                  </span>
+                </td>
+              </tr>
+
+            ) : users.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="pengguna-empty"
+                >
+                  Tidak ada data.
+                </td>
+              </tr>
+
+            ) : (
+              users.map(
+                (item, index) => (
+                  <tr
+                    key={item.id}
+                  >
+
+                    {/* NO */}
+                    <td>
+                      {index + 1}
+                    </td>
+
+                    {/* NAMA */}
+                    <td>
+                      <strong className="pengguna-name">
+                        {item.nama}
+                      </strong>
+                    </td>
+
+                    {/* JABATAN */}
+                    <td>
+                      {item.jabatan}
+                    </td>
+
+                    {/* USERNAME */}
+                    <td>
+                      <span className="pengguna-username">
+                        {item.username}
+                      </span>
+                    </td>
+
+                    {/* STATUS */}
+                    <td>
+                      <span
+                        className={
+                          item.aktif
+                            ? "pengguna-status active"
+                            : "pengguna-status inactive"
+                        }
+                      >
+                        {item.aktif
+                          ? "Aktif"
+                          : "Non Aktif"}
+                      </span>
+                    </td>
+
+                    {/* ROLE */}
+                    <td>
+                      <span className="pengguna-role">
+                        {item.role || "-"}
+                      </span>
+                    </td>
+
+                    {/* AKSI */}
+                    <td>
+
+                      <div className="pengguna-table-action">
+
+                        <button
+                          type="button"
+                          className="pengguna-btn-action"
+                          disabled={loading}
+                          onClick={() =>
+                            handleEdit(item)
+                          }
+                          title="Edit"
+                          aria-label={`Edit ${item.nama}`}
+                        >
+                          <Pencil
+                            size={18}
+                          />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="pengguna-btn-action danger"
+                          disabled={loading}
+                          onClick={() =>
+                            handleDelete(
+                              item.id
+                            )
+                          }
+                          title="Hapus"
+                          aria-label={`Hapus ${item.nama}`}
+                        >
+                          <Trash2
+                            size={18}
+                          />
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+                )
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      {/* ======================================
+          MODAL FORM
+      ======================================= */}
+
+      {modalMode && (
+        <FormPengguna
+          initialData={
+            modalMode === "edit"
+              ? selectedUser
+              : null
+          }
+
+          onClose={
+            handleCloseModal
+          }
+
+          onSuccess={
+            handleFormSuccess
+          }
+        />
+      )}
+
+    </>
   );
 }

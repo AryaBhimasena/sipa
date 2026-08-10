@@ -1,26 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import {
   Eye,
   EyeOff,
+  X,
 } from "lucide-react";
 
 import { API_URL } from "../../../lib/api";
+import "../../../styles/components/form-pengguna.css";
+
+const ROLE_OPTIONS = [
+  "Kasir",
+  "Admin",
+  "System Administrator",
+];
+
+const EMPTY_FORM = {
+  id: "",
+  nama: "",
+  jabatan: "",
+  username: "",
+  password: "",
+  confirmPassword: "",
+  aktif: true,
+  role: "Admin",
+};
 
 export default function FormPengguna({
   onClose,
+  onSuccess,
+  initialData = null,
 }) {
+  const isEdit = Boolean(initialData);
+
   const [form, setForm] =
-    useState({
-      nama: "",
-      jabatan: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      aktif: true,
-      role: "Admin",
-    });
+    useState(EMPTY_FORM);
 
   const [loading, setLoading] =
     useState(false);
@@ -31,11 +47,45 @@ export default function FormPengguna({
   const [showConfirm, setShowConfirm] =
     useState(false);
 
+  /*
+   * ==========================================
+   * LOAD DATA FORM
+   * ==========================================
+   */
+
+  useEffect(() => {
+    if (!initialData) {
+      setForm(EMPTY_FORM);
+      return;
+    }
+
+    setForm({
+      id: initialData.id || "",
+      nama: initialData.nama || "",
+      jabatan: initialData.jabatan || "",
+      username: initialData.username || "",
+      password: "",
+      confirmPassword: "",
+      aktif:
+        initialData.aktif === true ||
+        initialData.aktif === "true" ||
+        initialData.aktif === "TRUE" ||
+        initialData.aktif === 1 ||
+        initialData.aktif === "1",
+      role: initialData.role || "Admin",
+    });
+  }, [initialData]);
+
+  /*
+   * ==========================================
+   * PASSWORD VALIDATION
+   * ==========================================
+   */
+
   const passwordMismatch =
     form.password &&
     form.confirmPassword &&
-    form.password !==
-      form.confirmPassword;
+    form.password !== form.confirmPassword;
 
   function handleChange(
     field,
@@ -47,12 +97,88 @@ export default function FormPengguna({
     }));
   }
 
+  /*
+   * ==========================================
+   * SUBMIT
+   * ==========================================
+   */
+
   async function handleSubmit(e) {
     e.preventDefault();
+
+    /*
+     * ------------------------------------------
+     * VALIDASI DATA DASAR
+     * ------------------------------------------
+     */
+
+    if (!form.nama.trim()) {
+      alert("Nama lengkap wajib diisi");
+      return;
+    }
+
+    if (!form.jabatan.trim()) {
+      alert("Jabatan wajib diisi");
+      return;
+    }
+
+    if (!form.username.trim()) {
+      alert("Username wajib diisi");
+      return;
+    }
+
+    if (!form.role) {
+      alert("Role pengguna wajib dipilih");
+      return;
+    }
+
+    /*
+     * ------------------------------------------
+     * VALIDASI PASSWORD
+     *
+     * Saat tambah:
+     * Password wajib.
+     *
+     * Saat edit:
+     * Password boleh kosong.
+     * Jika diisi, konfirmasi wajib cocok.
+     * ------------------------------------------
+     */
+
+    if (!isEdit && !form.password) {
+      alert("Password wajib diisi");
+      return;
+    }
+
+    if (
+      !isEdit &&
+      !form.confirmPassword
+    ) {
+      alert(
+        "Konfirmasi password wajib diisi"
+      );
+      return;
+    }
 
     if (passwordMismatch) {
       alert(
         "Konfirmasi password tidak cocok"
+      );
+      return;
+    }
+
+    /*
+     * Jika password diisi ketika edit,
+     * maka konfirmasi juga harus diisi.
+     */
+
+    if (
+      isEdit &&
+      form.password &&
+      !form.confirmPassword
+    ) {
+      alert(
+        "Konfirmasi password wajib diisi"
       );
       return;
     }
@@ -63,24 +189,32 @@ export default function FormPengguna({
       const body =
         new URLSearchParams();
 
+      /*
+       * ------------------------------------------
+       * FIELD UMUM
+       * ------------------------------------------
+       */
+
+      if (isEdit) {
+        body.append(
+          "id",
+          form.id
+        );
+      }
+
       body.append(
         "nama",
-        form.nama
+        form.nama.trim()
       );
 
       body.append(
         "jabatan",
-        form.jabatan
+        form.jabatan.trim()
       );
 
       body.append(
         "username",
-        form.username
-      );
-
-      body.append(
-        "password",
-        form.password
+        form.username.trim()
       );
 
       body.append(
@@ -93,8 +227,38 @@ export default function FormPengguna({
         form.role
       );
 
+      /*
+       * ------------------------------------------
+       * PASSWORD
+       *
+       * Saat tambah selalu dikirim.
+       *
+       * Saat edit hanya dikirim jika
+       * pengguna memang mengubah password.
+       * ------------------------------------------
+       */
+
+      if (
+        form.password
+      ) {
+        body.append(
+          "password",
+          form.password
+        );
+      }
+
+      /*
+       * ------------------------------------------
+       * ENDPOINT
+       * ------------------------------------------
+       */
+
+      const endpoint = isEdit
+        ? "updateUser"
+        : "createUser";
+
       const res = await fetch(
-        `${API_URL}?path=createUser`,
+        `${API_URL}?path=${endpoint}`,
         {
           method: "POST",
           body,
@@ -104,247 +268,461 @@ export default function FormPengguna({
       const json =
         await res.json();
 
+      /*
+       * ------------------------------------------
+       * RESPONSE ERROR
+       * ------------------------------------------
+       */
+
       if (!json.success) {
-        alert(json.message);
-        setLoading(false);
+        alert(
+          json.message ||
+            (
+              isEdit
+                ? "Gagal memperbarui data pengguna"
+                : "User gagal ditambahkan"
+            )
+        );
+
         return;
       }
 
+      /*
+       * ------------------------------------------
+       * SUCCESS
+       * ------------------------------------------
+       */
+
       alert(
-        "User berhasil ditambahkan"
+        isEdit
+          ? "Data pengguna berhasil diperbarui"
+          : "User berhasil ditambahkan"
       );
+
+      /*
+       * Beritahu parent agar
+       * mengambil data terbaru.
+       */
+
+      if (onSuccess) {
+        await onSuccess();
+      }
 
       onClose();
 
     } catch (error) {
       console.error(error);
+
       alert(
         "Gagal terhubung ke server"
       );
-    }
 
-    setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="popup-form"
-    >
-      <div className="form-grid">
+    <div className="form-pengguna-overlay">
 
-        <div className="form-group">
-          <label>
-            Nama Lengkap
-          </label>
+      <div className="form-pengguna-modal">
 
-          <input
-            value={form.nama}
-            onChange={(e) =>
-              handleChange(
-                "nama",
-                e.target.value
-              )
-            }
-            required
-          />
-        </div>
+        {/* =====================================
+            HEADER
+        ====================================== */}
 
-        <div className="form-group">
-          <label>
-            Jabatan
-          </label>
+        <div className="form-pengguna-header">
 
-          <input
-            value={form.jabatan}
-            onChange={(e) =>
-              handleChange(
-                "jabatan",
-                e.target.value
-              )
-            }
-            required
-          />
-        </div>
+          <div className="form-pengguna-header-content">
 
-        <div className="form-group">
-          <label>
-            Username
-          </label>
+            <h2 className="form-pengguna-title">
+              {isEdit
+                ? "Edit Pengguna"
+                : "Tambah Pengguna"}
+            </h2>
 
-          <input
-            value={form.username}
-            onChange={(e) =>
-              handleChange(
-                "username",
-                e.target.value
-              )
-            }
-            required
-          />
-        </div>
+            <p className="form-pengguna-subtitle">
+              {isEdit
+                ? "Perbarui informasi dan hak akses pengguna."
+                : "Tambahkan pengguna baru dan tentukan hak aksesnya."}
+            </p>
 
-        <div className="form-group">
-          <label>
-            Status Akun
-          </label>
+          </div>
 
-          <select
-            value={String(form.aktif)}
-            onChange={(e) =>
-              handleChange(
-                "aktif",
-                e.target.value ===
-                  "true"
-              )
-            }
+          <button
+            type="button"
+            className="form-pengguna-close"
+            onClick={onClose}
+            disabled={loading}
+            aria-label="Tutup"
           >
-            <option value="true">
-              Aktif
-            </option>
+            <X size={19} />
+          </button>
 
-            <option value="false">
-              Non Aktif
-            </option>
-          </select>
         </div>
 
-        <div className="form-group">
-          <label>
-            Password
-          </label>
+        {/* =====================================
+            BODY
+        ====================================== */}
 
-          <div className="password-field">
-            <input
-              type={
-                showPassword
-                  ? "text"
-                  : "password"
-              }
-              value={form.password}
-              onChange={(e) =>
-                handleChange(
-                  "password",
-                  e.target.value
-                )
-              }
-              required
-            />
+        <div className="form-pengguna-body">
 
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() =>
-                setShowPassword(
-                  !showPassword
-                )
-              }
-            >
-              {showPassword ? (
-                <EyeOff size={18} />
-              ) : (
-                <Eye size={18} />
+          <form
+            className="form-pengguna-form"
+            onSubmit={handleSubmit}
+          >
+
+            {/* =================================
+                DATA PENGGUNA
+            ================================== */}
+
+            <div className="form-pengguna-grid">
+
+              <div className="form-group">
+
+                <label>
+                  Nama Lengkap
+                </label>
+
+                <input
+                  type="text"
+                  value={form.nama}
+                  onChange={(e) =>
+                    handleChange(
+                      "nama",
+                      e.target.value
+                    )
+                  }
+                  required
+                  disabled={loading}
+                  autoComplete="name"
+                  placeholder="Masukkan nama lengkap"
+                />
+
+              </div>
+
+              <div className="form-group">
+
+                <label>
+                  Jabatan
+                </label>
+
+                <input
+                  type="text"
+                  value={form.jabatan}
+                  onChange={(e) =>
+                    handleChange(
+                      "jabatan",
+                      e.target.value
+                    )
+                  }
+                  required
+                  disabled={loading}
+                  placeholder="Masukkan jabatan"
+                />
+
+              </div>
+
+              <div className="form-group">
+
+                <label>
+                  Username
+                </label>
+
+                <input
+                  type="text"
+                  value={form.username}
+                  onChange={(e) =>
+                    handleChange(
+                      "username",
+                      e.target.value
+                    )
+                  }
+                  required
+                  disabled={loading}
+                  autoComplete="username"
+                  placeholder="Masukkan username"
+                />
+
+              </div>
+
+              <div className="form-group">
+
+                <label>
+                  Status Akun
+                </label>
+
+                <select
+                  value={String(
+                    form.aktif
+                  )}
+                  onChange={(e) =>
+                    handleChange(
+                      "aktif",
+                      e.target.value ===
+                        "true"
+                    )
+                  }
+                  disabled={loading}
+                >
+                  <option value="true">
+                    Aktif
+                  </option>
+
+                  <option value="false">
+                    Non Aktif
+                  </option>
+                </select>
+
+              </div>
+
+              <div className="form-group full-width">
+
+                <label>
+                  Role
+                </label>
+
+                <select
+                  value={form.role}
+                  onChange={(e) =>
+                    handleChange(
+                      "role",
+                      e.target.value
+                    )
+                  }
+                  disabled={loading}
+                >
+                  {ROLE_OPTIONS.map(
+                    (role) => (
+                      <option
+                        key={role}
+                        value={role}
+                      >
+                        {role}
+                      </option>
+                    )
+                  )}
+                </select>
+
+              </div>
+
+            </div>
+
+            {/* =================================
+                KEAMANAN AKUN
+            ================================== */}
+
+            <div className="form-pengguna-section">
+
+              <h3 className="form-pengguna-section-title">
+                Keamanan Akun
+              </h3>
+
+              {isEdit && (
+                <p
+                  style={{
+                    margin:
+                      "-8px 0 16px",
+                    color:
+                      "#6b7280",
+                    fontSize:
+                      "12px",
+                    lineHeight:
+                      "1.5",
+                  }}
+                >
+                  Kosongkan password jika
+                  tidak ingin mengubah password
+                  pengguna.
+                </p>
               )}
-            </button>
-          </div>
+
+              <div className="form-pengguna-grid">
+
+                {/* PASSWORD */}
+
+                <div className="form-group">
+
+                  <label>
+                    Password
+                  </label>
+
+                  <div className="password-field">
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      value={
+                        form.password
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          "password",
+                          e.target.value
+                        )
+                      }
+                      required={!isEdit}
+                      disabled={loading}
+                      autoComplete="new-password"
+                      placeholder={
+                        isEdit
+                          ? "Kosongkan jika tetap"
+                          : "Masukkan password"
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() =>
+                        setShowPassword(
+                          (prev) =>
+                            !prev
+                        )
+                      }
+                      disabled={loading}
+                      aria-label={
+                        showPassword
+                          ? "Sembunyikan password"
+                          : "Tampilkan password"
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff
+                          size={18}
+                        />
+                      ) : (
+                        <Eye
+                          size={18}
+                        />
+                      )}
+                    </button>
+
+                  </div>
+
+                </div>
+
+                {/* KONFIRMASI PASSWORD */}
+
+                <div className="form-group">
+
+                  <label>
+                    Konfirmasi Password
+                  </label>
+
+                  <div className="password-field">
+
+                    <input
+                      type={
+                        showConfirm
+                          ? "text"
+                          : "password"
+                      }
+                      value={
+                        form.confirmPassword
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          "confirmPassword",
+                          e.target.value
+                        )
+                      }
+                      required={
+                        !isEdit
+                      }
+                      disabled={loading}
+                      autoComplete="new-password"
+                      placeholder={
+                        isEdit
+                          ? "Kosongkan jika tetap"
+                          : "Ulangi password"
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() =>
+                        setShowConfirm(
+                          (prev) =>
+                            !prev
+                        )
+                      }
+                      disabled={loading}
+                      aria-label={
+                        showConfirm
+                          ? "Sembunyikan konfirmasi password"
+                          : "Tampilkan konfirmasi password"
+                      }
+                    >
+                      {showConfirm ? (
+                        <EyeOff
+                          size={18}
+                        />
+                      ) : (
+                        <Eye
+                          size={18}
+                        />
+                      )}
+                    </button>
+
+                  </div>
+
+                  {passwordMismatch && (
+                    <small className="field-error">
+                      Password tidak cocok
+                    </small>
+                  )}
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* =================================
+                ACTION
+            ================================== */}
+
+            <div className="form-pengguna-actions">
+
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={onClose}
+                disabled={loading}
+              >
+                Batal
+              </button>
+
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={
+                  loading ||
+                  Boolean(
+                    passwordMismatch
+                  )
+                }
+              >
+                {loading
+                  ? "Menyimpan..."
+                  : isEdit
+                    ? "Simpan Perubahan"
+                    : "Simpan"}
+              </button>
+
+            </div>
+
+          </form>
+
         </div>
 
-        <div className="form-group">
-          <label>
-            Konfirmasi Password
-          </label>
-
-          <div className="password-field">
-            <input
-              type={
-                showConfirm
-                  ? "text"
-                  : "password"
-              }
-              value={
-                form.confirmPassword
-              }
-              onChange={(e) =>
-                handleChange(
-                  "confirmPassword",
-                  e.target.value
-                )
-              }
-              required
-            />
-
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() =>
-                setShowConfirm(
-                  !showConfirm
-                )
-              }
-            >
-              {showConfirm ? (
-                <EyeOff size={18} />
-              ) : (
-                <Eye size={18} />
-              )}
-            </button>
-          </div>
-
-          {passwordMismatch && (
-            <small className="field-error">
-              Password tidak cocok
-            </small>
-          )}
-        </div>
-
       </div>
 
-      <div className="form-group">
-        <label>Role</label>
-
-        <select
-          value={form.role}
-          onChange={(e) =>
-            handleChange(
-              "role",
-              e.target.value
-            )
-          }
-        >
-          <option>
-            System Administrator
-          </option>
-
-          <option>
-            Admin
-          </option>
-        </select>
-      </div>
-
-      <div className="form-actions">
-
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={onClose}
-        >
-          Batal
-        </button>
-
-        <button
-          type="submit"
-          className="btn-primary"
-          disabled={
-            loading ||
-            passwordMismatch
-          }
-        >
-          {loading
-            ? "Menyimpan..."
-            : "Simpan"}
-        </button>
-
-      </div>
-    </form>
+    </div>
   );
 }

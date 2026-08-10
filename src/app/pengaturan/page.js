@@ -167,46 +167,6 @@ export default function PengaturanPage() {
 
               <div className="setting-card">
 
-				<div className="card-header">
-
-				  <div>
-					<h2>
-					  {menus.find(
-						(menu) => menu.id === activeMenu
-					  )?.title}
-					</h2>
-
-					<p>
-					  {menus.find(
-						(menu) => menu.id === activeMenu
-					  )?.description}
-					</p>
-				  </div>
-
-				  <div className="header-actions">
-
-					<input
-					  type="text"
-					  className="search-input"
-					  placeholder="Cari data..."
-					  value={keyword}
-					  onChange={(e) =>
-						setKeyword(e.target.value)
-					  }
-					/>
-
-					<button
-					  className="btn-primary"
-					  onClick={() =>
-						setShowModal(true)
-					  }
-					>
-					  + Tambah Data
-					</button>
-
-				  </div>
-
-				</div>
 
                 {/* TABLE */}
 
