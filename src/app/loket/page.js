@@ -1,3 +1,4 @@
+//app/loket/page.js
 "use client";
 
 import { useEffect, useState, useMemo } from "react";

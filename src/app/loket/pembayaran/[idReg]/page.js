@@ -1,3 +1,4 @@
+//app/loket/pembayaran/[idReg]/page.js
 "use client";
 
 import { useEffect, useState } from "react";

@@ -1,492 +1,804 @@
 /* ======================================================
-MODAL LAYER (PRINT PREVIEW)
+   MODAL LAYER (PRINT PREVIEW)
 ====================================================== */
 
 .modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0, 0, 0, 0.6);
-z-index: 999;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
 }
 
 .modal-container {
-position: fixed;
-inset: 0;
-margin: auto;
-width: 90%;
-max-width: 1200px;
-height: 90%;
-background: #f5f5f5;
-border-radius: 8px;
-z-index: 1000;
-display: flex;
-flex-direction: column;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: 90%;
+  max-width: 1200px;
+  height: 90%;
+  background: #f5f5f5;
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ======================================================
+   MODAL HEADER
+====================================================== */
+
 .modal-header {
-height: 44px;
-padding: 0 16px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-font-size: 14px;
+  height: 44px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
 }
 
 .modal-close {
-background: none;
-border: none;
-color: #000000;
-font-size: 18px;
-cursor: pointer;
-}
-
-.modal-body {
-display: flex;
-justify-content: center;
-align-items: flex-start;
-width: 100%;
-height: 100%;
-overflow: auto;
-padding: 24px;
-background: #f2f3f5;
-box-sizing: border-box;
+  background: none;
+  border: none;
+  color: #000000;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 /* ======================================================
-CUSTOM MODAL HEADER
+   MODAL BODY
+====================================================== */
+
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 24px;
+  background: #f2f3f5;
+  box-sizing: border-box;
+}
+
+/* ======================================================
+   CUSTOM MODAL HEADER
 ====================================================== */
 
 .custom-header {
-height: 52px;
-padding: 0 16px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: #ffffff;
-border-bottom: 1px solid #e0e0e0;
+  min-height: 52px;
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-sizing: border-box;
 }
 
 /* ======================================================
-ACTION GROUP
+   PAYMENT METHOD - HEADER MODAL
+====================================================== */
+
+.payment-method-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  /*
+   * Tetap berada di tengah header tanpa
+   * mempengaruhi ukuran area kuitansi.
+   */
+  flex: 1;
+  white-space: nowrap;
+}
+
+.payment-method-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  margin-right: 2px;
+}
+
+/* ======================================================
+   RADIO PAYMENT
+====================================================== */
+
+.payment-radio {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 5px 9px;
+
+  border-radius: 5px;
+
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.payment-radio:hover {
+  background: #f3f4f6;
+}
+
+.payment-radio.active {
+  color: #111;
+  font-weight: 600;
+}
+
+/* ======================================================
+   RADIO INPUT
+====================================================== */
+
+.payment-radio input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ======================================================
+   CUSTOM RADIO DOT
+====================================================== */
+
+.radio-dot {
+  width: 15px;
+  height: 15px;
+
+  border: 1.5px solid #9ca3af;
+  border-radius: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+/* ======================================================
+   RADIO ACTIVE
+====================================================== */
+
+.payment-radio.active .radio-dot {
+  border-color: #198754;
+}
+
+.payment-radio.active .radio-dot::after {
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #198754;
+}
+
+/* ======================================================
+   RADIO DISABLED
+====================================================== */
+
+.payment-radio:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ======================================================
+   ACTION GROUP
 ====================================================== */
 
 .action-group {
-display: flex;
-align-items: center;
-gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ======================================================
-BASE BUTTON STYLE
+   BASE BUTTON STYLE
 ====================================================== */
 
 .custom-header button {
-all: unset;
-cursor: pointer;
-min-width: 90px;
-padding: 7px 14px;
-border-radius: 6px;
-font-size: 13px;
-font-weight: 600;
-line-height: 1;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-transition:
-background 0.15s ease,
-transform 0.05s ease;
+  all: unset;
+
+  cursor: pointer;
+
+  min-width: 90px;
+
+  padding: 7px 14px;
+
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
 }
 
 .custom-header button:active {
-transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 /* ======================================================
-TUTUP (SECONDARY)
+   TUTUP
 ====================================================== */
 
 .btn-tutup {
-background: #f1f3f5;
-color: #333;
+  background: #f1f3f5;
+  color: #333;
 }
 
 .btn-tutup:hover {
-background: #e4e6e8;
+  background: #e4e6e8;
 }
 
 /* ======================================================
-EXPORT PDF
+   EXPORT PDF
 ====================================================== */
 
 .btn-pdf {
-background: #6f42c1;
-color: #fff;
+  background: #6f42c1;
+  color: #fff;
 }
 
 .btn-pdf:hover {
-background: #5c35a6;
-color: #fff;
+  background: #5c35a6;
+  color: #fff;
 }
 
 /* ======================================================
-SIMPAN (PRIMARY)
+   SIMPAN
 ====================================================== */
 
 .btn-simpan {
-background: #00a87e;
-color: #fff;
+  background: #00a87e;
+  color: #fff;
 }
 
 .btn-simpan:hover {
-background: #008f6a;
-color: #fff;
+  background: #008f6a;
+  color: #fff;
 }
 
 /* ======================================================
-PRINT
+   PRINT
 ====================================================== */
 
 .btn-print {
-background: #1f6fd8;
-color: #fff;
+  background: #1f6fd8;
+  color: #fff;
 }
 
 .btn-print:hover {
-background: #195fc0;
-color: #fff;
+  background: #195fc0;
+  color: #fff;
 }
 
 /* ======================================================
-DISABLED
+   DISABLED
 ====================================================== */
 
 .custom-header button:disabled {
-opacity: 0.6;
-cursor: not-allowed;
-pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ======================================================
-PAPER (KUITANSI PREVIEW)
+   PAPER (KUITANSI PREVIEW)
+
+   JANGAN mengubah ukuran/dimensi area ini.
+   Struktur dipertahankan untuk kebutuhan printer
+   dot matrix.
 ====================================================== */
 
 .kuitansi-paper {
-width: 100%;
-height: 100%;
-aspect-ratio: 11 / 9.5;
-display: flex;
-flex-direction: column;
-padding: 20px;
-box-sizing: border-box;
-background: #ffffff;
-color: #000000;
-font-family: "Courier New", Courier, monospace;
-font-size: 12px;
-line-height: 1.4;
-border: 1px solid #000;
-box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-margin: 0 auto;
-overflow: hidden;
+  width: 100%;
+  height: 100%;
+
+  aspect-ratio: 11 / 9.5;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  color: #000000;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  border: 1px solid #000;
+
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.12);
+
+  margin: 0 auto;
+
+  overflow: hidden;
 }
 
 /* ======================================================
-HEADER
+   HEADER KUITANSI
 ====================================================== */
 
 .kuitansi-header {
-position: relative;
-text-align: center;
-padding-bottom: 6px;
-min-height: 95px;
-flex-shrink: 0;
+  position: relative;
+
+  text-align: center;
+
+  padding-bottom: 6px;
+
+  min-height: 95px;
+
+  flex-shrink: 0;
 }
 
 /* ======================================================
-LOGO KOP (OVERLAY)
+   LOGO KOP
 ====================================================== */
 
 .kop-left {
-position: absolute;
-height: 80px;
-display: flex;
-align-items: center;
-justify-content: center;
+  position: absolute;
+
+  height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .kop-logo {
-width: 120px;
-height: auto;
-object-fit: contain;
+  width: 120px;
+  height: auto;
+
+  object-fit: contain;
 }
 
 .kop-center h3 {
-margin: 0;
-font-size: 14px;
-font-weight: bold;
-text-transform: uppercase;
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  text-transform: uppercase;
 }
 
 .kop-center h4 {
-margin: 4px 0 0;
-font-size: 13px;
-font-weight: bold;
+  margin: 4px 0 0;
+
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .kop-center p {
-margin: 2px 0;
-font-size: 11px;
+  margin: 2px 0;
+
+  font-size: 11px;
 }
 
 .subtitle {
-font-style: italic;
+  font-style: italic;
 }
 
 /* ======================================================
-BODY
+   BODY
 ====================================================== */
 
 .kuitansi-body {
-margin-top: 8px;
-position: relative;
-flex: 1 1 auto;
-overflow: hidden;
+  margin-top: 8px;
+
+  position: relative;
+
+  flex: 1 1 auto;
+
+  overflow: hidden;
 }
 
 /* ======================================================
-TANGGAL POJOK KANAN
+   TANGGAL
 ====================================================== */
 
 .tanggal-bayar {
-position: absolute;
-top: 0;
-right: 0;
-font-size: 11px;
-margin-right: 10px;
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  font-size: 11px;
+
+  margin-right: 10px;
 }
 
 /* ======================================================
-KONTEN UTAMA
+   KONTEN UTAMA
 ====================================================== */
 
 .content-left {
-margin-top: 18px;
-width: 100%;
+  margin-top: 18px;
+
+  width: 100%;
 }
 
 /* ======================================================
-BARIS LABEL
+   BARIS LABEL
+
+   DIPERTAHANKAN agar output dot matrix
+   tidak berubah.
 ====================================================== */
 
 .row {
-display: flex;
-gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .row span {
-word-break: break-word;
-white-space: normal;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .row span:first-child {
-width: 230px;
+  width: 230px;
 }
 
 /* ======================================================
-TOTAL UTAMA
+   TOTAL UTAMA
 ====================================================== */
 
 .total-utama {
-margin-top: 6px;
-padding-top: 4px;
-border-top: 1px solid #000;
-font-weight: bold;
+  margin-top: 6px;
+  padding-top: 4px;
+
+  border-top: 1px solid #000;
+
+  font-weight: bold;
 }
 
 /* ======================================================
-JUDUL SECTION
+   JUDUL SECTION
 ====================================================== */
 
 .section-title {
-margin: 6px 0 4px;
-font-weight: bold;
-text-decoration: underline;
+  margin: 6px 0 4px;
+
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 /* ======================================================
-FOOTER
+   FOOTER
+
+   Struktur utama tetap dipertahankan.
 ====================================================== */
 
 .kuitansi-footer {
-display: flex;
-gap: 16px;
-flex-shrink: 0;
-margin-top: auto;
-padding-top: 10px;
+  display: flex;
+
+  gap: 16px;
+
+  flex-shrink: 0;
+
+  margin-top: auto;
+
+  padding-top: 10px;
 }
 
 /* ======================================================
-70% LEFT
+   AREA KIRI FOOTER
 ====================================================== */
 
 .catatan {
-flex: 7;
-font-size: 11px;
+  flex: 7;
+
+  font-size: 11px;
 }
 
 .catatan ol {
-margin: 4px 0 0 16px;
-padding: 0;
+  margin: 4px 0 0 16px;
+  padding: 0;
 }
 
 /* ======================================================
-30% RIGHT
+   METODE PEMBAYARAN PADA KUITANSI
+
+   Posisi:
+   - pojok kiri bawah
+   - berada di area footer
+   - tidak menjadi row pada body kuitansi
+   - tidak menambah field data
+====================================================== */
+
+.payment-method-print {
+  display: inline-block;
+
+  margin-top: 10px;
+
+  padding: 4px 8px;
+
+  border: 1px solid #000;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 11px;
+
+  font-weight: bold;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+
+  box-sizing: border-box;
+}
+
+/* ======================================================
+   30% RIGHT - TANDA TANGAN
 ====================================================== */
 
 .content-right {
-flex: 3;
-font-size: 11px;
-text-align: center;
+  flex: 3;
+
+  font-size: 11px;
+
+  text-align: center;
 }
 
 .ttd-space {
-height: 48px;
+  height: 48px;
 }
 
 .nama-petugas {
-font-weight: bold;
+  font-weight: bold;
 }
 
 /* ======================================================
-SAVING OVERLAY
+   SAVING OVERLAY
 ====================================================== */
 
 .saving-overlay {
-position: fixed;
-inset: 0;
-background: rgba(255, 255, 255, 0.85);
-z-index: 9999;
-display: flex;
-align-items: center;
-justify-content: center;
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .saving-box {
-padding: 20px 30px;
-background: white;
-border: 2px solid #000;
-font-weight: bold;
-font-size: 16px;
+  padding: 20px 30px;
+
+  background: white;
+
+  border: 2px solid #000;
+
+  font-weight: bold;
+
+  font-size: 16px;
 }
 
 /* ======================================================
-CONFIRM MODAL (UNSAVED TRANSACTION WARNING)
+   CONFIRM MODAL
 ====================================================== */
 
 .confirm-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0, 0, 0, 0.45);
-z-index: 2000;
-display: flex;
-align-items: center;
-justify-content: center;
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .confirm-modal {
-width: 320px;
-max-width: 90%;
-background: #ffffff;
-border-radius: 10px;
-padding: 22px 20px 20px;
-box-sizing: border-box;
-text-align: center;
-box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
-animation: confirmPop 0.18s ease-out;
+  width: 320px;
+  max-width: 90%;
+
+  background: #ffffff;
+
+  border-radius: 10px;
+
+  padding: 22px 20px 20px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.25);
+
+  animation: confirmPop 0.18s ease-out;
 }
 
 @keyframes confirmPop {
-from {
-transform: scale(0.9);
-opacity: 0;
-}
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
 
-to {
-transform: scale(1);
-opacity: 1;
-}
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .confirm-icon {
-color: #f59e0b;
-margin-bottom: 10px;
+  color: #f59e0b;
+  margin-bottom: 10px;
 }
 
 .confirm-modal h3 {
-margin: 0 0 6px;
-font-size: 16px;
-font-weight: 700;
-color: #111;
+  margin: 0 0 6px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: #111;
 }
 
 .confirm-modal p {
-margin: 0 0 18px;
-font-size: 13px;
-color: #444;
-line-height: 1.4;
+  margin: 0 0 18px;
+
+  font-size: 13px;
+
+  color: #444;
+
+  line-height: 1.4;
 }
 
 /* ======================================================
-CONFIRM ACTION BUTTONS
+   CONFIRM ACTION BUTTONS
 ====================================================== */
 
 .confirm-actions {
-display: flex;
-gap: 10px;
-justify-content: center;
+  display: flex;
+
+  gap: 10px;
+
+  justify-content: center;
 }
 
 .confirm-actions button {
-all: unset;
-cursor: pointer;
-padding: 8px 16px;
-min-width: 110px;
-border-radius: 6px;
-font-size: 13px;
-font-weight: 600;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-transition:
-background 0.15s ease,
-transform 0.05s ease;
+  all: unset;
+
+  cursor: pointer;
+
+  padding: 8px 16px;
+
+  min-width: 110px;
+
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
 }
 
 .confirm-actions button:active {
-transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 /* ======================================================
-PRIMARY
+   PRIMARY
 ====================================================== */
 
 .btn-confirm {
-background: #00a87e;
-color: #ffffff;
+  background: #00a87e;
+  color: #ffffff;
 }
 
 .btn-confirm:hover {
-background: #008f6a;
+  background: #008f6a;
 }
 
 /* ======================================================
-SECONDARY
+   SECONDARY
 ====================================================== */
 
 .btn-cancel {
-background: #f1f3f5;
-color: #333;
+  background: #f1f3f5;
+  color: #333;
 }
 
 .btn-cancel:hover {
-background: #e4e6e8;
+  background: #e4e6e8;
+}
+
+/* ======================================================
+   RESPONSIVE HEADER
+====================================================== */
+
+@media (max-width: 900px) {
+
+  .custom-header {
+    gap: 10px;
+  }
+
+  .payment-method-group {
+    gap: 5px;
+  }
+
+  .payment-method-label {
+    display: none;
+  }
+
+  .custom-header button {
+    min-width: 75px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .modal-container {
+    width: 96%;
+    height: 94%;
+  }
+
+  .custom-header {
+    padding: 0 10px;
+  }
+
+  .payment-radio {
+    padding: 5px 7px;
+  }
+
+  .action-group {
+    gap: 4px;
+  }
+
+  .btn-pdf {
+    display: none !important;
+  }
 }

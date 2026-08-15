@@ -25,8 +25,28 @@ export default function ModalKuitansi({
   const [namaPetugas, setNamaPetugas] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
+  /* =================================================
+     METODE PEMBAYARAN
+
+     Pilihan:
+     - TUNAI
+     - QRIS
+
+     Default tetap TUNAI agar perilaku sebelumnya
+     tetap berjalan normal.
+
+     Status pembayaran TIDAK dikelola di modal ini.
+     Status ditentukan oleh proses/backend verifikasi.
+  ================================================= */
+
+  const [metodeBayar, setMetodeBayar] =
+    useState("TUNAI");
+
   const printRef = useRef(null);
-  const actionState = useRef(createKuitansiActionState());
+
+  const actionState = useRef(
+    createKuitansiActionState()
+  );
 
   /* =================================================
      DATA PPN
@@ -60,12 +80,14 @@ export default function ModalKuitansi({
   ================================================= */
 
   useEffect(() => {
-    const session = localStorage.getItem("session");
+    const session =
+      localStorage.getItem("session");
 
     if (!session) return;
 
     try {
-      const parsed = JSON.parse(session);
+      const parsed =
+        JSON.parse(session);
 
       setNamaPetugas(
         parsed.user?.nama || ""
@@ -76,6 +98,14 @@ export default function ModalKuitansi({
   }, []);
 
   /* =================================================
+     PERUBAHAN METODE PEMBAYARAN
+  ================================================= */
+
+  function handleMetodeBayarChange(event) {
+    setMetodeBayar(event.target.value);
+  }
+
+  /* =================================================
      SIMPAN PEMBAYARAN
   ================================================= */
 
@@ -83,83 +113,114 @@ export default function ModalKuitansi({
     try {
       setLoading(true);
 
-const payload = {
-  header: {
-    no_kuitansi:
-      ringkasan.no_kuitansi,
+      const payload = {
+        header: {
+          no_kuitansi:
+            ringkasan.no_kuitansi,
 
-    id_reg:
-      dataPedagang.id_reg,
+          id_reg:
+            dataPedagang.id_reg,
 
-    nama_pedagang:
-      dataPedagang.nama,
+          nama_pedagang:
+            dataPedagang.nama,
 
-    jenis_objek:
-      dataPedagang.objek?.jenis_objek,
+          jenis_objek:
+            dataPedagang.objek?.jenis_objek,
 
-    blok:
-      dataPedagang.blok,
+          blok:
+            dataPedagang.blok,
 
-    no_toko:
-      dataPedagang.no,
+          no_toko:
+            dataPedagang.no,
 
-    periode_tahun:
-      ringkasan.periode,
+          periode_tahun:
+            ringkasan.periode,
 
-    jumlah_bulan:
-      ringkasan.jumlahBulan,
+          jumlah_bulan:
+            ringkasan.jumlahBulan,
 
-    subtotal: {
-      sewa:
-        Number(ringkasan.subtotal?.sewa || 0),
+          subtotal: {
+            sewa:
+              Number(
+                ringkasan.subtotal?.sewa || 0
+              ),
 
-      kebersihan:
-        Number(ringkasan.subtotal?.kebersihan || 0),
+            kebersihan:
+              Number(
+                ringkasan.subtotal?.kebersihan || 0
+              ),
 
-      keamanan:
-        Number(ringkasan.subtotal?.keamanan || 0),
+            keamanan:
+              Number(
+                ringkasan.subtotal?.keamanan || 0
+              ),
 
-      diskon:
-        Number(ringkasan.subtotal?.diskon || 0),
+            diskon:
+              Number(
+                ringkasan.subtotal?.diskon || 0
+              ),
 
-      denda:
-        Number(ringkasan.subtotal?.denda || 0),
-    },
+            denda:
+              Number(
+                ringkasan.subtotal?.denda || 0
+              ),
+          },
 
-    total_bayar:
-      ringkasan.total,
+          total_bayar:
+            ringkasan.total,
 
-    metode_bayar:
-      "TUNAI",
+          /* =========================================
+             METODE PEMBAYARAN
 
-    nama_petugas:
-      namaPetugas,
-  },
+             Hanya metode yang dikirim.
 
-  detail:
-    (ringkasan.rincian || []).map((d) => ({
-      bulan:
-        d.bulan,
+             Status pembayaran TIDAK dikirim dari
+             frontend.
 
-      sewa:
-        Number(d.sewa || 0),
+             Backend/verifikasi menentukan status
+             pembayaran sesuai metode dan proses
+             transaksi.
+          ========================================= */
 
-      kebersihan:
-        Number(d.kebersihan || 0),
+          metode_bayar:
+            metodeBayar,
 
-      keamanan:
-        Number(d.keamanan || 0),
+          nama_petugas:
+            namaPetugas,
+        },
 
-      denda:
-        Number(d.denda || 0),
+        detail:
+          (ringkasan.rincian || []).map(
+            (d) => ({
+              bulan:
+                d.bulan,
 
-      diskonPersen:
-        Number(d.diskonPersen || 0),
+              sewa:
+                Number(d.sewa || 0),
 
-      total:
-        Number(d.total || 0),
-    })),
-};
+              kebersihan:
+                Number(
+                  d.kebersihan || 0
+                ),
+
+              keamanan:
+                Number(
+                  d.keamanan || 0
+                ),
+
+              denda:
+                Number(d.denda || 0),
+
+              diskonPersen:
+                Number(
+                  d.diskonPersen || 0
+                ),
+
+              total:
+                Number(d.total || 0),
+            })
+          ),
+      };
 
       const res = await fetch(
         `${API_URL}?path=simpanPembayaran`,
@@ -178,7 +239,8 @@ const payload = {
         }
       );
 
-      const result = await res.json();
+      const result =
+        await res.json();
 
       if (!result.success) {
         alert(
@@ -191,7 +253,10 @@ const payload = {
         return false;
       }
 
-      if (typeof onConfirm === "function") {
+      if (
+        typeof onConfirm ===
+        "function"
+      ) {
         onConfirm(result);
       }
 
@@ -241,9 +306,11 @@ const payload = {
 
       {loading && (
         <div className="saving-overlay">
+
           <div className="saving-box">
             Menyimpan data...
           </div>
+
         </div>
       )}
 
@@ -263,10 +330,14 @@ const payload = {
       <div className="modal-container">
 
         {/* =================================================
-            HEADER
+            HEADER MODAL
         ================================================= */}
 
         <div className="modal-header custom-header">
+
+          {/* =================================================
+              TUTUP
+          ================================================= */}
 
           <button
             type="button"
@@ -276,6 +347,89 @@ const payload = {
           >
             Tutup
           </button>
+
+          {/* =================================================
+              METODE PEMBAYARAN
+
+              Radio button hanya berada di header modal.
+
+              Tidak mempengaruhi layout kuitansi yang
+              akan dicetak.
+          ================================================= */}
+
+          <div className="payment-method-group">
+
+            <span className="payment-method-label">
+              Metode Pembayaran
+            </span>
+
+            {/* TUNAI */}
+
+            <label
+              className={`payment-radio ${
+                metodeBayar === "TUNAI"
+                  ? "active"
+                  : ""
+              }`}
+            >
+
+              <input
+                type="radio"
+                name="metodePembayaran"
+                value="TUNAI"
+                checked={
+                  metodeBayar === "TUNAI"
+                }
+                onChange={
+                  handleMetodeBayarChange
+                }
+                disabled={loading}
+              />
+
+              <span className="radio-dot" />
+
+              <span>
+                Tunai
+              </span>
+
+            </label>
+
+            {/* QRIS */}
+
+            <label
+              className={`payment-radio ${
+                metodeBayar === "QRIS"
+                  ? "active"
+                  : ""
+              }`}
+            >
+
+              <input
+                type="radio"
+                name="metodePembayaran"
+                value="QRIS"
+                checked={
+                  metodeBayar === "QRIS"
+                }
+                onChange={
+                  handleMetodeBayarChange
+                }
+                disabled={loading}
+              />
+
+              <span className="radio-dot" />
+
+              <span>
+                QRIS
+              </span>
+
+            </label>
+
+          </div>
+
+          {/* =================================================
+              ACTION GROUP
+          ================================================= */}
 
           <div className="action-group">
 
@@ -325,6 +479,7 @@ const payload = {
             </button>
 
           </div>
+
         </div>
 
         {/* =================================================
@@ -345,11 +500,13 @@ const payload = {
             <div className="kuitansi-header">
 
               <div className="kop-left">
+
                 <img
                   src="/logo-perumda-banjarmasin.png"
                   alt="Logo Perumda Pasar Banjarmasin"
                   className="kop-logo"
                 />
+
               </div>
 
               <div className="kop-center">
@@ -379,6 +536,10 @@ const payload = {
 
             {/* =================================================
                 BODY KUITANSI
+
+                Struktur asli dipertahankan.
+                TIDAK ada tambahan baris metode/status
+                pembayaran di sini.
             ================================================= */}
 
             <div className="kuitansi-body">
@@ -656,6 +817,13 @@ const payload = {
 
             {/* =================================================
                 FOOTER
+
+                Struktur footer tetap 70% : 30%.
+                Kotak metode pembayaran ditempatkan di
+                sisi kiri bawah, sedangkan nama petugas
+                tetap di sisi kanan.
+
+                Tidak ada baris baru pada body kuitansi.
             ================================================= */}
 
             <div className="kuitansi-footer">
@@ -690,7 +858,31 @@ const payload = {
 
                 </ol>
 
+                {/* =================================================
+                    METODE PEMBAYARAN
+
+                    Ditampilkan sebagai blok tebal
+                    di pojok kiri bawah kuitansi.
+
+                    Contoh:
+                    Pembayaran : Tunai
+                    Pembayaran : QRIS
+                ================================================= */}
+
+                <div className="payment-method-print">
+
+                  Pembayaran :{" "}
+                  {metodeBayar === "QRIS"
+                    ? "QRIS"
+                    : "Tunai"}
+
+                </div>
+
               </div>
+
+              {/* =================================================
+                  TANDA TANGAN / PETUGAS
+              ================================================= */}
 
               <div className="content-right">
 

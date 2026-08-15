@@ -4,87 +4,228 @@
   padding: 28px 32px 40px;
 }
 
-/* ================= FILTER BAR ================= */
+/* ==================================================
+   FILTER BAR
+================================================== */
+
 .laporan-filter {
   display: flex;
-  justify-content: space-between; /* kiri vs kanan */
-  align-items: flex-end;          /* sejajar bawah (lebih rapi untuk input) */
+  justify-content: space-between;
+  align-items: flex-end;
   width: 100%;
   gap: 24px;
   margin-bottom: 16px;
 }
 
-/* KIRI */
+/* ==================================================
+   SEARCH - KIRI
+================================================== */
+
 .laporan-filter-left {
-  flex: 1;                        /* ambil sisa ruang */
+  flex: 1 1 auto;
+  min-width: 220px;
+
   display: flex;
   align-items: center;
 }
 
 .laporan-filter-left input {
   width: 100%;
-  max-width: 520px;               /* sejajar tabel, tapi fleksibel */
+  max-width: 520px;
 }
 
-/* KANAN */
+/* ==================================================
+   CONTROLLER - KANAN
+================================================== */
+
 .laporan-filter-controls {
-  display: grid;
-  grid-template-columns: 160px 150px 150px auto auto;
-  align-items: end;
-  gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
-/* INPUT DEFAULT */
+/* ==================================================
+   INPUT & SELECT
+================================================== */
+
 .laporan-filter input,
 .laporan-filter select {
-  padding: 10px 12px;
-  border-radius: 10px;
+  height: 38px;
+
+  padding: 0 11px;
+
+  border-radius: 9px;
   border: 1px solid #e5e7eb;
+
   font-size: 13px;
+  font-family: inherit;
+
   background: #ffffff;
+  color: #0f172a;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
 .laporan-filter input:focus,
 .laporan-filter select:focus {
   outline: none;
+
+  border-color: #93c5fd;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+/* ==================================================
+   UKURAN KONTROL
+================================================== */
+
+/* search */
+
+.laporan-filter-left input {
+  height: 38px;
+}
+
+/* periode */
+
+.laporan-filter-controls select:first-child {
+  width: 130px;
+}
+
+/* status */
+
+.laporan-filter-controls select:nth-child(2) {
+  width: 135px;
+}
+
+/* tanggal */
+
+.laporan-filter-controls input[type="date"] {
+  width: 145px;
+}
+
+/* ==================================================
+   BUTTON SYSTEM
+================================================== */
+
+.laporan-btn {
+  height: 38px;
+
+  padding: 0 14px;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+
+  cursor: pointer;
+
+  border: 1px solid transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  white-space: nowrap;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.05s ease;
+}
+
+.laporan-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.laporan-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==================================================
+   PROSES
+================================================== */
+
+.laporan-btn-proses {
+  min-width: 78px;
+
+  background: #2563eb;
+  color: #ffffff;
+
   border-color: #2563eb;
 }
 
-/* ================= BUTTON SYSTEM ================= */
-
-.laporan-btn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background 0.15s ease;
-}
-
-/* PROSES */
-.laporan-btn-proses {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.laporan-btn-proses:hover {
+.laporan-btn-proses:hover:not(:disabled) {
   background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  box-shadow:
+    0 2px 6px rgba(37, 99, 235, 0.18);
 }
 
-/* EXPORT */
+/* ==================================================
+   EXPORT EXCEL
+   SOFT GREEN
+================================================== */
+
+.laporan-btn-excel {
+  min-width: 108px;
+
+  background: #dcfce7;
+  color: #166534;
+
+  border-color: #bbf7d0;
+}
+
+.laporan-btn-excel:hover:not(:disabled) {
+  background: #bbf7d0;
+  border-color: #86efac;
+
+  box-shadow:
+    0 2px 6px rgba(22, 101, 52, 0.12);
+}
+
+/* ==================================================
+   EXPORT PDF
+   SOFT RED
+================================================== */
+
 .laporan-btn-export {
-  background: #f3f4f6;
-  color: #111827;
-  border: 1px solid #e5e7eb;
+  min-width: 100px;
+
+  background: #fee2e2;
+  color: #b91c1c;
+
+  border-color: #fecaca;
 }
 
-.laporan-btn-export:hover {
-  background: #e5e7eb;
+.laporan-btn-export:hover:not(:disabled) {
+  background: #fecaca;
+  border-color: #fca5a5;
+
+  box-shadow:
+    0 2px 6px rgba(185, 28, 28, 0.12);
 }
 
-
-/* ================= TABLE ================= */
+/* ==================================================
+   TABLE
+================================================== */
 
 .laporan-table-wrapper {
   border-radius: 14px;
@@ -122,6 +263,7 @@
 }
 
 /* baris utama laporan (klik-able) */
+
 .laporan-row {
   cursor: pointer;
   transition: background 0.15s ease;
@@ -131,22 +273,27 @@
   background: #f1f5f9;
 }
 
-/* ================= ACTION TOOLBAR ROW ================= */
+/* ==================================================
+   ACTION TOOLBAR ROW
+================================================== */
 
 .laporan-actions {
   display: inline-flex;
   align-items: center;
-  gap: 10px; /* jarak antar icon */
+  gap: 10px;
 }
 
 /* rapikan semua tombol icon */
+
 .laporan-actions button {
   padding: 6px;
   border-radius: 6px;
   transition: background 0.15s ease;
 }
 
-/* ================= EMPTY STATE ================= */
+/* ==================================================
+   EMPTY STATE
+================================================== */
 
 .laporan-empty {
   text-align: center;
@@ -155,7 +302,9 @@
   padding: 20px;
 }
 
-/* ================= DETAIL STRIP CONTAINER ================= */
+/* ==================================================
+   DETAIL STRIP CONTAINER
+================================================== */
 
 .detail-strip {
   background: #fff;
@@ -170,7 +319,9 @@
   border-top: 1px solid #e5e7eb;
 }
 
-/* ================= STRIP CARD FEEL ================= */
+/* ==================================================
+   STRIP CARD FEEL
+================================================== */
 
 .strip-table {
   width: 100%;
@@ -184,7 +335,9 @@
   box-shadow: inset 0 0 0 1px #e5e7eb;
 }
 
-/* ================= STRIP HEADER ================= */
+/* ==================================================
+   STRIP HEADER
+================================================== */
 
 .strip-table thead th {
   background: #f1f5ff;
@@ -195,7 +348,9 @@
   font-size: 12px;
 }
 
-/* ================= STRIP BODY ================= */
+/* ==================================================
+   STRIP BODY
+================================================== */
 
 .strip-table tbody td {
   padding: 10px 14px;
@@ -211,21 +366,30 @@
   background: #eef2f7;
 }
 
-/* ================= STRIP ACTION COLUMN ================= */
+/* ==================================================
+   STRIP ACTION COLUMN
+================================================== */
 
 .strip-table tbody td:last-child {
-  width: 110px;
+  width: 90px;
   padding: 6px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* center perfect */
+
 .strip-actions {
-  display: flex;
+  display: inline-flex;
+  gap: 8px;
   justify-content: center;
   align-items: center;
 }
 
-/* ================= DELETE BUTTON (CONSISTENT DESIGN) ================= */
+/* ==================================================
+   DELETE BUTTON
+================================================== */
+
 .btn-delete-base {
   padding: 6px 14px;
   border-radius: 8px;
@@ -239,7 +403,7 @@
 
   cursor: pointer;
 
-  transition: 
+  transition:
     background 0.15s ease,
     transform 0.05s ease,
     box-shadow 0.1s ease;
@@ -248,7 +412,7 @@
 .btn-delete-base:hover {
   background: #dc2626;
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .btn-delete-base:active {
@@ -268,7 +432,7 @@
 
   cursor: pointer;
 
-  transition: 
+  transition:
     background 0.15s ease,
     transform 0.05s ease,
     box-shadow 0.1s ease;
@@ -277,14 +441,16 @@
 .btn-delete-strip:hover {
   background: #dc2626;
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .btn-delete-strip:active {
   transform: translateY(1px);
 }
 
-/* ================= PRINT BUTTON (MATCH SYSTEM) ================= */
+/* ==================================================
+   PRINT BUTTON
+================================================== */
 
 .btn-print {
   padding: 6px 14px;
@@ -299,7 +465,7 @@
   border: none;
   cursor: pointer;
 
-  transition: 
+  transition:
     background 0.15s ease,
     transform 0.05s ease,
     box-shadow 0.1s ease;
@@ -307,30 +473,16 @@
 
 .btn-print:hover {
   background: #bfdbfe;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .btn-print:active {
   transform: translateY(1px);
 }
 
-/* ================= CENTER ACTION COLUMN ================= */
-
-.strip-table tbody td:last-child {
-  width: 90px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* kalau ada lebih dari 1 tombol dalam 1 cell */
-.strip-actions {
-  display: inline-flex;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ================= ANIMATION FEEL ================= */
+/* ==================================================
+   ANIMATION FEEL
+================================================== */
 
 .detail-strip {
   animation: fadeIn 0.3s ease-in-out;
@@ -341,28 +493,42 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+/* ==================================================
+   PDF LOADING
+================================================== */
+
 .pdf-loading-overlay {
   position: fixed;
   inset: 0;
+
   background: rgba(0, 0, 0, 0.35);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   z-index: 9999;
 }
 
 .pdf-loading-popup {
   background: white;
+
   padding: 30px 40px;
+
   border-radius: 12px;
+
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.2);
+
   min-width: 280px;
 }
 
@@ -373,8 +539,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .pdf-loading-popup p {
