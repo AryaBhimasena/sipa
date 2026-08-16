@@ -27,33 +27,93 @@
   border-color: #2563eb;
 }
 
-/* ================= TABLE ================= */
+/* =========================================================
+   TABLE
+========================================================= */
 
+/*
+   Wrapper menjadi area scroll horizontal.
+
+   Sebelumnya:
+   overflow: hidden;
+
+   Akibatnya tabel yang terlalu lebar dipaksa masuk
+   ke area yang tersedia.
+
+   Sekarang:
+   overflow-x: auto;
+
+   sehingga pada layar sempit tabel tetap memiliki
+   ukuran yang nyaman dan pengguna dapat melakukan
+   scroll horizontal.
+*/
 .loket-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+
   border-radius: 14px;
   border: 1px solid #e5e7eb;
-  overflow: hidden;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /*
+    Supaya scrollbar tidak terlalu menempel dengan tabel.
+  */
+  scrollbar-width: thin;
 }
 
+/*
+   TABLE
+
+   Jangan memaksa tabel selalu mengikuti lebar wrapper.
+
+   min-width menjaga kolom tetap nyaman dibaca.
+*/
 .loket-table {
   width: 100%;
+  min-width: 900px;
+
   border-collapse: collapse;
   font-size: 13px;
+
+  table-layout: auto;
 }
 
+/*
+   HEADER
+*/
 .loket-table thead th {
   background: #f8fafc;
   color: #475569;
   font-weight: 700;
   text-align: left;
+
   padding: 12px 14px;
+
   border-bottom: 1px solid #e5e7eb;
+
+  /*
+    Header tidak boleh pecah menjadi beberapa baris.
+  */
+  white-space: nowrap;
 }
 
+/*
+   BODY
+*/
 .loket-table tbody td {
   padding: 14px;
+
   border-bottom: 1px solid #f1f5f9;
+
   color: #0f172a;
+
+  /*
+    Mencegah angka dan nama kolom tertentu
+    dipaksa turun ke beberapa baris.
+  */
+  white-space: nowrap;
 }
 
 .loket-table tbody tr:hover {
@@ -74,6 +134,7 @@
 
   font-size: 12px;
   font-weight: 600;
+
   background: #2563eb;
   color: #ffffff;
 }
@@ -97,6 +158,7 @@
 }
 
 /* teks info */
+
 .loket-pagination .pagination-info {
   color: #64748b;
   font-weight: 500;
@@ -104,30 +166,93 @@
 }
 
 /* panah < > */
+
 .loket-pagination .page-arrow {
   font-weight: 700;
   color: #2563eb;
   cursor: pointer;
+
   padding: 2px 6px;
+
   border-radius: 6px;
+
   user-select: none;
 }
 
 /* hover halus */
+
 .loket-pagination .page-arrow:hover {
   background: #eff6ff;
 }
 
-/* disable look (opsional via class) */
+/* disable look */
+
 .loket-pagination .page-arrow.disabled {
   color: #cbd5f5;
   cursor: not-allowed;
   background: transparent;
 }
 
-/* responsive */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+/*
+   TABLET / NETBOOK
+--------------------------------------------------------- */
+
+@media (max-width: 1200px) {
+
+  .loket-page {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /*
+     Tabel tetap memiliki lebar minimum.
+     Wrapper yang melakukan horizontal scroll.
+  */
+  .loket-table {
+    min-width: 900px;
+  }
+
+}
+
+
+/*
+   MOBILE / LAYAR SEMPIT
+--------------------------------------------------------- */
+
 @media (max-width: 768px) {
+
+  .loket-page {
+    padding: 20px 16px 32px;
+  }
+
+  /*
+     Filter tidak lagi dipaksa menjadi
+     5 kolom dalam satu baris.
+  */
+  .loket-filter {
+    grid-template-columns: 1fr;
+  }
+
+  /*
+     Pagination berada di tengah.
+  */
   .loket-pagination {
     justify-content: center;
   }
+
+  /*
+     Tabel tetap dapat di-scroll horizontal.
+  */
+  .loket-table-wrapper {
+    border-radius: 10px;
+  }
+
+  .loket-table {
+    min-width: 900px;
+  }
+
 }
