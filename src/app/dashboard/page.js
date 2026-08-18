@@ -188,13 +188,23 @@ useEffect(() => {
 					  <td>{row.nama}</td>
 					  <td>{row.kios}</td>
 					  <td>Rp {row.total.toLocaleString("id-ID")}</td>
-					  <td>
-						<span className={`badge ${
-						  row.status === "PAID" ? "success" : "warning"
-						}`}>
-						  {row.status === "PAID" ? "Lunas" : "Belum Bayar"}
-						</span>
-					  </td>
+<td>
+  <span
+    className={`badge ${
+      row.status === "PAID"
+        ? "success"
+        : row.status === "PENDING"
+          ? "warning"
+          : "danger"
+    }`}
+  >
+    {row.status === "PAID"
+      ? "Lunas"
+      : row.status === "PENDING"
+        ? "Pending"
+        : "Tidak Valid"}
+  </span>
+</td>
 					</tr>
 				  ))}
 				</tbody>

@@ -23,10 +23,11 @@ import {
 import "../../../styles/layout.css";
 import "../../../styles/pages/laporan.css";
 
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import { Loader2 } from "lucide-react";
+import { exportLaporanPembayaranPDF } from "../../../lib/laporan/eksportPDF-laporanpembayaran";
+
+import { useUser } from "../../../lib/context/UserContext";
 
 export default function LaporanPembayaranPage() {
   const {
@@ -34,6 +35,8 @@ export default function LaporanPembayaranPage() {
     loading,
     refetch,
   } = useLaporanPembayaran();
+  
+  const user = useUser();
 
   const [isDownloading, setIsDownloading] =
     useState(false);
@@ -432,149 +435,52 @@ const handleExportExcel = () => {
     }
   };
 
-  /* =====================================================
-     EXPORT PDF
-  ===================================================== */
+/* =====================================================
+   EXPORT PDF
+===================================================== */
 
-  const handlePreviewPDF = async () => {
-    if (!tglAwal || !tglAkhir) {
-      alert(
-        "Silakan pilih tanggal terlebih dahulu"
-      );
-      return;
-    }
-
-    setIsDownloading(true);
-
-    const url =
-      `/laporan/preview-pdf?start=${tglAwal}&end=${tglAkhir}`;
-
-    const iframe =
-      document.createElement(
-        "iframe"
-      );
-
-    iframe.style.position =
-      "fixed";
-
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "0";
-    iframe.src = url;
-
-    document.body.appendChild(
-      iframe
+const handleExportPDF = async () => {
+  if (!tglAwal || !tglAkhir) {
+    alert(
+      "Silakan pilih tanggal terlebih dahulu"
     );
 
-    iframe.onload =
-      async () => {
-        try {
-          const iframeDoc =
-            iframe.contentDocument ||
-            iframe.contentWindow.document;
+    return;
+  }
 
-          const waitForPages =
-            () =>
-              new Promise(
-                (resolve) => {
-                  const check =
-                    () => {
-                      const pages =
-                        iframeDoc.querySelectorAll(
-                          ".preview-paper"
-                        );
+  if (!filteredData.length) {
+    alert(
+      "Tidak ada data yang dapat diekspor."
+    );
 
-                      if (
-                        pages.length >
-                        0
-                      ) {
-                        resolve(
-                          pages
-                        );
-                      } else {
-                        setTimeout(
-                          check,
-                          300
-                        );
-                      }
-                    };
+    return;
+  }
 
-                  check();
-                }
-              );
+  setIsDownloading(true);
 
-          const pages =
-            await waitForPages();
+  try {
+    await exportLaporanPembayaranPDF(
+      filteredData,
+      {
+        tglAwal,
+        tglAkhir,
+        user,
+      }
+    );
+  } catch (err) {
+    console.error(
+      "[handleExportPDF]",
+      err
+    );
 
-          const pdf =
-            new jsPDF({
-              orientation:
-                "landscape",
-              unit: "mm",
-              format: "a4",
-              compress: true,
-            });
-
-          for (
-            let i = 0;
-            i < pages.length;
-            i++
-          ) {
-            const canvas =
-              await html2canvas(
-                pages[i],
-                {
-                  scale: 2,
-                  backgroundColor:
-                    "#ffffff",
-                  useCORS: true,
-                }
-              );
-
-            const imgData =
-              canvas.toDataURL(
-                "image/jpeg",
-                0.75
-              );
-
-            if (i > 0) {
-              pdf.addPage();
-            }
-
-            pdf.addImage(
-              imgData,
-              "JPEG",
-              0,
-              0,
-              297,
-              210
-            );
-          }
-
-          pdf.save(
-            `Laporan_Pembayaran_${tglAwal}_${tglAkhir}.pdf`
-          );
-
-        } catch (err) {
-          console.error(err);
-
-          alert(
-            "Gagal generate PDF"
-          );
-
-        } finally {
-          document.body.removeChild(
-            iframe
-          );
-
-          setIsDownloading(
-            false
-          );
-        }
-      };
-  };
+    alert(
+      err?.message ||
+        "Gagal membuat file PDF."
+    );
+  } finally {
+    setIsDownloading(false);
+  }
+};
 
   /* =====================================================
      DELETE HEADER
@@ -893,19 +799,20 @@ const handleExportExcel = () => {
 
               {/* EXPORT PDF */}
 
-              <button
-                className="laporan-btn laporan-btn-export"
-                onClick={
-                  handlePreviewPDF
-                }
-                disabled={
-                  isDownloading
-                }
-              >
-                {isDownloading
-                  ? "Memproses..."
-                  : "Export PDF"}
-              </button>
+				<button
+				  className="laporan-btn laporan-btn-export"
+				  onClick={
+					handleExportPDF
+				  }
+				  disabled={
+					isDownloading ||
+					filteredData.length === 0
+				  }
+				>
+				  {isDownloading
+					? "Memproses..."
+					: "Export PDF"}
+				</button>
 
             </div>
           </div>
